@@ -7,5 +7,5 @@ pluginManagement {
 }
 
 include ':FtcRobotController'
-include ':StealthLib'
 include ':TeamCode'
+include ':StealthLib'

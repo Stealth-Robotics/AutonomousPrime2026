@@ -33,7 +33,7 @@ public class Teleop extends StealthOpMode {
                     driveGamepad.getLeftY() * scaledPower,
                     driveGamepad.getRightX() * scaledPower
             );
-        }));
+        }, robot.drive));
     }
 
     @TeleOp(name = "Teleop (RED ALLIANCE)", group = "Red")

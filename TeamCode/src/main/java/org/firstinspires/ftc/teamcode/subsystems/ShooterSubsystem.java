@@ -12,6 +12,5 @@ public class ShooterSubsystem extends StealthSubsystem {
     public ShooterSubsystem(HardwareMap hardwareMap) {
         gateServo = hardwareMap.get(Servo.class, "gateServo");
         flywheelMotor = hardwareMap.get(DcMotorEx.class, "flywheelMotor");
-
     }
 }

@@ -34,6 +34,9 @@ public class Teleop extends StealthOpMode {
                     driveGamepad.getRightX() * scaledPower
             );
         }, robot.drive));
+
+        //Reset the teleop pose if we ever lose our position
+        driveGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON).whenPressed(() -> robot.resetPose());
     }
 
     @TeleOp(name = "Teleop (RED ALLIANCE)", group = "Red")

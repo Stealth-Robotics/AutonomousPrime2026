@@ -21,4 +21,8 @@ public class Shooter extends StealthSubsystem {
         shooterMotor.setDirection(DcMotorSimple.Direction.FORWARD); //TODO: Tune
         shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
+
+    @Override
+    public void periodic() {
+    }
 }

@@ -29,6 +29,10 @@ public class Drive extends StealthSubsystem {
         pedroFollower.setPose(p);
     }
 
+    public Pose getPose() {
+        return pedroFollower.pose();
+    }
+
     @Override
     public void periodic() {
         pedroFollower.update();

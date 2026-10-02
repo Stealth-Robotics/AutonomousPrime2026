@@ -37,6 +37,9 @@ public class Teleop extends StealthOpMode {
 
         //Reset the teleop pose if we ever lose our position
         driveGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON).whenPressed(() -> robot.resetPose());
+
+        //Toggle which side of our hive we are aiming at
+        operatorGamepad.getGamepadButton(GamepadKeys.Button.Y).whenPressed(() -> robot.toggleTargetHiveSide());
     }
 
     @TeleOp(name = "Teleop (RED ALLIANCE)", group = "Red")

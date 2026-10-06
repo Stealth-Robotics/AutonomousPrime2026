@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.stealthrobotics.library.Alliance;
-import org.stealthrobotics.library.AutoToTeleStorage;
 
 import java.util.List;
 
@@ -46,16 +45,6 @@ public abstract class StealthOpMode extends LinearOpMode {
     }
 
     /**
-     * Override this to provide the robot's final heading at the end of autonomous mode.
-     * This will be automatically saved and made available to your tele-op mode.
-     *
-     * @return heading in radians
-     */
-    public double getFinalHeading() {
-        return 0.0;
-    }
-
-    /**
      * Schedules {@link com.arcrobotics.ftclib.command.Command} objects to the scheduler
      */
     public void schedule(Command... commands) {
@@ -67,10 +56,6 @@ public abstract class StealthOpMode extends LinearOpMode {
      */
     public void register(Subsystem... subsystems) {
         CommandScheduler.getInstance().registerSubsystem(subsystems);
-    }
-
-    public void bruh() {
-
     }
 
     public void printTelemetry() {}
@@ -133,15 +118,6 @@ public abstract class StealthOpMode extends LinearOpMode {
             hubs.forEach(LynxModule::clearBulkCache);
         }
 
-        bruh();
-
         CommandScheduler.getInstance().reset();
-
-        // You're free to save the final heading from a command, so don't redo that here. It turns
-        // out this is a terrible place to ask for the final heading, since the IMU will always
-        // return 0 after the opmode is over!
-        if (AutoToTeleStorage.finalAutoHeading == 0.0) {
-            AutoToTeleStorage.finalAutoHeading = getFinalHeading();
-        }
     }
 }

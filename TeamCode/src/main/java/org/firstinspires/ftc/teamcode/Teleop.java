@@ -1,9 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.stealthrobotics.library.Commands.run;
-
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import org.firstinspires.ftc.teamcode.systems.Robot;
+import org.firstinspires.ftc.teamcode.util.CommandTranslator;
 import org.stealthrobotics.library.opmodes.StealthOpMode;
 
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -40,6 +39,11 @@ public class Teleop extends StealthOpMode {
 
         //Toggle which side of our hive we are aiming at
         operatorGamepad.getGamepadButton(GamepadKeys.Button.Y).whenPressed(() -> robot.toggleTargetHiveSide());
+
+        robot.intake.setDefaultCommand(run(() -> robot.intake.setPower(driveGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) - driveGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER))));
+
+        driveGamepad.getGamepadButton(GamepadKeys.Button.Y).whenPressed(CommandTranslator.asCommand(robot.shooter.toggleGate()));
+        driveGamepad.getGamepadButton(GamepadKeys.Button.X).whenPressed(CommandTranslator.asCommand(robot.intake.toggleHarvester()));
     }
 
     @TeleOp(name = "Teleop (RED ALLIANCE)", group = "Red")

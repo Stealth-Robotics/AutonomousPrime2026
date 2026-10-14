@@ -27,8 +27,6 @@ public class Teleop extends NextOpMode {
 
     @Override
     public void periodic() {
-        telemetry.addData("o", "ep");
-        Telemetry.log("yo)");
     }
 
     @Override
@@ -46,8 +44,8 @@ public class Teleop extends NextOpMode {
     }
 
     @NextTeleop(name = "Blue Teleop")
-    public class BlueTeleop extends Teleop { public BlueTeleop(Robot robot) { super(robot); Alliance.set(Alliance.BLUE); } }
+    public static class BlueTeleop extends Teleop { public BlueTeleop(Robot robot) { super(robot); Alliance.set(Alliance.BLUE); } }
 
     @NextTeleop(name = "Red Teleop")
-    public class RedTeleop extends Teleop { public RedTeleop(Robot robot) { super(robot); Alliance.set(Alliance.RED); } }
+    public static class RedTeleop extends Teleop { public RedTeleop(Robot robot) { super(robot); Alliance.set(Alliance.RED); } }
 }

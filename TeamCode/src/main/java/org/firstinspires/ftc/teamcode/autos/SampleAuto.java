@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.autos;
 
 import org.firstinspires.ftc.teamcode.Robot;
-import org.stealthrobotics.library.opmodes.StealthOpMode;
+import dev.nextftc.robot.opmode.NextOpMode;
 
-public class SampleAuto extends StealthOpMode {
-    private Robot robot;
-    public void initialize() {
-        robot = new Robot(hardwareMap);
+public class SampleAuto extends NextOpMode {
+    private final Robot robot;
+
+    public SampleAuto(Robot robot) {
+        super(robot);
+        this.robot = robot;
     }
 }

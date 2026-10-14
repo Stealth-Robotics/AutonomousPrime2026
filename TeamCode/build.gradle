@@ -50,6 +50,10 @@ dependencies {
     implementation project(':StealthLib')
 
     implementation 'org.ftclib.ftclib:core:2.1.1'
-
     implementation("dev.frozenmilk.sinister:Sloth:0.3.2")
+
+    //NextFTC
+    implementation 'dev.nextftc.v2:control:0.2.1'
+    implementation 'dev.nextftc.v2:hardware:0.2.1'
+    implementation 'dev.nextftc.v2:robot:0.2.1'
 }

@@ -1,6 +1,4 @@
-package org.firstinspires.ftc.teamcode;
-
-import org.firstinspires.ftc.teamcode.util.Pose3D;
+package org.firstinspires.ftc.teamcode.util;
 
 public class FieldConstants {
 

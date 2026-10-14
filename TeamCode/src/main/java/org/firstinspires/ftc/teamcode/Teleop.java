@@ -1,54 +1,53 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import org.firstinspires.ftc.teamcode.systems.Robot;
-import org.firstinspires.ftc.teamcode.util.CommandTranslator;
-import org.stealthrobotics.library.opmodes.StealthOpMode;
+import org.stealthrobotics.library.Alliance;
 
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import dev.nextftc.robot.Telemetry;
+import dev.nextftc.robot.opmode.BulkReadHook;
+import dev.nextftc.robot.opmode.NextOpMode;
+import dev.nextftc.robot.opmode.NextTeleop;
+import dev.nextftc.robot.triggers.CommandGamepad;
 
-public class Teleop extends StealthOpMode {
-    private GamepadEx driveGamepad;
-    private GamepadEx operatorGamepad;
+public class Teleop extends NextOpMode {
+    private final Robot robot;
 
-    private Robot robot;
+    private final CommandGamepad driverGamepad = new CommandGamepad(gamepad1);
+    private final CommandGamepad operatorGamepad = new CommandGamepad(gamepad2);
+
+    public Teleop(Robot robot) {
+        super(robot, BulkReadHook.INSTANCE);
+        this.robot = robot;
+    }
 
     @Override
-    public void initialize() {
-        driveGamepad = new GamepadEx(gamepad1);
-        operatorGamepad = new GamepadEx(gamepad2);
-
-        robot = new Robot(hardwareMap);
-
+    public void start() {
+        robot.drive.teleopDrive(driverGamepad).schedule();
         configureBindings();
     }
 
-    private void configureBindings() {
-        robot.drive.setDefaultCommand(run(() -> {
-            double scaledPower = driveGamepad.getButton(GamepadKeys.Button.RIGHT_BUMPER) ? 0.75 : 1;
-            robot.drive.driveFieldCentric(
-                    driveGamepad.getLeftX() * scaledPower,
-                    driveGamepad.getLeftY() * scaledPower,
-                    driveGamepad.getRightX() * scaledPower
-            );
-        }, robot.drive));
-
-        //Reset the teleop pose if we ever lose our position
-        driveGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON).whenPressed(() -> robot.resetPose());
-
-        //Toggle which side of our hive we are aiming at
-        operatorGamepad.getGamepadButton(GamepadKeys.Button.Y).whenPressed(() -> robot.toggleTargetHiveSide());
-
-        robot.intake.setDefaultCommand(run(() -> robot.intake.setPower(driveGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) - driveGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER))));
-
-        driveGamepad.getGamepadButton(GamepadKeys.Button.Y).whenPressed(CommandTranslator.asCommand(robot.shooter.toggleGate()));
-        driveGamepad.getGamepadButton(GamepadKeys.Button.X).whenPressed(CommandTranslator.asCommand(robot.intake.toggleHarvester()));
+    @Override
+    public void periodic() {
+        telemetry.addData("o", "ep");
+        Telemetry.log("yo)");
     }
 
-    @TeleOp(name = "Teleop (RED ALLIANCE)", group = "Red")
-    public static class RedTeleop extends Teleop { }
+    @Override
+    public void end() {
+    }
 
-    @TeleOp(name = "Teleop (BLUE ALLIANCE)", group = "Blue")
-    public static class BlueTeleop extends Teleop { }
+    private void configureBindings() {
+        driverGamepad.a().onTrue(robot.resetPose());
+        driverGamepad.y().onTrue(robot.shooter.toggleGate());
+        driverGamepad.x().onTrue(robot.intake.toggleHarvester());
+        driverGamepad.rightTrigger().isOver(0.2).whileTrue(robot.intake.intake());
+        driverGamepad.leftTrigger().isOver(0.2).whileTrue(robot.intake.outtake());
+
+        operatorGamepad.y().onTrue(robot.toggleTargetHiveSide());
+    }
+
+    @NextTeleop(name = "Blue Teleop")
+    public class BlueTeleop extends Teleop { public BlueTeleop(Robot robot) { super(robot); Alliance.set(Alliance.BLUE); } }
+
+    @NextTeleop(name = "Red Teleop")
+    public class RedTeleop extends Teleop { public RedTeleop(Robot robot) { super(robot); Alliance.set(Alliance.RED); } }
 }

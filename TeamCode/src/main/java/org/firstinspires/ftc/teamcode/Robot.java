@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.mechanisms.Intake;
 import org.firstinspires.ftc.teamcode.mechanisms.Shooter;
 import org.firstinspires.ftc.teamcode.mechanisms.Turret;
 import org.firstinspires.ftc.teamcode.util.FieldConstants;
-import org.firstinspires.ftc.teamcode.util.HiveSide;
 import org.firstinspires.ftc.teamcode.util.Pose3D;
 import org.stealthrobotics.library.Alliance;
 
@@ -28,6 +27,11 @@ public class Robot implements NextRobot {
     public final Turret turret = new Turret();
 
     private HiveSide targetHiveSide = HiveSide.LEFT;
+
+    public enum HiveSide {
+        LEFT,
+        RIGHT
+    }
 
     private static final Pose BLUE_RESET_POSE = new Pose(0, 0, 0);
     private static final Pose RED_RESET_POSE = new Pose(0, 0, 0);

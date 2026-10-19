@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import org.firstinspires.ftc.teamcode.util.PedroPoseSaver;
 import org.stealthrobotics.library.Alliance;
 
 import dev.nextftc.robot.Telemetry;
@@ -21,7 +22,12 @@ public class Teleop extends NextOpMode {
 
     @Override
     public void start() {
+        //Load the saved pose from auto
+        robot.drive.setPose(PedroPoseSaver.savedPose);
+
+        //Schedule the teleop driving command
         robot.drive.teleopDrive(driverGamepad).schedule();
+
         configureBindings();
     }
 
@@ -31,6 +37,7 @@ public class Teleop extends NextOpMode {
 
     @Override
     public void end() {
+        PedroPoseSaver.savedPose = robot.drive.getPose();
     }
 
     private void configureBindings() {
@@ -44,8 +51,18 @@ public class Teleop extends NextOpMode {
     }
 
     @NextTeleop(name = "Blue Teleop")
-    public static class BlueTeleop extends Teleop { public BlueTeleop(Robot robot) { super(robot); Alliance.set(Alliance.BLUE); } }
+    public static class BlueTeleop extends Teleop {
+        public BlueTeleop(Robot robot) {
+            super(robot);
+            Alliance.set(Alliance.BLUE);
+        }
+    }
 
     @NextTeleop(name = "Red Teleop")
-    public static class RedTeleop extends Teleop { public RedTeleop(Robot robot) { super(robot); Alliance.set(Alliance.RED); } }
+    public static class RedTeleop extends Teleop {
+        public RedTeleop(Robot robot) {
+            super(robot);
+            Alliance.set(Alliance.RED);
+        }
+    }
 }

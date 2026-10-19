@@ -5,7 +5,7 @@ import com.pedropathing.follower.ManualDrive;
 import com.pedropathing.ivy.Command;
 import com.pedropathing.math.Pose;
 
-import org.firstinspires.ftc.teamcode.util.AutoDataStorage;
+import org.firstinspires.ftc.teamcode.util.PedroPoseSaver;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.stealthrobotics.library.Alliance;
 
@@ -19,9 +19,6 @@ public class Drive implements Mechanism {
 
     public Drive() {
         pedroFollower = Constants.create(RobotController.hardwareMap());
-
-        //Set the follower's pose to the end of auto pose (overwritten if still in auto)
-        pedroFollower.setPose(AutoDataStorage.endOfAutoPose);
     }
 
     public Command teleopDrive(CommandGamepad gamepad) {

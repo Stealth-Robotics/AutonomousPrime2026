@@ -26,6 +26,16 @@ public class Pose3D {
         this(pose.x(), pose.y(), z, pose.heading());
     }
 
+    public Pose3D plus(Pose3D other) {
+        return new Pose3D(this.x + other.x, this.y + other.y, this.z + other.z, this.heading + other.heading);
+    }
+    public Pose3D minus(Pose3D other) {
+        return new Pose3D(this.x - other.x, this.y - other.y, this.z - other.z, this.heading - other.heading);
+    }
+    public Pose3D rotate(double dHeading) {
+        return new Pose3D(this.x, this.y, this.z, this.heading + dHeading);
+    }
+
     public double x() {
         return x;
     }

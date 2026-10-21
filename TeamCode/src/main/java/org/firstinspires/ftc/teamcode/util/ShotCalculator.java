@@ -24,7 +24,7 @@ public class ShotCalculator {
     }
 
     public void update(Pose3D robotPose, Pose3D robotVelocity, Pose3D targetPose) {
-        Pose3D turretPose = robotPose.plus(Turret.ROBOT_TO_TURRET_OFFSET.rotateBy(robotPose.heading())); // Get Rotated robot position
+        Pose3D turretPose = robotPose.plus(ROBOT_TO_TURRET_OFFSET.rotateBy(robotPose.heading())); // Get rotated robot position
 
         Pose3D shotDisplacement = targetPose.minus(turretPose);
 

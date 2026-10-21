@@ -2,8 +2,7 @@ package org.firstinspires.ftc.teamcode.util;
 
 import com.pedropathing.math.Pose;
 
-
-public class Pose3D{
+public class Pose3D {
     private final double z;
     private final Pose pose;
 

@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import org.stealthrobotics.library.Alliance;
-import org.stealthrobotics.library.opmodes.StealthOpMode;
 
 import dev.nextftc.robot.Telemetry;
 import dev.nextftc.robot.opmode.BulkReadHook;
@@ -9,7 +8,7 @@ import dev.nextftc.robot.opmode.NextOpMode;
 import dev.nextftc.robot.opmode.NextTeleop;
 import dev.nextftc.robot.triggers.CommandGamepad;
 
-public abstract class Teleop extends StealthOpMode {
+public abstract class Teleop extends NextOpMode {
     private final Robot robot;
 
     private final CommandGamepad driverGamepad = new CommandGamepad(gamepad1);

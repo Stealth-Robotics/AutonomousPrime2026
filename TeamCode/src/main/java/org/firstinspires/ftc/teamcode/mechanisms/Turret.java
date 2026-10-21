@@ -12,19 +12,9 @@ import dev.nextftc.robot.Mechanism;
 public class Turret implements Mechanism {
     private final NextMotor turretMotor = new NextMotor(RobotController.controlHub(), 0);
 
-    private static final Pose3D ROBOT_TO_TURRET_OFFSET = new Pose3D(0, 0, 0, 0);
+    public static final Pose3D ROBOT_TO_TURRET_OFFSET = new Pose3D(0, 0, 0, 0);
 
     // Returns a field relative turret offset by rotating the turret offset about the origin by the bot's heading.
-    public static Pose3D turretOffsetWithAngle(double theta) {
-        double radius = Math.sqrt(ROBOT_TO_TURRET_OFFSET.x() * ROBOT_TO_TURRET_OFFSET.x() + ROBOT_TO_TURRET_OFFSET.y() * ROBOT_TO_TURRET_OFFSET.y());
-        double angle = Math.atan2(ROBOT_TO_TURRET_OFFSET.y(), ROBOT_TO_TURRET_OFFSET.x());
-        return new Pose3D(
-                radius * Math.cos(angle + theta),
-                radius * Math.sin(angle + theta),
-                ROBOT_TO_TURRET_OFFSET.z(),
-                ROBOT_TO_TURRET_OFFSET.heading() + theta
-        );
-    }
 
     /*
         Add sotm to the turret. Use velocity compensdtion, turret tangential velocity compensation, tilt compensation, latency compensation

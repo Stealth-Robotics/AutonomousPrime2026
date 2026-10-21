@@ -4,22 +4,23 @@ import org.firstinspires.ftc.teamcode.mechanisms.Turret;
 
 import dev.nextftc.control.util.InterpolatingMap;
 
-
-//TODO: Latency, tilt, rpm, feedforward, interpolation, t-tuning
+// TODO: Latency, rpm, feedforward, interpolation, t-tuning
 public class ShotCalculator {
+    private static final double GRAVITY = 9.80665; // Gravity on earth in m/s²
+    private static final double LATENCY = 0.02; // Estimated delay between pose measurements and update time in seconds
 
-    private static double GRAVITY = 9.80665; // Gravity on earth in m/s/s
-    private static double LATENCY = 0.050; // Estimated delay between pose measurements and update time in ms
-    private InterpolatingMap<Double> distanceToRPM = InterpolatingMap.linear(); // Interpolation map for RPM values at given distances in inches
+    private static final Pose3D ROBOT_TO_TURRET_OFFSET = new Pose3D(0, 0, 0, 0);
+
+    // Interpolation map for RPM values at given distances in inches
+    private final InterpolatingMap<Double> distanceToRPM = InterpolatingMap.linear();
 
 
     private double turretAngle = 0, hoodAngle = 0, rpm = 0;
 
     public ShotCalculator() {
-        //                 (inches, rpm)
+        // Units = (inches, RPM)
         distanceToRPM.put(0.0, 1000.0);
         distanceToRPM.put(144.0, 2000.0);
-
     }
 
     public void update(Pose3D robotPose, Pose3D robotVelocity, Pose3D targetPose) {
@@ -40,9 +41,14 @@ public class ShotCalculator {
         double horizontalVelocity = Math.hypot(movingShotVelocity.x(), movingShotVelocity.y());
         double horizontalDistance = Math.hypot(shotDisplacement.x(), shotDisplacement.y());
 
-        turretAngle = Math.toDegrees(Math.atan2(movingShotVelocity.y(), movingShotVelocity.x())); // Turret angle is the angle of the horizontal components of the shot vector
-        hoodAngle = 90 - Math.toDegrees(Math.atan2(movingShotVelocity.z(), horizontalVelocity)); // "90 - ..." results from the perpendicular angle between hood lift and fire angle
-        rpm = distanceToRPM.get(horizontalDistance); // RPM is derived from the tuned rpm interpolation table.
+        // Turret angle is the angle of the horizontal components of the shot vector
+        turretAngle = Math.toDegrees(Math.atan2(movingShotVelocity.y(), movingShotVelocity.x()));
+
+        // "90 - ..." results from the perpendicular angle between hood lift and fire angle
+        hoodAngle = 90 - Math.toDegrees(Math.atan2(movingShotVelocity.z(), horizontalVelocity));
+
+        // RPM is derived from the tuned rpm interpolation table
+        rpm = distanceToRPM.get(horizontalDistance);
     }
 
     public double getTurretAngle() {

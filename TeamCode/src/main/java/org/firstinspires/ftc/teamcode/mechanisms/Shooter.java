@@ -4,18 +4,16 @@ import static com.pedropathing.ivy.commands.Commands.*;
 
 import com.pedropathing.ivy.Command;
 
-import org.firstinspires.ftc.teamcode.util.HardwareConfig;
-
 import dev.nextftc.hardware.RobotController;
 import dev.nextftc.hardware.actuators.NextMotor;
 import dev.nextftc.hardware.actuators.NextServo;
 import dev.nextftc.robot.Mechanism;
 
 public class Shooter implements Mechanism {
-    private final NextMotor leftShooterMotor = new NextMotor(RobotController.controlHub(), HardwareConfig.LEFT_SHOOTER_MOTOR);
-    private final NextMotor rightShooterMotor = new NextMotor(RobotController.controlHub(), HardwareConfig.RIGHT_SHOOTER_MOTOR);
+    private final NextMotor leftShooterMotor = new NextMotor(RobotController.controlHub(), 0);
+    private final NextMotor rightShooterMotor = new NextMotor(RobotController.controlHub(), 0);
 
-    private final NextServo gateServo = new NextServo(RobotController.controlHub(), HardwareConfig.GATE_SERVO);
+    private final NextServo gateServo = new NextServo(RobotController.controlHub(), 0);
 
     private GateState gateState = GateState.CLOSED;
 

@@ -4,18 +4,15 @@ import static com.pedropathing.ivy.commands.Commands.*;
 
 import com.pedropathing.ivy.Command;
 
-import org.firstinspires.ftc.teamcode.util.HardwareConfig;
-
 import dev.nextftc.hardware.RobotController;
 import dev.nextftc.hardware.actuators.NextMotor;
 import dev.nextftc.hardware.actuators.NextServo;
 import dev.nextftc.robot.Mechanism;
 
 public class Intake implements Mechanism {
-    private final NextMotor intakeMotor = new NextMotor(RobotController.controlHub(), HardwareConfig.INTAKE_MOTOR);
-    private final NextServo harvesterServo = new NextServo(RobotController.controlHub(), HardwareConfig.HARVESTER_SERVO);
+    private final NextMotor intakeMotor = new NextMotor(RobotController.controlHub(), 0);
+    private final NextServo harvesterServo = new NextServo(RobotController.controlHub(), 0);
 
-    //TODO: Tune
     private final double INTAKE_SPEED = 1.0;
     private final double OUTTAKE_SPEED = -1.0;
 
@@ -32,7 +29,7 @@ public class Intake implements Mechanism {
 
     public Intake() {
         intakeMotor.setZeroPowerBehavior(NextMotor.ZeroPowerBehavior.FLOAT);
-        intakeMotor.setDirection(NextMotor.Direction.FORWARD);
+        intakeMotor.setDirection(NextMotor.Direction.REVERSE);
 
         //Start with the harvester up
         harvesterServo.setPosition(HARVESTER_UP_POSITION);
@@ -72,5 +69,9 @@ public class Intake implements Mechanism {
             raiseHarvester(),
             lowerHarvester()
         );
+    }
+
+    @Override
+    public void periodic() {
     }
 }

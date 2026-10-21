@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
-import org.firstinspires.ftc.teamcode.util.PedroPoseSaver;
 import org.stealthrobotics.library.Alliance;
+import org.stealthrobotics.library.opmodes.StealthOpMode;
 
 import dev.nextftc.robot.Telemetry;
 import dev.nextftc.robot.opmode.BulkReadHook;
@@ -9,7 +9,7 @@ import dev.nextftc.robot.opmode.NextOpMode;
 import dev.nextftc.robot.opmode.NextTeleop;
 import dev.nextftc.robot.triggers.CommandGamepad;
 
-public class Teleop extends NextOpMode {
+public abstract class Teleop extends StealthOpMode {
     private final Robot robot;
 
     private final CommandGamepad driverGamepad = new CommandGamepad(gamepad1);
@@ -22,10 +22,7 @@ public class Teleop extends NextOpMode {
 
     @Override
     public void start() {
-        //Load the saved pose from auto
-        robot.drive.setPose(PedroPoseSaver.savedPose);
-
-        //Schedule the teleop driving command
+        // Schedule the teleop driving command
         robot.drive.teleopDrive(driverGamepad).schedule();
 
         configureBindings();
@@ -33,24 +30,25 @@ public class Teleop extends NextOpMode {
 
     @Override
     public void periodic() {
+        Telemetry.log("Alliance", Alliance.get());
     }
 
     @Override
     public void end() {
-        PedroPoseSaver.savedPose = robot.drive.getPose();
     }
 
     private void configureBindings() {
         driverGamepad.a().onTrue(robot.resetPose());
         driverGamepad.y().onTrue(robot.shooter.toggleGate());
         driverGamepad.x().onTrue(robot.intake.toggleHarvester());
+
         driverGamepad.rightTrigger().isOver(0.2).whileTrue(robot.intake.intake());
         driverGamepad.leftTrigger().isOver(0.2).whileTrue(robot.intake.outtake());
 
         operatorGamepad.y().onTrue(robot.toggleTargetHiveSide());
     }
 
-    @NextTeleop(name = "Blue Teleop")
+    @NextTeleop(name = "Teleop (Blue)")
     public static class BlueTeleop extends Teleop {
         public BlueTeleop(Robot robot) {
             super(robot);
@@ -58,7 +56,7 @@ public class Teleop extends NextOpMode {
         }
     }
 
-    @NextTeleop(name = "Red Teleop")
+    @NextTeleop(name = "Teleop (Red)")
     public static class RedTeleop extends Teleop {
         public RedTeleop(Robot robot) {
             super(robot);

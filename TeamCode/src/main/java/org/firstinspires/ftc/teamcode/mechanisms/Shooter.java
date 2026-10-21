@@ -8,18 +8,18 @@ import dev.nextftc.hardware.RobotController;
 import dev.nextftc.hardware.actuators.NextMotor;
 import dev.nextftc.hardware.actuators.NextServo;
 import dev.nextftc.robot.Mechanism;
+import dev.nextftc.robot.Telemetry;
 
 public class Shooter implements Mechanism {
-    private final NextMotor leftShooterMotor = new NextMotor(RobotController.controlHub(), 0);
-    private final NextMotor rightShooterMotor = new NextMotor(RobotController.controlHub(), 0);
+//    private final NextMotor leftShooterMotor = new NextMotor(RobotController.controlHub(), 1);
+//    private final NextMotor rightShooterMotor = new NextMotor(RobotController.controlHub(), 2);
 
     private final NextServo gateServo = new NextServo(RobotController.controlHub(), 0);
 
     private GateState gateState = GateState.CLOSED;
 
-    //TODO: Tune
-    private final double GATE_OPEN_POSITION = 1.0;
-    private final double GATE_CLOSED_POSITION = 0.0;
+    private final double GATE_OPEN_POSITION = 0.18;
+    private final double GATE_CLOSED_POSITION = 0.4;
 
     public enum GateState {
         OPEN,
@@ -27,16 +27,14 @@ public class Shooter implements Mechanism {
     }
 
     public Shooter() {
-        leftShooterMotor.setZeroPowerBehavior(NextMotor.ZeroPowerBehavior.FLOAT);
-        rightShooterMotor.setZeroPowerBehavior(NextMotor.ZeroPowerBehavior.FLOAT);
-
-        leftShooterMotor.setDirection(NextMotor.Direction.FORWARD);
-        rightShooterMotor.setDirection(NextMotor.Direction.FORWARD);
-
-        rightShooterMotor.follow(leftShooterMotor);
-
-        //Start with the gate closed
-        gateServo.setPosition(GATE_CLOSED_POSITION);
+        //Uncomment when using
+//        leftShooterMotor.setZeroPowerBehavior(NextMotor.ZeroPowerBehavior.FLOAT);
+//        rightShooterMotor.setZeroPowerBehavior(NextMotor.ZeroPowerBehavior.FLOAT);
+//
+//        leftShooterMotor.setDirection(NextMotor.Direction.FORWARD);
+//        rightShooterMotor.setDirection(NextMotor.Direction.FORWARD);
+//
+//        rightShooterMotor.follow(leftShooterMotor);
     }
 
     public GateState getGateState() {
@@ -67,5 +65,6 @@ public class Shooter implements Mechanism {
 
     @Override
     public void periodic() {
+        Telemetry.log("Gate State", gateState);
     }
 }

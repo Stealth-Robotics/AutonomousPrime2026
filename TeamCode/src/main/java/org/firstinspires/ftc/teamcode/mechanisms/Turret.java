@@ -10,11 +10,12 @@ import dev.nextftc.hardware.actuators.NextMotor;
 import dev.nextftc.robot.Mechanism;
 
 public class Turret implements Mechanism {
-    private final NextMotor turretMotor = new NextMotor(RobotController.controlHub(), 0);
+    private final NextMotor turretMotor = new NextMotor(RobotController.controlHub(), 3);
 
     public Turret() {
-        turretMotor.setZeroPowerBehavior(NextMotor.ZeroPowerBehavior.BRAKE);
-        turretMotor.setDirection(NextMotor.Direction.FORWARD);
+        //Uncomment when using
+//        turretMotor.setZeroPowerBehavior(NextMotor.ZeroPowerBehavior.BRAKE);
+//        turretMotor.setDirection(NextMotor.Direction.FORWARD);
     }
 
     public void updateTracking(Pose robotPose, Pose3D targetCellPose) {

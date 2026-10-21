@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import org.stealthrobotics.library.Alliance;
 
-import dev.nextftc.robot.Telemetry;
 import dev.nextftc.robot.opmode.BulkReadHook;
 import dev.nextftc.robot.opmode.NextOpMode;
 import dev.nextftc.robot.opmode.NextTeleop;
@@ -22,22 +21,15 @@ public abstract class Teleop extends NextOpMode {
     @Override
     public void start() {
         // Schedule the teleop driving command
-        robot.drive.teleopDrive(driverGamepad).schedule();
+//        robot.drive.teleopDrive(driverGamepad).schedule();
+        robot.shooter.closeGate().schedule();
+        robot.intake.raiseHarvester().schedule();
 
         configureBindings();
     }
 
-    @Override
-    public void periodic() {
-        Telemetry.log("Alliance", Alliance.get());
-    }
-
-    @Override
-    public void end() {
-    }
-
     private void configureBindings() {
-        driverGamepad.a().onTrue(robot.resetPose());
+//        driverGamepad.a().onTrue(robot.resetPose());
         driverGamepad.y().onTrue(robot.shooter.toggleGate());
         driverGamepad.x().onTrue(robot.intake.toggleHarvester());
 

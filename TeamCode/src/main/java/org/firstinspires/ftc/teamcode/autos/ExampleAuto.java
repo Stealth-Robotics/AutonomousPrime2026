@@ -36,6 +36,9 @@ public abstract class ExampleAuto extends NextOpMode {
 
     @Override
     public void start() {
+        robot.shooter.closeGate().schedule();
+        robot.intake.raiseHarvester().schedule();
+
         // Run the auto here
     }
 

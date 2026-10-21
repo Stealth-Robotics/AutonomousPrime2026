@@ -19,12 +19,13 @@ import java.util.Set;
 
 import dev.nextftc.robot.Mechanism;
 import dev.nextftc.robot.NextRobot;
+import dev.nextftc.robot.Telemetry;
 
 public class Robot implements NextRobot {
-    public final Drive drive = new Drive();
+//    public final Drive drive = new Drive();
     public final Intake intake = new Intake();
     public final Shooter shooter = new Shooter();
-    public final Turret turret = new Turret();
+//    public final Turret turret = new Turret();
 
     private HiveSide targetHiveSide = HiveSide.LEFT;
 
@@ -36,13 +37,13 @@ public class Robot implements NextRobot {
     private static final Pose BLUE_RESET_POSE = new Pose(0, 0, 0);
     private static final Pose RED_RESET_POSE = new Pose(0, 0, 0);
 
-    public Command resetPose() {
-        return conditional(
-            Alliance::isBlue,
-            instant(() -> drive.setPose(BLUE_RESET_POSE)),
-            instant(() -> drive.setPose(RED_RESET_POSE))
-        );
-    }
+//    public Command resetPose() {
+//        return conditional(
+//            Alliance::isBlue,
+//            instant(() -> drive.setPose(BLUE_RESET_POSE)),
+//            instant(() -> drive.setPose(RED_RESET_POSE))
+//        );
+//    }
 
     public Command toggleTargetHiveSide() {
         return conditional(
@@ -62,11 +63,15 @@ public class Robot implements NextRobot {
 
     @Override
     public void periodic() {
-        turret.updateTracking(drive.getPose(), getTargetCellPose());
+//        turret.updateTracking(drive.getPose(), getTargetCellPose());
+
+        Telemetry.log("Alliance", Alliance.get());
+        Telemetry.log("Target Hive Side", targetHiveSide);
     }
 
     @Override @NonNull
     public Set<Mechanism> getMechanisms() {
-        return Set.of(drive, intake, shooter, turret);
+//        return Set.of(drive, intake, shooter, turret);
+        return Set.of(intake, shooter);
     }
 }

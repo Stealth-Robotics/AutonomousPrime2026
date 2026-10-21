@@ -11,7 +11,7 @@ import dev.nextftc.robot.Mechanism;
 
 public class Intake implements Mechanism {
     private final NextMotor intakeMotor = new NextMotor(RobotController.controlHub(), 0);
-    private final NextServo harvesterServo = new NextServo(RobotController.controlHub(), 0);
+//    private final NextServo harvesterServo = new NextServo(RobotController.controlHub(), 1);
 
     private final double INTAKE_SPEED = 1.0;
     private final double OUTTAKE_SPEED = -1.0;
@@ -30,9 +30,6 @@ public class Intake implements Mechanism {
     public Intake() {
         intakeMotor.setZeroPowerBehavior(NextMotor.ZeroPowerBehavior.FLOAT);
         intakeMotor.setDirection(NextMotor.Direction.REVERSE);
-
-        //Start with the harvester up
-        harvesterServo.setPosition(HARVESTER_UP_POSITION);
     }
 
     public Command intake() {
@@ -51,14 +48,14 @@ public class Intake implements Mechanism {
 
     public Command raiseHarvester() {
         return instant(() -> {
-            harvesterServo.setPosition(HARVESTER_UP_POSITION);
+//            harvesterServo.setPosition(HARVESTER_UP_POSITION);
             harvesterState = HarvesterState.UP;
         });
     }
 
     public Command lowerHarvester() {
         return instant(() -> {
-            harvesterServo.setPosition(HARVESTER_DOWN_POSITION);
+//            harvesterServo.setPosition(HARVESTER_DOWN_POSITION);
             harvesterState = HarvesterState.DOWN;
         });
     }

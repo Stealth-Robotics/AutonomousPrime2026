@@ -12,6 +12,8 @@ import dev.nextftc.robot.Mechanism;
 public class Turret implements Mechanism {
     private final NextMotor turretMotor = new NextMotor(RobotController.controlHub(), 0);
 
+    public static final Pose3D ROBOT_TO_TURRET_OFFSET = new Pose3D(0, 0, 0, 0);
+
     public Turret() {
         turretMotor.setZeroPowerBehavior(NextMotor.ZeroPowerBehavior.BRAKE);
         turretMotor.setDirection(NextMotor.Direction.FORWARD);

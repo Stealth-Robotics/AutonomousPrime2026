@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.util;
 
+import org.firstinspires.ftc.teamcode.mechanisms.Turret;
+
 import dev.nextftc.control.util.InterpolatingMap;
 
 // TODO: Latency, rpm, feedforward, interpolation, t-tuning
@@ -12,6 +14,7 @@ public class ShotCalculator {
     // Interpolation map for RPM values at given distances in inches
     private final InterpolatingMap<Double> distanceToRPM = InterpolatingMap.linear();
 
+
     private double turretAngle = 0, hoodAngle = 0, rpm = 0;
 
     public ShotCalculator() {
@@ -21,7 +24,8 @@ public class ShotCalculator {
     }
 
     public void update(Pose3D robotPose, Pose3D robotVelocity, Pose3D targetPose) {
-        Pose3D turretPose = robotPose.plus(turretOffsetWithAngle(robotPose.heading()));
+        Pose3D turretPose = robotPose.plus(Turret.ROBOT_TO_TURRET_OFFSET.rotateBy(robotPose.heading())); // Get Rotated robot position
+
         Pose3D shotDisplacement = targetPose.minus(turretPose);
 
         double t = 1.0; // Arbitrary time of flight measurement in seconds [NEED TO UPDATE SOON]
@@ -45,18 +49,6 @@ public class ShotCalculator {
 
         // RPM is derived from the tuned rpm interpolation table
         rpm = distanceToRPM.get(horizontalDistance);
-    }
-
-    // Returns a field relative turret offset by rotating the turret offset about the origin by the bot's heading.
-    private Pose3D turretOffsetWithAngle(double theta) {
-        double radius = Math.sqrt(ROBOT_TO_TURRET_OFFSET.x() * ROBOT_TO_TURRET_OFFSET.x() + ROBOT_TO_TURRET_OFFSET.y() * ROBOT_TO_TURRET_OFFSET.y());
-        double angle = Math.atan2(ROBOT_TO_TURRET_OFFSET.y(), ROBOT_TO_TURRET_OFFSET.x());
-        return new Pose3D(
-            radius * Math.cos(angle + theta),
-            radius * Math.sin(angle + theta),
-            ROBOT_TO_TURRET_OFFSET.z(),
-            ROBOT_TO_TURRET_OFFSET.heading() + theta
-        );
     }
 
     public double getTurretAngle() {

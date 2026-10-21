@@ -3,16 +3,17 @@ package org.firstinspires.ftc.teamcode.util;
 import com.pedropathing.math.Pose;
 
 
-public class Pose3D extends Pose{
+public class Pose3D{
     private final double z;
+    private final Pose pose;
 
     public Pose3D(double x, double y, double z, double heading) {
-        super(x, y, heading);
+        this.pose = new Pose(x, y, heading);
         this.z = z;
     }
 
     public Pose3D(double x, double y, double z) {
-        super(x, y);
+        this.pose = new Pose(x, y);
         this.z = z;
     }
 
@@ -36,11 +37,11 @@ public class Pose3D extends Pose{
     }
 
     public double x() {
-        return super.x();
+        return pose.x();
     }
 
     public double y() {
-        return super.y();
+        return pose.y();
     }
 
     public double z() {
@@ -48,10 +49,10 @@ public class Pose3D extends Pose{
     }
 
     public double heading() {
-        return super.heading();
+        return pose.heading();
     }
 
     public Pose asPose() {
-        return new Pose(x(), y(), heading());
+        return pose;
     }
 }

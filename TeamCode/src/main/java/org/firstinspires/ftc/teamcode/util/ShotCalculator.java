@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode.util;
 
 import org.firstinspires.ftc.teamcode.mechanisms.Turret;
 
-import dev.nextftc.control.util.InterpolatingMap;
-
 // TODO: Latency, rpm, feedforward, interpolation, t-tuning
 public class ShotCalculator {
     private static final double GRAVITY = 9.80665; // Gravity on earth in m/s²
@@ -12,15 +10,15 @@ public class ShotCalculator {
     private static final Pose3D ROBOT_TO_TURRET_OFFSET = new Pose3D(0, 0, 0, 0);
 
     // Interpolation map for RPM values at given distances in inches
-    private final InterpolatingMap<Double> distanceToRPM = InterpolatingMap.linear();
+//    private final InterpolatingMap<Double> distanceToRPM = InterpolatingMap.linear();
 
 
     private double turretAngle = 0, hoodAngle = 0, rpm = 0;
 
     public ShotCalculator() {
         // Units = (inches, RPM)
-        distanceToRPM.put(0.0, 1000.0);
-        distanceToRPM.put(144.0, 2000.0);
+//        distanceToRPM.put(0.0, 1000.0);
+//        distanceToRPM.put(144.0, 2000.0);
     }
 
     public void update(Pose3D robotPose, Pose3D robotVelocity, Pose3D targetPose) {
@@ -48,7 +46,7 @@ public class ShotCalculator {
         hoodAngle = 90 - Math.toDegrees(Math.atan2(movingShotVelocity.z(), horizontalVelocity));
 
         // RPM is derived from the tuned rpm interpolation table
-        rpm = distanceToRPM.get(horizontalDistance);
+//        rpm = distanceToRPM.get(horizontalDistance);
     }
 
     public double getTurretAngle() {

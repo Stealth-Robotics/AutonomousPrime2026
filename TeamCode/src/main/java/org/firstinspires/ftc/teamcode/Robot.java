@@ -2,10 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import static org.stealthrobotics.library.opmodes.StealthOpMode.telemetry;
 
-import androidx.annotation.NonNull;
-
 import com.arcrobotics.ftclib.command.Command;
-import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -13,15 +10,10 @@ import org.firstinspires.ftc.teamcode.mechanisms.Drive;
 import org.firstinspires.ftc.teamcode.mechanisms.Intake;
 import org.firstinspires.ftc.teamcode.mechanisms.Shooter;
 import org.firstinspires.ftc.teamcode.mechanisms.Turret;
-import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.util.FieldConstants;
 import org.firstinspires.ftc.teamcode.util.Pose3D;
 import org.stealthrobotics.library.Alliance;
 import org.stealthrobotics.library.StealthSubsystem;
-
-import java.util.Set;
-
-import dev.nextftc.hardware.RobotController;
 
 public class Robot extends StealthSubsystem {
     public final Drive drive;

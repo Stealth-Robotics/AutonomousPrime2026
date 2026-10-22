@@ -3,19 +3,19 @@ package org.firstinspires.ftc.teamcode.mechanisms;
 import static org.stealthrobotics.library.opmodes.StealthOpMode.telemetry;
 
 import com.arcrobotics.ftclib.command.Command;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.stealthrobotics.library.StealthSubsystem;
 
-import dev.nextftc.hardware.RobotController;
-import dev.nextftc.hardware.actuators.NextMotor;
-import dev.nextftc.hardware.actuators.NextServo;
-
 public class Shooter extends StealthSubsystem {
-//    private final NextMotor leftShooterMotor;
-//    private final NextMotor rightShooterMotor;
+//    private final DcMotorEx leftShooterMotor;
+//    private final DcMotorEx rightShooterMotor;
 
-    private final NextServo gateServo;
+    private final Servo gateServo;
 
     private GateState gateState = GateState.CLOSED;
 
@@ -28,23 +28,16 @@ public class Shooter extends StealthSubsystem {
     }
 
     public Shooter(HardwareMap h) {
-//        leftShooterMotor = new NextMotor(RobotController.controlHub(), 2);
-//        rightShooterMotor = new NextMotor(RobotController.controlHub(), 3);
+//        leftShooterMotor = h.get(DcMotorEx.class, "left_shooter");
+//        rightShooterMotor = h.get(DcMotorEx.class, "right_shooter");
 
-        gateServo = new NextServo(RobotController.expansionHub(), 0);
+        gateServo = h.get(Servo.class, "gate");
 
-//        leftShooterMotor.setZeroPowerBehavior(NextMotor.ZeroPowerBehavior.FLOAT);
-//        leftShooterMotor.setDirection(NextMotor.Direction.FORWARD);
+//        leftShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+//        leftShooterMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 //
-//        leftShooterMotor.getVelocityConstants()
-//            .withP(0)
-//            .withI(0)
-//            .withD(0)
-//            .withS(0)
-//            .withV(0)
-//            .withA(0);
-//
-//        rightShooterMotor.follow(leftShooterMotor);
+//        rightShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+//        rightShooterMotor.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     public GateState getGateState() {

@@ -29,6 +29,7 @@ public abstract class ExampleAuto extends StealthOpMode {
 
     @Override
     public void initialize() {
+        // Go to the correct starting configuration
         robot.shooter.closeGate().schedule();
         robot.intake.raiseHarvester().schedule();
 

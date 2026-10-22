@@ -23,15 +23,18 @@ public abstract class Teleop extends StealthOpMode {
 
         // Schedule the teleop driving command
         robot.drive.teleopDrive(driverGamepad).schedule();
+
+        // Go to the correct starting configuration
         robot.shooter.closeGate().schedule();
+        robot.intake.raiseHarvester().schedule();
 
         configureBindings();
     }
 
     private void configureBindings() {
-//        driverGamepad.getGamepadButton(GamepadKeys.Button.A).whenPressed(robot.resetPose());
+        driverGamepad.getGamepadButton(GamepadKeys.Button.A).whenPressed(robot.resetPose());
         driverGamepad.getGamepadButton(GamepadKeys.Button.Y).whenPressed(robot.shooter.toggleGate());
-//        driverGamepad.getGamepadButton(GamepadKeys.Button.X).whenPressed(robot.intake.toggleHarvester());
+        driverGamepad.getGamepadButton(GamepadKeys.Button.X).whenPressed(robot.intake.toggleHarvester());
 
         new Trigger(() -> driverGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.2)
             .whenActive(robot.intake.intake())
@@ -40,7 +43,7 @@ public abstract class Teleop extends StealthOpMode {
             .whenActive(robot.intake.outtake())
             .whenInactive(robot.intake.stop());
 
-//        operatorGamepad.getGamepadButton(GamepadKeys.Button.Y).whenPressed(robot.toggleTargetHiveSide());
+        operatorGamepad.getGamepadButton(GamepadKeys.Button.Y).whenPressed(robot.toggleTargetHiveSide());
     }
 
     @TeleOp(name = "Teleop (Blue)", group = "Blue")

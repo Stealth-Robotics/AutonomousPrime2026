@@ -12,11 +12,11 @@ import org.stealthrobotics.library.StealthSubsystem;
 public class Turret extends StealthSubsystem {
     private final DcMotorEx turretMotor;
 
-    //Degrees
-    private final double MAX_TURRET_ANGLE_DEGREES = 270;
-    private final double MIN_TURRET_ANGLE_DEGREES = -270;
+    private final double MAX_TURRET_ANGLE_DEGREES = 200;
+    private final double MIN_TURRET_ANGLE_DEGREES = -200;
 
     private final double TURRET_GEAR_RATIO = 100.0 / 30.0;
+    private final double TICKS_PER_REVOLUTION = 384.5;
 
     public Turret(HardwareMap h) {
         turretMotor = h.get(DcMotorEx.class, "turret");
@@ -25,7 +25,7 @@ public class Turret extends StealthSubsystem {
         turretMotor.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
-    public void updateTracking(Pose robotPose, Pose3D targetCellPose) {
+    public void updateTracking(Pose robotPose) {
     }
 
     @Override

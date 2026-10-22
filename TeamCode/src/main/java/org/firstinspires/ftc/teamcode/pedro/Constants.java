@@ -41,6 +41,7 @@ public class Constants {
 
     public static ForesightConfig foresightConfig = new ForesightConfig(
         c -> {
+            //TODO: Tune for this robot
             Controller primaryTranslationalForward = Controller.proportional(0.3);
             Controller secondaryTranslationalForward = Controller.proportional(0.1);
             Controller primaryTranslationalLateral = Controller.proportional(0.3);

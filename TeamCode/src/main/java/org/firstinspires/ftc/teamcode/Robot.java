@@ -21,13 +21,6 @@ public class Robot extends StealthSubsystem {
     public final Shooter shooter;
     public final Turret turret;
 
-    private HiveSide targetHiveSide = HiveSide.LEFT;
-
-    public enum HiveSide {
-        LEFT,
-        RIGHT
-    }
-
     private static final Pose BLUE_RESET_POSE = new Pose(0, 0, 0);
     private static final Pose RED_RESET_POSE = new Pose(0, 0, 0);
 
@@ -46,27 +39,10 @@ public class Robot extends StealthSubsystem {
         );
     }
 
-    public Command toggleTargetHiveSide() {
-        return conditional(
-            () -> targetHiveSide.equals(HiveSide.LEFT),
-            instant(() -> targetHiveSide = HiveSide.RIGHT),
-            instant(() -> targetHiveSide = HiveSide.LEFT)
-        );
-    }
-
-    //Returns the 3D pose of the target hive cell
-    private Pose3D getTargetCellPose() {
-        if (Alliance.get().equals(Alliance.BLUE))
-            return targetHiveSide.equals(HiveSide.LEFT) ? FieldConstants.LEFT_BLUE_CELL : FieldConstants.RIGHT_BLUE_CELL;
-        else
-            return targetHiveSide.equals(HiveSide.LEFT) ? FieldConstants.LEFT_RED_CELL : FieldConstants.RIGHT_RED_CELL;
-    }
-
     @Override
     public void periodic() {
-        turret.updateTracking(drive.getPose(), getTargetCellPose());
+        turret.updateTracking(drive.getPose());
 
         telemetry.addData("Alliance", Alliance.get());
-        telemetry.addData("Target Hive Side", targetHiveSide);
     }
 }

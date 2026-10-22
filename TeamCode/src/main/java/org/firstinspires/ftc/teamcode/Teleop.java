@@ -42,8 +42,6 @@ public abstract class Teleop extends StealthOpMode {
         new Trigger(() -> driverGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2)
             .whenActive(robot.intake.outtake())
             .whenInactive(robot.intake.stop());
-
-        operatorGamepad.getGamepadButton(GamepadKeys.Button.Y).whenPressed(robot.toggleTargetHiveSide());
     }
 
     @TeleOp(name = "Teleop (Blue)", group = "Blue")

@@ -14,8 +14,6 @@ import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.stealthrobotics.library.Alliance;
 import org.stealthrobotics.library.StealthSubsystem;
 
-import dev.nextftc.hardware.RobotController;
-
 public class Drive extends StealthSubsystem {
     private final Follower follower;
 
@@ -26,12 +24,12 @@ public class Drive extends StealthSubsystem {
     public Command teleopDrive(GamepadEx gamepad) {
         return infinite(() -> {
             if (gamepad.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON).get())
-                follower.setHeading(Alliance.isRed() ? 0 : 180);
+                follower.setHeading(Alliance.isRed() ? 0 : Math.toRadians(180));
 
             follower.manual(ManualDrive.fieldCentric(
                 -gamepad.getLeftY(),
                 gamepad.getLeftX(),
-                gamepad.getRightX(),
+                -gamepad.getRightX(),
                 follower.pose().heading()
             ));
         });

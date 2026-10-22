@@ -1,20 +1,21 @@
 package org.firstinspires.ftc.teamcode.mechanisms;
 
-import static com.pedropathing.ivy.commands.Commands.*;
+import static org.stealthrobotics.library.opmodes.StealthOpMode.telemetry;
 
-import com.pedropathing.ivy.Command;
+import com.arcrobotics.ftclib.command.Command;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.stealthrobotics.library.StealthSubsystem;
 
 import dev.nextftc.hardware.RobotController;
 import dev.nextftc.hardware.actuators.NextMotor;
 import dev.nextftc.hardware.actuators.NextServo;
-import dev.nextftc.robot.Mechanism;
-import dev.nextftc.robot.Telemetry;
 
-public class Shooter implements Mechanism {
-//    private final NextMotor leftShooterMotor = new NextMotor(RobotController.controlHub(), 1);
-//    private final NextMotor rightShooterMotor = new NextMotor(RobotController.controlHub(), 2);
+public class Shooter extends StealthSubsystem {
+//    private final NextMotor leftShooterMotor;
+//    private final NextMotor rightShooterMotor;
 
-    private final NextServo gateServo = new NextServo(RobotController.controlHub(), 0);
+    private final NextServo gateServo;
 
     private GateState gateState = GateState.CLOSED;
 
@@ -26,13 +27,22 @@ public class Shooter implements Mechanism {
         CLOSED
     }
 
-    public Shooter() {
-        //Uncomment when using
+    public Shooter(HardwareMap h) {
+//        leftShooterMotor = new NextMotor(RobotController.controlHub(), 2);
+//        rightShooterMotor = new NextMotor(RobotController.controlHub(), 3);
+
+        gateServo = new NextServo(RobotController.expansionHub(), 0);
+
 //        leftShooterMotor.setZeroPowerBehavior(NextMotor.ZeroPowerBehavior.FLOAT);
-//        rightShooterMotor.setZeroPowerBehavior(NextMotor.ZeroPowerBehavior.FLOAT);
-//
 //        leftShooterMotor.setDirection(NextMotor.Direction.FORWARD);
-//        rightShooterMotor.setDirection(NextMotor.Direction.FORWARD);
+//
+//        leftShooterMotor.getVelocityConstants()
+//            .withP(0)
+//            .withI(0)
+//            .withD(0)
+//            .withS(0)
+//            .withV(0)
+//            .withA(0);
 //
 //        rightShooterMotor.follow(leftShooterMotor);
     }
@@ -65,6 +75,6 @@ public class Shooter implements Mechanism {
 
     @Override
     public void periodic() {
-        Telemetry.log("Gate State", gateState);
+        telemetry.addData("Gate State", gateState);
     }
 }

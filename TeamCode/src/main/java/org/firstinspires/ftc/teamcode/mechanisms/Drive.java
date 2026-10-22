@@ -1,54 +1,54 @@
 package org.firstinspires.ftc.teamcode.mechanisms;
 
+import static org.stealthrobotics.library.opmodes.StealthOpMode.telemetry;
+
+import com.arcrobotics.ftclib.command.Command;
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.ManualDrive;
-import com.pedropathing.ivy.Command;
 import com.pedropathing.math.Pose;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.stealthrobotics.library.Alliance;
+import org.stealthrobotics.library.StealthSubsystem;
 
 import dev.nextftc.hardware.RobotController;
-import dev.nextftc.robot.Mechanism;
-import dev.nextftc.robot.Telemetry;
-import dev.nextftc.robot.triggers.CommandGamepad;
 
-public class Drive implements Mechanism {
-    private final Follower pedroFollower;
+public class Drive extends StealthSubsystem {
+    private final Follower follower;
 
-    public Drive() {
-        pedroFollower = Constants.create(RobotController.hardwareMap());
+    public Drive(HardwareMap h) {
+        follower = Constants.create(h);
     }
 
-    public Command teleopDrive(CommandGamepad gamepad) {
+    public Command teleopDrive(GamepadEx gamepad) {
         return infinite(() -> {
-            if (gamepad.rightStickButton().getAsBoolean())
-                pedroFollower.setHeading(Alliance.isRed() ? 0 : 180);
+            if (gamepad.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON).get())
+                follower.setHeading(Alliance.isRed() ? 0 : 180);
 
-            ManualDrive.driveOrHold(
-                pedroFollower,
-                ManualDrive.fieldCentric(
-                        -gamepad.leftStickY().getValue(),
-                        gamepad.leftStickX().getValue(),
-                        gamepad.rightStickX().getValue(),
-                        pedroFollower.pose().heading()
-                )
-            );
+            follower.manual(ManualDrive.fieldCentric(
+                -gamepad.getLeftY(),
+                gamepad.getLeftX(),
+                gamepad.getRightX(),
+                follower.pose().heading()
+            ));
         });
     }
 
     public void setPose(Pose p) {
-        pedroFollower.setPose(p);
+        follower.setPose(p);
     }
 
     public Pose getPose() {
-        return pedroFollower.pose();
+        return follower.pose();
     }
 
     @Override
     public void periodic() {
-        pedroFollower.update();
+        follower.update();
 
-        Telemetry.log("Follower Mode: ", pedroFollower.mode());
+        telemetry.addData("Follower Mode: ", follower.mode());
     }
 }

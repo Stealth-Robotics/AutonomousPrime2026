@@ -1,20 +1,26 @@
 package org.firstinspires.ftc.teamcode.mechanisms;
 
-import static com.pedropathing.ivy.commands.Commands.*;
+import static org.stealthrobotics.library.opmodes.StealthOpMode.telemetry;
 
-import com.pedropathing.ivy.Command;
+import com.arcrobotics.ftclib.command.Command;
+import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.stealthrobotics.library.StealthSubsystem;
 
 import dev.nextftc.hardware.RobotController;
 import dev.nextftc.hardware.actuators.NextMotor;
 import dev.nextftc.hardware.actuators.NextServo;
-import dev.nextftc.robot.Mechanism;
 
-public class Intake implements Mechanism {
-    private final NextMotor intakeMotor = new NextMotor(RobotController.controlHub(), 0);
-//    private final NextServo harvesterServo = new NextServo(RobotController.controlHub(), 1);
+public class Intake extends StealthSubsystem {
+    private final DcMotorEx intakeMotor;
+    private final NextServo harvesterServo;
 
-    private final double INTAKE_SPEED = 1.0;
-    private final double OUTTAKE_SPEED = -1.0;
+    private final double INTAKE_SPEED = 1;
+    private final double OUTTAKE_SPEED = -1;
 
     //TODO: Tune
     private final double HARVESTER_UP_POSITION = 0.0;
@@ -27,19 +33,24 @@ public class Intake implements Mechanism {
         DOWN
     }
 
-    public Intake() {
+    public Intake(HardwareMap h) {
+        intakeMotor = h.get(DcMotorEx.class, "intake");
+        harvesterServo = new NextServo(RobotController.expansionHub(), 2);
+
         intakeMotor.setZeroPowerBehavior(NextMotor.ZeroPowerBehavior.FLOAT);
         intakeMotor.setDirection(NextMotor.Direction.REVERSE);
     }
 
     public Command intake() {
-        return infinite(() -> intakeMotor.setThrottle(INTAKE_SPEED))
-            .setEnd(interrupted -> intakeMotor.setThrottle(0));
+        return instant(() -> intakeMotor.setThrottle(INTAKE_SPEED));
     }
 
     public Command outtake() {
-        return infinite(() -> intakeMotor.setThrottle(OUTTAKE_SPEED))
-            .setEnd(interrupted -> intakeMotor.setThrottle(0));
+        return instant(() -> intakeMotor.setThrottle(OUTTAKE_SPEED));
+    }
+
+    public Command stop() {
+        return instant(() -> intakeMotor.setThrottle(0));
     }
 
     public HarvesterState getHarvesterState() {
@@ -48,14 +59,14 @@ public class Intake implements Mechanism {
 
     public Command raiseHarvester() {
         return instant(() -> {
-//            harvesterServo.setPosition(HARVESTER_UP_POSITION);
+            harvesterServo.setPosition(HARVESTER_UP_POSITION);
             harvesterState = HarvesterState.UP;
         });
     }
 
     public Command lowerHarvester() {
         return instant(() -> {
-//            harvesterServo.setPosition(HARVESTER_DOWN_POSITION);
+            harvesterServo.setPosition(HARVESTER_DOWN_POSITION);
             harvesterState = HarvesterState.DOWN;
         });
     }

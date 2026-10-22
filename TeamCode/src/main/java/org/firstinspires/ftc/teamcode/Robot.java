@@ -1,31 +1,33 @@
 package org.firstinspires.ftc.teamcode;
 
-import static com.pedropathing.ivy.commands.Commands.*;
+import static org.stealthrobotics.library.opmodes.StealthOpMode.telemetry;
 
 import androidx.annotation.NonNull;
 
-import com.pedropathing.ivy.Command;
+import com.arcrobotics.ftclib.command.Command;
+import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Pose;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.mechanisms.Drive;
 import org.firstinspires.ftc.teamcode.mechanisms.Intake;
 import org.firstinspires.ftc.teamcode.mechanisms.Shooter;
 import org.firstinspires.ftc.teamcode.mechanisms.Turret;
+import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.util.FieldConstants;
 import org.firstinspires.ftc.teamcode.util.Pose3D;
 import org.stealthrobotics.library.Alliance;
+import org.stealthrobotics.library.StealthSubsystem;
 
 import java.util.Set;
 
-import dev.nextftc.robot.Mechanism;
-import dev.nextftc.robot.NextRobot;
-import dev.nextftc.robot.Telemetry;
+import dev.nextftc.hardware.RobotController;
 
-public class Robot implements NextRobot {
-//    public final Drive drive = new Drive();
-    public final Intake intake = new Intake();
-    public final Shooter shooter = new Shooter();
-//    public final Turret turret = new Turret();
+public class Robot extends StealthSubsystem {
+    public final Drive drive;
+    public final Intake intake;
+    public final Shooter shooter;
+    public final Turret turret;
 
     private HiveSide targetHiveSide = HiveSide.LEFT;
 
@@ -37,13 +39,20 @@ public class Robot implements NextRobot {
     private static final Pose BLUE_RESET_POSE = new Pose(0, 0, 0);
     private static final Pose RED_RESET_POSE = new Pose(0, 0, 0);
 
-//    public Command resetPose() {
-//        return conditional(
-//            Alliance::isBlue,
-//            instant(() -> drive.setPose(BLUE_RESET_POSE)),
-//            instant(() -> drive.setPose(RED_RESET_POSE))
-//        );
-//    }
+    public Robot(HardwareMap h) {
+        drive = new Drive(h);
+        intake = new Intake(h);
+        shooter = new Shooter(h);
+        turret = new Turret(h);
+    }
+
+    public Command resetPose() {
+        return conditional(
+            Alliance::isBlue,
+            instant(() -> drive.setPose(BLUE_RESET_POSE)),
+            instant(() -> drive.setPose(RED_RESET_POSE))
+        );
+    }
 
     public Command toggleTargetHiveSide() {
         return conditional(
@@ -63,15 +72,9 @@ public class Robot implements NextRobot {
 
     @Override
     public void periodic() {
-//        turret.updateTracking(drive.getPose(), getTargetCellPose());
+        turret.updateTracking(drive.getPose(), getTargetCellPose());
 
-        Telemetry.log("Alliance", Alliance.get());
-        Telemetry.log("Target Hive Side", targetHiveSide);
-    }
-
-    @Override @NonNull
-    public Set<Mechanism> getMechanisms() {
-//        return Set.of(drive, intake, shooter, turret);
-        return Set.of(intake, shooter);
+        telemetry.addData("Alliance", Alliance.get());
+        telemetry.addData("Target Hive Side", targetHiveSide);
     }
 }

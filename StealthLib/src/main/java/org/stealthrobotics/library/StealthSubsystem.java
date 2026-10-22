@@ -5,8 +5,10 @@ import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.StartEndCommand;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 
+import java.util.function.BooleanSupplier;
+
 public class StealthSubsystem extends SubsystemBase {
-    public Command runOnce(Runnable action) {
+    public Command instant(Runnable action) {
         return Commands.runOnce(action, this);
     }
 
@@ -18,7 +20,7 @@ public class StealthSubsystem extends SubsystemBase {
      * @return the command
      * @see RunCommand
      */
-    public Command run(Runnable action) {
+    public Command infinite(Runnable action) {
         return Commands.run(action, this);
     }
 
@@ -45,5 +47,9 @@ public class StealthSubsystem extends SubsystemBase {
      */
     public Command runEnd(Runnable run, Runnable end) {
         return Commands.runEnd(run, end, this);
+    }
+
+    public Command conditional(BooleanSupplier condition, Command onTrue, Command onFalse) {
+        return Commands.either(onTrue, onFalse, condition);
     }
 }

@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.util.PoseSaver;
 import org.stealthrobotics.library.Alliance;
 import org.stealthrobotics.library.opmodes.StealthOpMode;
 
@@ -21,6 +22,9 @@ public abstract class Teleop extends StealthOpMode {
         driverGamepad = new GamepadEx(gamepad1);
         operatorGamepad = new GamepadEx(gamepad2);
 
+        // Load the saved pose
+        robot.drive.setPose(PoseSaver.savedPose);
+
         // Schedule the teleop driving command
         robot.drive.teleopDrive(driverGamepad).schedule();
 
@@ -29,6 +33,11 @@ public abstract class Teleop extends StealthOpMode {
         robot.intake.raiseHarvester().schedule();
 
         configureBindings();
+    }
+
+    @Override
+    public void end() {
+        PoseSaver.savedPose = robot.drive.getPose();
     }
 
     private void configureBindings() {

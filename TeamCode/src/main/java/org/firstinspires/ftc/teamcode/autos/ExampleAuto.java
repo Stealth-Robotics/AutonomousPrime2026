@@ -9,6 +9,7 @@ import com.pedropathing.paths.Path;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.util.PoseSaver;
 import org.stealthrobotics.library.Alliance;
 import org.stealthrobotics.library.opmodes.StealthOpMode;
 
@@ -36,6 +37,11 @@ public abstract class ExampleAuto extends StealthOpMode {
         CommandScheduler.getInstance().schedule(
             // Put auto here:
         );
+    }
+
+    @Override
+    public void end() {
+        PoseSaver.savedPose = robot.drive.getPose();
     }
 
     @Autonomous(name = "Example Auto (Blue)", group = "Blue")

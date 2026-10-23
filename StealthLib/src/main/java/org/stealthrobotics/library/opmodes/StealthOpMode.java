@@ -29,6 +29,11 @@ public abstract class StealthOpMode extends LinearOpMode {
      */
     public abstract void initialize();
 
+    /*
+     * Override this to do stuff right before the opmode finishes
+     */
+    public abstract void end();
+
     /**
      * Override this to do work while waiting for the op-mode to start.
      */
@@ -117,6 +122,8 @@ public abstract class StealthOpMode extends LinearOpMode {
             telemetry.update();
             hubs.forEach(LynxModule::clearBulkCache);
         }
+
+        end();
 
         CommandScheduler.getInstance().reset();
     }

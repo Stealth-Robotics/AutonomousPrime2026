@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.mechanisms;
+package org.firstinspires.ftc.teamcode.systems;
 
 import com.arcrobotics.ftclib.command.Command;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -13,10 +13,10 @@ public class Intake extends StealthSubsystem {
     private final DcMotorEx intakeMotor;
     private final Servo harvesterServo;
 
-    private final double INTAKE_SPEED = 1;
+    private final double INTAKE_SPEED = 0.9;
     private final double OUTTAKE_SPEED = -1;
 
-    private final double HARVESTER_UP_POSITION = 0;
+    private final double HARVESTER_UP_POSITION = 0.1;
     private final double HARVESTER_DOWN_POSITION = 1;
 
     private HarvesterState harvesterState = HarvesterState.UP;

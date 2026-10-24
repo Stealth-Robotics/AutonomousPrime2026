@@ -32,7 +32,6 @@ public abstract class ExampleAuto extends StealthOpMode {
     public void initialize() {
         // Go to the correct starting configuration
         robot.shooter.closeGate().schedule();
-        robot.intake.raiseHarvester().schedule();
 
         CommandScheduler.getInstance().schedule(
             // Put auto here:

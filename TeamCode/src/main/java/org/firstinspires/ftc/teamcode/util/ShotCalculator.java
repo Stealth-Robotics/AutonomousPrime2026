@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.util;
 
-import org.firstinspires.ftc.teamcode.mechanisms.Turret;
-
 // TODO: Latency, rpm, feedforward, interpolation, t-tuning
 public class ShotCalculator {
     private static final double GRAVITY = 9.80665; // Gravity on earth in m/s²

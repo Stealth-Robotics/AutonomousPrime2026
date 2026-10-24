@@ -3,16 +3,17 @@ package org.firstinspires.ftc.teamcode;
 import static org.stealthrobotics.library.opmodes.StealthOpMode.telemetry;
 
 import com.arcrobotics.ftclib.command.Command;
+import com.arcrobotics.ftclib.command.WaitCommand;
+import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.mechanisms.Drive;
-import org.firstinspires.ftc.teamcode.mechanisms.Intake;
-import org.firstinspires.ftc.teamcode.mechanisms.Shooter;
-import org.firstinspires.ftc.teamcode.mechanisms.Turret;
-import org.firstinspires.ftc.teamcode.util.FieldConstants;
-import org.firstinspires.ftc.teamcode.util.Pose3D;
+import org.firstinspires.ftc.teamcode.systems.Drive;
+import org.firstinspires.ftc.teamcode.systems.Intake;
+import org.firstinspires.ftc.teamcode.systems.Shooter;
+import org.firstinspires.ftc.teamcode.systems.Turret;
 import org.stealthrobotics.library.Alliance;
+import org.stealthrobotics.library.Commands;
 import org.stealthrobotics.library.StealthSubsystem;
 
 public class Robot extends StealthSubsystem {
@@ -31,6 +32,19 @@ public class Robot extends StealthSubsystem {
         turret = new Turret(h);
     }
 
+    public Command shoot() {
+        return Commands.sequence(
+            shooter.runShooter(() -> 3800), //Get from sotm solver
+            new WaitUntilCommand(shooter::atTargetRPM),
+            shooter.openGate(),
+            intake.intake(),
+            new WaitCommand(1000),
+            shooter.closeGate(),
+            intake.stop(),
+            shooter.stopShooter()
+        );
+    }
+
     public Command resetPose() {
         return conditional(
             Alliance::isBlue,
@@ -42,6 +56,7 @@ public class Robot extends StealthSubsystem {
     @Override
     public void periodic() {
         turret.updateTracking(drive.getPose());
+        shooter.setHoodAngle(20); //Get from sotm solver
 
         telemetry.addData("Alliance", Alliance.get());
     }

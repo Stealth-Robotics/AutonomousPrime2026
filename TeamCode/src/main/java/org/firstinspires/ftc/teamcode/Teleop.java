@@ -30,7 +30,6 @@ public abstract class Teleop extends StealthOpMode {
 
         // Go to the correct starting configuration
         robot.shooter.closeGate().schedule();
-        robot.intake.raiseHarvester().schedule();
 
         configureBindings();
     }
@@ -42,8 +41,9 @@ public abstract class Teleop extends StealthOpMode {
 
     private void configureBindings() {
         driverGamepad.getGamepadButton(GamepadKeys.Button.A).whenPressed(robot.resetPose());
-        driverGamepad.getGamepadButton(GamepadKeys.Button.Y).whenPressed(robot.shooter.toggleGate());
         driverGamepad.getGamepadButton(GamepadKeys.Button.X).whenPressed(robot.intake.toggleHarvester());
+
+        driverGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(robot.shoot());
 
         new Trigger(() -> driverGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.2)
             .whenActive(robot.intake.intake())

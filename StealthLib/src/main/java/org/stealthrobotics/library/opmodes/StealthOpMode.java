@@ -25,7 +25,7 @@ public abstract class StealthOpMode extends LinearOpMode {
     public static Telemetry telemetry;
 
     /**
-     * Override this to setup your hardware, commands, button bindings, etc.
+     * Override this to set up your hardware, commands, button bindings, etc.
      */
     public abstract void initialize();
 

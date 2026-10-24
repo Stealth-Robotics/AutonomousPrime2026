@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.autos;
 
 import static com.pedropathing.api.Paths.line;
 
+import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.pedropathing.api.PoseFactory;
 import com.pedropathing.math.Pose;
@@ -11,6 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.util.PoseSaver;
 import org.stealthrobotics.library.Alliance;
+import org.stealthrobotics.library.Commands;
 import org.stealthrobotics.library.opmodes.StealthOpMode;
 
 public abstract class ExampleAuto extends StealthOpMode {
@@ -30,11 +32,13 @@ public abstract class ExampleAuto extends StealthOpMode {
 
     @Override
     public void initialize() {
-        // Go to the correct starting configuration
         robot.shooter.closeGate().schedule();
+    }
 
-        CommandScheduler.getInstance().schedule(
-            // Put auto here:
+    @Override
+    public Command getAutoCommand() {
+        return Commands.sequence(
+            // Put auto commands here
         );
     }
 

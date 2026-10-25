@@ -26,6 +26,9 @@ public class Pose3D {
     public Pose3D minus(Pose3D other) {
         return new Pose3D(this.asPose().minus(other.asPose()), this.z() - other.z());
     }
+    public Pose3D times(double scalar) {
+        return new Pose3D(this.asPose().times(scalar), this.z() * scalar);
+    }
 
     // From https://en.wikipedia.org/wiki/Rotation_matrix - "In two dimensions"
     public Pose3D rotateBy(double degreeIncrement) {

@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.systems.Drive;
 import org.firstinspires.ftc.teamcode.systems.Intake;
 import org.firstinspires.ftc.teamcode.systems.Shooter;
 import org.firstinspires.ftc.teamcode.systems.Turret;
+import org.firstinspires.ftc.teamcode.util.ShotCalculator;
 import org.stealthrobotics.library.Alliance;
 import org.stealthrobotics.library.Commands;
 import org.stealthrobotics.library.StealthSubsystem;
@@ -21,6 +22,7 @@ public class Robot extends StealthSubsystem {
     public final Intake intake;
     public final Shooter shooter;
     public final Turret turret;
+    private final ShotCalculator shotCalculator;
 
     private static final Pose BLUE_RESET_POSE = new Pose(0, 0, 0);
     private static final Pose RED_RESET_POSE = new Pose(0, 0, 0);
@@ -30,6 +32,7 @@ public class Robot extends StealthSubsystem {
         intake = new Intake(h);
         shooter = new Shooter(h);
         turret = new Turret(h);
+        shotCalculator = new ShotCalculator();
     }
 
     public Command shoot() {
@@ -55,8 +58,9 @@ public class Robot extends StealthSubsystem {
 
     @Override
     public void periodic() {
-        turret.updateTracking(drive.getPose());
-        shooter.setHoodAngle(20); //Get from sotm solver
+//        shotCalculator.update(drive.getPose(),[VELOCITY],[TARGET]);
+        turret.updateTracking(shotCalculator);
+        shooter.updateHoodAngle(shotCalculator);
 
         telemetry.addData("Alliance", Alliance.get());
     }

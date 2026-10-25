@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.util;
 
-// TODO: Latency, rpm, feedforward, interpolation, t-tuning
+// TODO: rpm, feedforward, interpolation, t-tuning
 public class ShotCalculator {
     private static final double GRAVITY = 9.80665; // Gravity on earth in m/s²
     private static final double LATENCY = 0.02; // Estimated delay between pose measurements and update time in seconds
@@ -21,6 +21,7 @@ public class ShotCalculator {
 
     public void update(Pose3D robotPose, Pose3D robotVelocity, Pose3D targetPose) {
         Pose3D turretPose = robotPose.plus(ROBOT_TO_TURRET_OFFSET.rotateBy(robotPose.heading())); // Get rotated robot position
+        turretPose = turretPose.plus(robotVelocity.times(LATENCY));
 
         Pose3D shotDisplacement = targetPose.minus(turretPose);
 
@@ -37,8 +38,13 @@ public class ShotCalculator {
         double horizontalVelocity = Math.hypot(movingShotVelocity.x(), movingShotVelocity.y());
         double horizontalDistance = Math.hypot(shotDisplacement.x(), shotDisplacement.y());
 
-        // Turret angle is the angle of the horizontal components of the shot vector
-        turretAngle = Math.toDegrees(Math.atan2(movingShotVelocity.y(), movingShotVelocity.x()));
+        double turretLatencyOffset = robotVelocity.heading() * LATENCY;
+
+        // Field relative turret angle is the angle of the horizontal components of the shot vector
+        double fieldRelativeTurretAngle = Math.toDegrees(Math.atan2(movingShotVelocity.y(), movingShotVelocity.x()));
+
+        // Robot relative turret angle is acquired by subtracting robot heading and a latency term from field relative turret angle
+        turretAngle = fieldRelativeTurretAngle - robotPose.heading() - turretLatencyOffset;
 
         // "90 - ..." results from the perpendicular angle between hood lift and fire angle
         hoodAngle = 90 - Math.toDegrees(Math.atan2(movingShotVelocity.z(), horizontalVelocity));

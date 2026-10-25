@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.util.ShotCalculator;
 import org.stealthrobotics.library.StealthSubsystem;
 
 import java.util.function.DoubleSupplier;
@@ -112,6 +113,10 @@ public class Shooter extends StealthSubsystem {
 
     public ShooterState getShooterState() {
         return shooterState;
+    }
+
+    public void updateHoodAngle(ShotCalculator shotCalculator) {
+        setHoodAngle(shotCalculator.getHoodAngle());
     }
 
     public void setHoodAngle(double angle) {

@@ -31,9 +31,9 @@ public class AutoBuilder {
 
     public AutoBuilder(HardwareMap hardwareMap, Alliance alliance) {
         robot = new Robot(hardwareMap);
-        follower = Constants.create(hardwareMap);
+        follower = robot.drive.getFollower();
 
-        if(alliance == Alliance.BLUE) {
+        if (alliance == Alliance.BLUE) {
             poseFactory.rotateAround(0,0,180);
         }
 

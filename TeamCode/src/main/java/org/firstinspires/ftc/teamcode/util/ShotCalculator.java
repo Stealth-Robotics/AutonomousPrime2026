@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.util;
 
-import com.pedropathing.utils.BijectiveMap;
-
 import org.stealthrobotics.library.Alliance;
 
 // TODO: rpm, feedforward, interpolation, t-tuning
@@ -18,13 +16,14 @@ public class ShotCalculator {
     private final Pose3D RED_LEFT_CELL = new Pose3D(86, 64, 64);
 
     // Interpolation map for RPM values at given distances in inches
-    private final BijectiveMap.InterpolatableMap distanceToRPM = new BijectiveMap.InterpolatableMap();
+    private final LerpTable distanceToRPM = new LerpTable(
+        0, 0,
+        1000, 1000
+    );
 
     private double turretAngle = 0, hoodAngle = 0, rpm = 0;
 
     public ShotCalculator() {
-        distanceToRPM.put(0.0, 1000.0);
-        distanceToRPM.put(144.0, 2000.0);
     }
 
     public void update(Pose3D robotPose, Pose3D robotVelocity) {
@@ -65,7 +64,7 @@ public class ShotCalculator {
         hoodAngle = 90 - Math.toDegrees(Math.atan2(movingShotVelocity.z(), horizontalVelocity));
 
         // RPM is derived from the tuned rpm interpolation table, and multiplied by a moving shot velocity factor for velocity compensation
-        rpm = movingShotVelocityRatio * distanceToRPM.getOrDefault(horizontalDistance,0.0);
+        rpm = movingShotVelocityRatio * distanceToRPM.get(horizontalDistance);
     }
 
     public double getTurretAngle() {

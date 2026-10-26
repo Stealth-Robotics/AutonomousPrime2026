@@ -14,7 +14,9 @@ import org.firstinspires.ftc.teamcode.systems.Drive;
 import org.firstinspires.ftc.teamcode.systems.Intake;
 import org.firstinspires.ftc.teamcode.systems.Shooter;
 import org.firstinspires.ftc.teamcode.systems.Turret;
+import org.firstinspires.ftc.teamcode.util.Pose3D;
 import org.firstinspires.ftc.teamcode.util.ShotCalculator;
+import org.firstinspires.ftc.teamcode.util.Targets;
 import org.stealthrobotics.library.Alliance;
 import org.stealthrobotics.library.Commands;
 import org.stealthrobotics.library.StealthSubsystem;
@@ -51,7 +53,8 @@ public class Robot extends StealthSubsystem {
 
     @Override
     public void periodic() {
-//        shotCalculator.update(drive.getPose(),[VELOCITY],[TARGET]);
+        shotCalculator.update(Pose3D.of(drive.getPose()), drive.getVelocity());
+
         turret.updateTurretAngle(shotCalculator.getTurretAngle());
         shooter.updateHoodAngle(shotCalculator.getHoodAngle());
 

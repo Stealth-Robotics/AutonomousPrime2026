@@ -2,12 +2,20 @@ package org.firstinspires.ftc.teamcode.util;
 
 import com.pedropathing.utils.BijectiveMap;
 
+import org.stealthrobotics.library.Alliance;
+
 // TODO: rpm, feedforward, interpolation, t-tuning
 public class ShotCalculator {
-    private static final double GRAVITY = 9.80665; // Gravity on earth in m/s²
-    private static final double LATENCY = 0.02; // Estimated delay between pose measurements and update time in seconds
+    private final double GRAVITY = 9.80665; // Gravity on earth in m/s²
+    private final double LATENCY = 0.02; // Estimated delay between pose measurements and update time in seconds
 
-    private static final Pose3D ROBOT_TO_TURRET_OFFSET = new Pose3D(0, 0, 0, 0);
+    private final Pose3D ROBOT_TO_TURRET_OFFSET = new Pose3D(0, 0, 0, 0);
+
+    // Hive cell target poses (TODO: Find actual poses from CAD)
+    private final Pose3D BLUE_RIGHT_CELL = new Pose3D(86,80,64);
+    private final Pose3D BLUE_LEFT_CELL = new Pose3D(58, 80, 64);
+    private final Pose3D RED_RIGHT_CELL = new Pose3D(58,64,64);
+    private final Pose3D RED_LEFT_CELL = new Pose3D(86, 64, 64);
 
     // Interpolation map for RPM values at given distances in inches
     private final BijectiveMap.InterpolatableMap distanceToRPM = new BijectiveMap.InterpolatableMap();
@@ -15,12 +23,15 @@ public class ShotCalculator {
     private double turretAngle = 0, hoodAngle = 0, rpm = 0;
 
     public ShotCalculator() {
-//               Units = (inches, RPM)
         distanceToRPM.put(0.0, 1000.0);
         distanceToRPM.put(144.0, 2000.0);
     }
 
-    public void update(Pose3D robotPose, Pose3D robotVelocity, Pose3D targetPose) {
+    public void update(Pose3D robotPose, Pose3D robotVelocity) {
+        Pose3D targetPose = Alliance.isRed() ?
+            (robotPose.y() < 72 ? RED_RIGHT_CELL : RED_LEFT_CELL) :
+            (robotPose.y() > 72 ? BLUE_RIGHT_CELL : BLUE_LEFT_CELL);
+
         Pose3D turretPose = robotPose.plus(ROBOT_TO_TURRET_OFFSET.rotateBy(robotPose.heading())); // Get rotated robot position
         turretPose = turretPose.plus(robotVelocity.times(LATENCY));
 

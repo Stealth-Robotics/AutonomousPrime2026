@@ -16,6 +16,10 @@ public class Pose3D {
         this.z = z;
     }
 
+    public Pose3D() {
+        this(0, 0, 0);
+    }
+
     public Pose3D(Pose pose, double z) {
         this(pose.x(), pose.y(), z, pose.heading());
     }

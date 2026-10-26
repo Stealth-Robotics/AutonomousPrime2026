@@ -8,10 +8,10 @@ import org.stealthrobotics.library.Commands;
 import org.stealthrobotics.library.opmodes.StealthOpMode;
 
 public abstract class ExampleAuto extends StealthOpMode {
-    AutoBuilder autoBuilder;
+    private final AutoBuilder autoBuilder;
 
     public ExampleAuto() {
-        autoBuilder = new AutoBuilder(hardwareMap, Alliance.get());
+        autoBuilder = new AutoBuilder(hardwareMap);
     }
 
     @Override
@@ -22,7 +22,7 @@ public abstract class ExampleAuto extends StealthOpMode {
     @Override
     public Command getAutoCommand() {
         return Commands.sequence(
-                autoBuilder.followPath(autoBuilder.startToShoot)
+            autoBuilder.followPath(autoBuilder.startToShoot)
         );
     }
 

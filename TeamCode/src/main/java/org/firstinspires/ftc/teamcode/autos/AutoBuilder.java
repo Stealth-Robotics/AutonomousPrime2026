@@ -18,9 +18,8 @@ import org.stealthrobotics.library.Alliance;
 public class AutoBuilder {
     private final Robot robot;
     private final Follower follower;
-
-
     private final PoseFactory poseFactory = PoseFactory.degrees();
+
     private Pose startPose;
     private Pose shootPose;
     private Pose flowerPose;
@@ -29,13 +28,12 @@ public class AutoBuilder {
     // public for testing
     public Path startToShoot;
 
-    public AutoBuilder(HardwareMap hardwareMap, Alliance alliance) {
+    public AutoBuilder(HardwareMap hardwareMap) {
         robot = new Robot(hardwareMap);
         follower = robot.drive.getFollower();
 
-        if (alliance == Alliance.BLUE) {
+        if (Alliance.isRed())
             poseFactory.rotateAround(0,0,180);
-        }
 
         buildPoses();
         buildPaths();
@@ -54,12 +52,15 @@ public class AutoBuilder {
     public void initialize() {
         robot.shooter.closeGate().schedule();
     }
+
     public void end() {
         PoseSaver.savedPose = robot.drive.getPose();
     }
+    
     public static Path createLine(Pose p1, Pose p2) {
         return line(p1, p2).linear(p1, p2);
     }
+
     public Command followPath(Path p) {
         return new RunCommand(() -> follower.follow(p)).interruptOn(follower::following);
     }

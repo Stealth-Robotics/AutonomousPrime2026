@@ -12,7 +12,9 @@ import org.firstinspires.ftc.teamcode.systems.Drive;
 import org.firstinspires.ftc.teamcode.systems.Intake;
 import org.firstinspires.ftc.teamcode.systems.Shooter;
 import org.firstinspires.ftc.teamcode.systems.Turret;
+import org.firstinspires.ftc.teamcode.util.Pose3D;
 import org.firstinspires.ftc.teamcode.util.ShotCalculator;
+import org.firstinspires.ftc.teamcode.util.Targets;
 import org.stealthrobotics.library.Alliance;
 import org.stealthrobotics.library.Commands;
 import org.stealthrobotics.library.StealthSubsystem;
@@ -24,15 +26,6 @@ public class Robot extends StealthSubsystem {
     public final Turret turret;
     private final ShotCalculator shotCalculator;
 
-    private static final Pose BLUE_RESET_POSE = new Pose(0, 0, 0);
-    private static final Pose RED_RESET_POSE = new Pose(0, 0, 0);
-
-    // Poses named from the drive station point of view, with robot facing towards opposing color's side
-    private static final Pose RED_RIGHT_RESET_POSE = new Pose(8,8,0);
-    private static final Pose RED_LEFT_RESET_POSE = new Pose(136, 8, 0);
-    private static final Pose BLUE_RIGHT_RESET_POSE = new Pose(136,136,180);
-    private static final Pose BLUE_LEFT_RESET_POSE = new Pose(8,136,180);
-
     public Robot(HardwareMap h) {
         drive = new Drive(h);
         intake = new Intake(h);
@@ -43,7 +36,7 @@ public class Robot extends StealthSubsystem {
 
     public Command shoot() {
         return Commands.sequence(
-            shooter.runShooter(() -> 3800), //Get from sotm solver
+            shooter.runShooter(shotCalculator::getRPM),
             new WaitUntilCommand(shooter::atTargetRPM),
             shooter.openGate(),
             intake.intake(),
@@ -56,7 +49,7 @@ public class Robot extends StealthSubsystem {
 
     @Override
     public void periodic() {
-//        shotCalculator.update(drive.getPose(),[VELOCITY],[TARGET]);
+        shotCalculator.update(Pose3D.of(drive.getPose()), drive.getVelocity(), Targets.getTarget(drive.getPose()));
         turret.updateTracking(shotCalculator);
         shooter.updateHoodAngle(shotCalculator);
 

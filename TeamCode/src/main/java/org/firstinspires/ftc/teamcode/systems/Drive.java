@@ -8,9 +8,11 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.ManualDrive;
 import com.pedropathing.math.Pose;
+import com.pedropathing.math.Velocity;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.util.Pose3D;
 import org.stealthrobotics.library.Alliance;
 import org.stealthrobotics.library.StealthSubsystem;
 
@@ -41,6 +43,10 @@ public class Drive extends StealthSubsystem {
 
     public Pose getPose() {
         return follower.pose();
+    }
+    public Pose3D getVelocity() {
+        Velocity v = follower.velocity();
+        return new Pose3D(v.vx, v.vy, 0, v.omega);
     }
 
     @Override

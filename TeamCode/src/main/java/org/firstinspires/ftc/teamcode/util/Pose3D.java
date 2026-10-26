@@ -20,6 +20,10 @@ public class Pose3D {
         this(pose.x(), pose.y(), z, pose.heading());
     }
 
+    public static Pose3D of(Pose pose) {
+        return new Pose3D(pose, 0);
+    }
+
     public Pose3D plus(Pose3D other) {
         return new Pose3D(this.asPose().plus(other.asPose()), this.z() + other.z());
     }
@@ -36,6 +40,10 @@ public class Pose3D {
         double sin = Math.sin(theta);
         double cos = Math.cos(theta);
         return new Pose3D(this.x() * cos - this.y() * sin, this.y() * cos + this.x() * sin, this.z(), this.heading() + degreeIncrement);
+    }
+
+    public double magnitude() {
+        return x() * x() + y() * y() + z() * z();
     }
 
     public double x() {

@@ -5,7 +5,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.util.Localizer;
+import org.firstinspires.ftc.teamcode.systems.Drive;
 import org.firstinspires.ftc.teamcode.util.PoseSaver;
 import org.stealthrobotics.library.Alliance;
 import org.stealthrobotics.library.opmodes.StealthOpMode;
@@ -42,7 +42,6 @@ public abstract class Teleop extends StealthOpMode {
 
     private void configureBindings() {
         driverGamepad.getGamepadButton(GamepadKeys.Button.X).whenPressed(robot.intake.toggleHarvester());
-
         driverGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(robot.shoot());
 
         new Trigger(() -> driverGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.2)
@@ -52,11 +51,15 @@ public abstract class Teleop extends StealthOpMode {
             .whenActive(robot.intake.outtake())
             .whenInactive(robot.intake.stop());
 
-        // Relocalization: Rotate controller clockwise 45° and use d-pad to designate robot's corner
-        driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(Localizer.resetPoseNearRight(robot.drive));
-        driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(Localizer.resetPoseNearLeft(robot.drive));
-        driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(Localizer.resetPoseFarLeft(robot.drive));
-        driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(Localizer.resetPoseFarRight(robot.drive));
+        // Relocalize the robot to one of the field's corners (assumes that the robot is facing forward)
+        operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+            .whenPressed(robot.drive.resetPoseTo(Drive.PoseResetLocation.FAR_LEFT_CORNER));
+        operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+            .whenPressed(robot.drive.resetPoseTo(Drive.PoseResetLocation.FAR_RIGHT_CORNER));
+        operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
+            .whenPressed(robot.drive.resetPoseTo(Drive.PoseResetLocation.CLOSE_RIGHT_CORNER));
+        operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+            .whenPressed(robot.drive.resetPoseTo(Drive.PoseResetLocation.CLOSE_LEFT_CORNER));
     }
 
     @TeleOp(name = "Teleop (Blue)", group = "Blue")

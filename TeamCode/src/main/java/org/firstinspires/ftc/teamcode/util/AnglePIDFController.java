@@ -13,7 +13,6 @@ package org.firstinspires.ftc.teamcode.util;
  * int(0,t)[e(t')dt'] is the total error and e'(t) is the velocity error.
  */
 public class AnglePIDFController {
-
     private double kP, kI, kD, kF;
     private double minAngle, maxAngle, range;
     private double setPoint;

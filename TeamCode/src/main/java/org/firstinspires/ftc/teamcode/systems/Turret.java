@@ -34,8 +34,8 @@ public class Turret extends StealthSubsystem {
         return turretMotor.getCurrentPosition() * TICKS_PER_REVOLUTION * TURRET_GEAR_RATIO * 360.0;
     }
 
-    public void updateTracking(ShotCalculator shotCalculator) {
-        setTrigAngle(shotCalculator.getTurretAngle());
+    public void updateTurretAngle(double angle) {
+        setTrigAngle(angle);
     }
 
     /**
@@ -55,6 +55,7 @@ public class Turret extends StealthSubsystem {
 
     @Override
     public void periodic() {
-        turretMotor.setPower(turretController.calculate(getAngle()));
+        //Commented out for testing
+//        turretMotor.setPower(turretController.calculate(getAngle()));
     }
 }

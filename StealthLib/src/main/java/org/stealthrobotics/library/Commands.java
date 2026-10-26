@@ -9,17 +9,13 @@ import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
 import com.arcrobotics.ftclib.command.ParallelRaceGroup;
 import com.arcrobotics.ftclib.command.PrintCommand;
 import com.arcrobotics.ftclib.command.RunCommand;
-import com.arcrobotics.ftclib.command.SelectCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.StartEndCommand;
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
 
-import java.util.Map;
-import java.util.Set;
 import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
 
 /**
  * Namespace for command factory methods.
@@ -117,12 +113,12 @@ public final class Commands {
     /**
      * Constructs a command that does nothing, finishing after a specified duration.
      *
-     * @param seconds after how long the command finishes
+     * @param milliseconds after how long the command finishes
      * @return the command
      * @see WaitCommand
      */
-    public static Command waitSeconds(long seconds) {
-        return new WaitCommand(seconds);
+    public static Command waitSeconds(long milliseconds) {
+        return new WaitCommand(milliseconds);
     }
 
     /**

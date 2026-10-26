@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode.systems;
 import static org.stealthrobotics.library.opmodes.StealthOpMode.telemetry;
 
 import com.arcrobotics.ftclib.command.Command;
-import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -12,7 +10,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.util.ShotCalculator;
 import org.stealthrobotics.library.StealthSubsystem;
 
 import java.util.function.DoubleSupplier;
@@ -33,6 +30,8 @@ public class Shooter extends StealthSubsystem {
 
     private ShooterState shooterState = ShooterState.IDLE;
     private GateState gateState = GateState.CLOSED;
+
+    private final double RPM_TOLERANCE = 100;
 
     private final double HOOD_MIN_POSITION = 0.55;
     private final double HOOD_MAX_POSITION = 0.85;
@@ -107,19 +106,7 @@ public class Shooter extends StealthSubsystem {
         });
     }
 
-    public GateState getGateState() {
-        return gateState;
-    }
-
-    public ShooterState getShooterState() {
-        return shooterState;
-    }
-
-    public void updateHoodAngle(ShotCalculator shotCalculator) {
-        setHoodAngle(shotCalculator.getHoodAngle());
-    }
-
-    public void setHoodAngle(double angle) {
+    public void updateHoodAngle(double angle) {
         double angleDegrees = Math.max(HOOD_MIN_ANGLE, Math.min(HOOD_MAX_ANGLE, angle));
         double servoPosition = HOOD_MIN_POSITION + (angleDegrees - HOOD_MIN_ANGLE) /
             (HOOD_MAX_ANGLE - HOOD_MIN_ANGLE) * (HOOD_MAX_POSITION - HOOD_MIN_POSITION);
@@ -129,7 +116,7 @@ public class Shooter extends StealthSubsystem {
     }
 
     public boolean atTargetRPM() {
-        return Math.abs(getCurrentRPM() - targetRPM) < 100;
+        return Math.abs(getCurrentRPM() - targetRPM) < RPM_TOLERANCE;
     }
 
     private double getCurrentRPM() {
@@ -144,13 +131,9 @@ public class Shooter extends StealthSubsystem {
 
             leftShooterMotor.setPower(calculatedPower);
             rightShooterMotor.setPower(calculatedPower);
-
-            telemetry.addData("Target RPM", targetRPM);
-            telemetry.addData("Current RPM", currentRPM);
-            telemetry.addData("RPM Error", targetRPM - currentRPM);
-            telemetry.addData("Shooter Power", calculatedPower);
         }
 
+        telemetry.addData("Target RPM", targetRPM);
         telemetry.addData("Hood Degrees", hoodAngle);
     }
 }

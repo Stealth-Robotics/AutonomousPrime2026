@@ -24,7 +24,7 @@ public class Turret extends StealthSubsystem {
     public Turret(HardwareMap h) {
         turretMotor = h.get(DcMotorEx.class, "turret");
         turretController = new AnglePIDFController(0.0, 0.0, 0.0, 0.0);
-        turretController.setAngularParams(-200, 200, 360);
+        turretController.setAngularParams(MIN_TURRET_ANGLE_DEGREES, MAX_TURRET_ANGLE_DEGREES, 360);
 
         turretMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         turretMotor.setDirection(DcMotorSimple.Direction.FORWARD);

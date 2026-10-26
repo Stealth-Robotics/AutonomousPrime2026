@@ -27,6 +27,12 @@ public class Robot extends StealthSubsystem {
     private static final Pose BLUE_RESET_POSE = new Pose(0, 0, 0);
     private static final Pose RED_RESET_POSE = new Pose(0, 0, 0);
 
+    // Poses named from the drive station point of view, with robot facing towards opposing color's side
+    private static final Pose RED_RIGHT_RESET_POSE = new Pose(8,8,0);
+    private static final Pose RED_LEFT_RESET_POSE = new Pose(136, 8, 0);
+    private static final Pose BLUE_RIGHT_RESET_POSE = new Pose(136,136,180);
+    private static final Pose BLUE_LEFT_RESET_POSE = new Pose(8,136,180);
+
     public Robot(HardwareMap h) {
         drive = new Drive(h);
         intake = new Intake(h);
@@ -45,14 +51,6 @@ public class Robot extends StealthSubsystem {
             shooter.closeGate(),
             intake.stop(),
             shooter.stopShooter()
-        );
-    }
-
-    public Command resetPose() {
-        return conditional(
-            Alliance::isBlue,
-            instant(() -> drive.setPose(BLUE_RESET_POSE)),
-            instant(() -> drive.setPose(RED_RESET_POSE))
         );
     }
 

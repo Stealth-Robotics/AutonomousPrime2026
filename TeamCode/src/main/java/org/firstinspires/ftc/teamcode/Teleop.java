@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.util.Localizer;
 import org.firstinspires.ftc.teamcode.util.PoseSaver;
 import org.stealthrobotics.library.Alliance;
 import org.stealthrobotics.library.opmodes.StealthOpMode;
@@ -40,7 +41,6 @@ public abstract class Teleop extends StealthOpMode {
     }
 
     private void configureBindings() {
-        driverGamepad.getGamepadButton(GamepadKeys.Button.A).whenPressed(robot.resetPose());
         driverGamepad.getGamepadButton(GamepadKeys.Button.X).whenPressed(robot.intake.toggleHarvester());
 
         driverGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(robot.shoot());
@@ -51,6 +51,12 @@ public abstract class Teleop extends StealthOpMode {
         new Trigger(() -> driverGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2)
             .whenActive(robot.intake.outtake())
             .whenInactive(robot.intake.stop());
+
+        // Relocalization: Rotate controller clockwise 45° and use d-pad to designate robot's corner
+        driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(Localizer.resetPoseNearRight(robot.drive));
+        driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(Localizer.resetPoseNearLeft(robot.drive));
+        driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(Localizer.resetPoseFarLeft(robot.drive));
+        driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(Localizer.resetPoseFarRight(robot.drive));
     }
 
     @TeleOp(name = "Teleop (Blue)", group = "Blue")

@@ -30,7 +30,7 @@ public class Pose3D {
         return new Pose3D(this.asPose().times(scalar), this.z() * scalar);
     }
 
-    // From https://en.wikipedia.org/wiki/Rotation_matrix - "In two dimensions"
+    // From https://en.wikipedia.org/wiki/Rotation_matrix#In_two_dimensions
     public Pose3D rotateBy(double degreeIncrement) {
         double theta = Math.toRadians(degreeIncrement);
         double sin = Math.sin(theta);

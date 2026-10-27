@@ -36,7 +36,7 @@ public class Robot extends StealthSubsystem {
 
     public Command shoot() {
         return sequence(
-            shooter.runShooter(shotCalculator::getRPM),
+            shooter.runShooter(),
             waitUntil(shooter::atTargetRPM),
             shooter.openGate(),
             intake.intake(),
@@ -51,8 +51,10 @@ public class Robot extends StealthSubsystem {
     public void periodic() {
         shotCalculator.update(Pose3D.of(drive.getPose()), drive.getVelocity());
 
-        turret.updateTurretAngle(shotCalculator.getTurretAngle());
-        shooter.updateHoodAngle(shotCalculator.getHoodAngle());
+        //TODO: Add velocity input from ShotCalculator
+//        turret.update(shotCalculator.getTurretAngle(), 0);
+        turret.update(0, 0);
+        shooter.update(shotCalculator.getRPM(), shotCalculator.getHoodAngle());
 
         telemetry.addData("Alliance", Alliance.get());
     }

@@ -73,17 +73,15 @@ public class Shooter extends StealthSubsystem {
         hoodServo.setDirection(Servo.Direction.REVERSE);
     }
 
-    public Command runShooter(DoubleSupplier rpm) {
+    public Command runShooter() {
         return instant(() -> {
             shooterState = ShooterState.SHOOTING;
-            targetRPM = rpm.getAsDouble();
         });
     }
 
     public Command stopShooter() {
         return instant(() -> {
             shooterState = ShooterState.IDLE;
-            targetRPM = 0.0;
 
             shooterPIDF.reset();
 
@@ -106,12 +104,14 @@ public class Shooter extends StealthSubsystem {
         });
     }
 
-    public void updateHoodAngle(double angle) {
-        double angleDegrees = Math.max(HOOD_MIN_ANGLE, Math.min(HOOD_MAX_ANGLE, angle));
+    public void update(double rpm, double hoodAngle) {
+        targetRPM = rpm;
+
+        double angleDegrees = Math.max(HOOD_MIN_ANGLE, Math.min(HOOD_MAX_ANGLE, hoodAngle));
         double servoPosition = HOOD_MIN_POSITION + (angleDegrees - HOOD_MIN_ANGLE) /
             (HOOD_MAX_ANGLE - HOOD_MIN_ANGLE) * (HOOD_MAX_POSITION - HOOD_MIN_POSITION);
 
-        hoodAngle = angleDegrees;
+        this.hoodAngle = angleDegrees;
         hoodServo.setPosition(servoPosition);
     }
 
@@ -134,6 +134,6 @@ public class Shooter extends StealthSubsystem {
         }
 
         telemetry.addData("Target RPM", targetRPM);
-        telemetry.addData("Hood Degrees", hoodAngle);
+        telemetry.addData("Hood Angle", hoodAngle);
     }
 }

@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.autos;
 
+import static org.stealthrobotics.library.Commands.sequence;
+
 import com.arcrobotics.ftclib.command.Command;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.stealthrobotics.library.Alliance;
-import org.stealthrobotics.library.Commands;
 import org.stealthrobotics.library.opmodes.StealthOpMode;
 
 public abstract class ExampleAuto extends StealthOpMode {
@@ -21,7 +22,7 @@ public abstract class ExampleAuto extends StealthOpMode {
 
     @Override
     public Command getAutoCommand() {
-        return Commands.sequence(
+        return sequence(
             autoBuilder.followPath(autoBuilder.startToShoot)
         );
     }

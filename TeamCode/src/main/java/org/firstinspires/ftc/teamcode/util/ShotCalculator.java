@@ -23,8 +23,7 @@ public class ShotCalculator {
 
     private double turretAngle = 0, hoodAngle = 0, rpm = 0;
 
-    public ShotCalculator() {
-    }
+    public ShotCalculator() {}
 
     public void update(Pose3D robotPose, Pose3D robotVelocity) {
         Pose3D targetPose = Alliance.isRed() ?

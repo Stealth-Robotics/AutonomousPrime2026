@@ -51,12 +51,13 @@ public class AutoBuilder {
 
     public void initialize() {
         robot.shooter.closeGate().schedule();
+        robot.intake.raiseHarvester().schedule();
     }
 
     public void end() {
         PoseSaver.savedPose = robot.drive.getPose();
     }
-    
+
     public static Path createLine(Pose p1, Pose p2) {
         return line(p1, p2).linear(p1, p2);
     }

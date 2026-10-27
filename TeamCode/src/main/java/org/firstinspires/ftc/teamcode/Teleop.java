@@ -30,6 +30,7 @@ public abstract class Teleop extends StealthOpMode {
         robot.drive.teleopDrive(driverGamepad).schedule();
 
         // Go to the correct starting configuration
+        robot.intake.raiseHarvester().schedule();
         robot.shooter.closeGate().schedule();
 
         configureBindings();

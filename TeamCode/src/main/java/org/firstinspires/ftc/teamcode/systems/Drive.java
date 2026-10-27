@@ -95,7 +95,11 @@ public class Drive extends StealthSubsystem {
     public void periodic() {
         follower.update();
 
-        telemetry.addData("Pose", "(" + follower.pose().x() + ", " +
-            follower.pose().y() + ", " + Math.toDegrees(follower.pose().heading()) + ")");
+        telemetry.addData(
+            "Pose", "(" +
+            (Math.round(follower.pose().x() * 100) / 100.0) + ", " +
+            (Math.round(follower.pose().y() * 100) / 100.0) + ", " +
+            (Math.round(Math.toDegrees(follower.pose().heading()) * 100) / 100.0) + ")"
+        );
     }
 }

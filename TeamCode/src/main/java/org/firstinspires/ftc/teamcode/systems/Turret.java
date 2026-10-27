@@ -51,7 +51,7 @@ public class Turret extends StealthSubsystem {
 
     @Override
     public void periodic() {
-        turretMotor.setPower(turretController.calculate(getAngle(), targetAngle, targetVelocity));
+//        turretMotor.setPower(turretController.calculate(getAngle(), targetAngle, targetVelocity));
 
         telemetry.addData("Turret Angle Degrees", getAngle());
     }

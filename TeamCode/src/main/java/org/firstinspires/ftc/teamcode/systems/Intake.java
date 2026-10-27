@@ -13,7 +13,7 @@ public class Intake extends StealthSubsystem {
     private final DcMotorEx intakeMotor;
     private final Servo harvesterServo;
 
-    private final double INTAKE_SPEED = 0.9;
+    private final double INTAKE_SPEED = 1;
     private final double OUTTAKE_SPEED = -1;
 
     private final double HARVESTER_UP_POSITION = 0.1;

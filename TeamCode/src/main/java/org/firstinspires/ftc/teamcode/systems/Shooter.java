@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.systems;
 
 import static org.stealthrobotics.library.opmodes.StealthOpMode.telemetry;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,11 +11,14 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.stealthrobotics.library.StealthSubsystem;
 
 import java.util.function.DoubleSupplier;
 
 public class Shooter extends StealthSubsystem {
+    private final Telemetry dashboard = FtcDashboard.getInstance().getTelemetry();
+
     private final DcMotorEx leftShooterMotor;
     private final DcMotorEx rightShooterMotor;
 
@@ -22,19 +26,19 @@ public class Shooter extends StealthSubsystem {
     private final Servo hoodServo;
 
     private final PIDFController shooterPIDF = new PIDFController(
-        0.001,
+        0.0005, // 0.001
         0,
         0,
-        0.000233
+        0.00021
     );
 
     private ShooterState shooterState = ShooterState.IDLE;
     private GateState gateState = GateState.CLOSED;
 
-    private final double RPM_TOLERANCE = 100;
+    private final double RPM_TOLERANCE = 50;
 
-    private final double HOOD_MIN_POSITION = 0.55;
-    private final double HOOD_MAX_POSITION = 0.85;
+    private final double HOOD_MIN_POSITION = 0;
+    private final double HOOD_MAX_POSITION = 0.3;
 
     private final double HOOD_MIN_ANGLE = 2.5;
     private final double HOOD_MAX_ANGLE = 22.5;
@@ -65,7 +69,7 @@ public class Shooter extends StealthSubsystem {
         hoodServo = h.get(Servo.class, "hood");
 
         leftShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        leftShooterMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftShooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         rightShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightShooterMotor.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -125,13 +129,21 @@ public class Shooter extends StealthSubsystem {
 
     @Override
     public void periodic() {
+        double currentRPM = getCurrentRPM();
+
         if (shooterState.equals(ShooterState.SHOOTING)) {
-            double currentRPM = getCurrentRPM();
             double calculatedPower = shooterPIDF.calculate(currentRPM, targetRPM);
 
             leftShooterMotor.setPower(calculatedPower);
             rightShooterMotor.setPower(calculatedPower);
+
+            telemetry.addData("Current RPM", currentRPM);
+            telemetry.addData("velocity", rightShooterMotor.getVelocity());
         }
+
+        dashboard.addData("current rpm", currentRPM);
+        dashboard.addData("target rpm", targetRPM);
+        dashboard.update();
 
         telemetry.addData("Target RPM", targetRPM);
         telemetry.addData("Hood Angle", hoodAngle);

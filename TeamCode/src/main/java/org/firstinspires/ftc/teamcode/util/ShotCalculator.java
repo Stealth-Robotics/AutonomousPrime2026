@@ -24,7 +24,7 @@ public class ShotCalculator {
     );
 
     private double pastShotTurretAngle = 0;
-    private long pastTimeStamp = -1;
+    private long pastTimeStamp = System.nanoTime();
     private double turretAngle = 0, turretFeedForward = 0, hoodAngle = 0, rpm = 0;
 
     public ShotCalculator() {}

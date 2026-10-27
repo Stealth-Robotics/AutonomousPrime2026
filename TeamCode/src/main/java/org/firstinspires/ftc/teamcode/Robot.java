@@ -51,8 +51,7 @@ public class Robot extends StealthSubsystem {
     public void periodic() {
         shotCalculator.update(Pose3D.of(drive.getPose()), drive.getVelocity());
 
-        //TODO: Add velocity input from ShotCalculator
-//        turret.update(shotCalculator.getTurretAngle(), 0);
+        turret.update(shotCalculator.getTurretAngle(), shotCalculator.getTurretFeedForward());
         turret.update(0, 0);
         shooter.update(shotCalculator.getRPM(), shotCalculator.getHoodAngle());
 

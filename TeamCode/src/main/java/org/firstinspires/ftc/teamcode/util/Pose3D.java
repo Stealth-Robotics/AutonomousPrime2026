@@ -39,11 +39,16 @@ public class Pose3D {
     }
 
     // From https://en.wikipedia.org/wiki/Rotation_matrix#In_two_dimensions
-    public Pose3D rotateBy(double degreeIncrement) {
-        double theta = Math.toRadians(degreeIncrement);
-        double sin = Math.sin(theta);
-        double cos = Math.cos(theta);
-        return new Pose3D(this.x() * cos - this.y() * sin, this.y() * cos + this.x() * sin, this.z(), this.heading() + degreeIncrement);
+    public Pose3D rotateBy(double radianIncrement) {
+        double sin = Math.sin(radianIncrement);
+        double cos = Math.cos(radianIncrement);
+
+        return new Pose3D(
+            this.x() * cos - this.y() * sin,
+            this.x() * sin + this.y() * cos,
+            this.z(),
+            this.heading() + radianIncrement
+        );
     }
 
     public double magnitude() {

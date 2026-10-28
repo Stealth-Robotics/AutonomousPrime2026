@@ -40,7 +40,7 @@ public class Turret extends StealthSubsystem {
     }
 
     public void update(double targetAngle, double targetVelocity) {
-        this.targetAngle = targetAngle + 90; // 0° -> Forwards, 90° -> Left, 180° -> Back, 270° -> Right
+        this.targetAngle = targetAngle;
         this.targetVelocity = targetVelocity;
     }
 

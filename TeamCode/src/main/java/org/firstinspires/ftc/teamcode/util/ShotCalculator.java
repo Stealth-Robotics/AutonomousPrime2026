@@ -8,19 +8,20 @@ public class ShotCalculator {
     private static final double GRAVITY = 386.0886; // Gravity on earth in in/s²
     private static final double LATENCY = 0.02; // Estimated delay between pose measurements and update time in seconds
 
-    private static final Pose3D ROBOT_TO_TURRET_OFFSET = new Pose3D(0, 0, 0, 0);
+    private static final Pose3D ROBOT_TO_TURRET_OFFSET = new Pose3D(0, -2.1, 7.6);
 
-    // Hive cell target poses (TODO: Find actual poses from CAD)
-    private static final Pose3D BLUE_RIGHT_CELL = new Pose3D(86,80,64);
-    private static final Pose3D BLUE_LEFT_CELL = new Pose3D(58, 80, 64);
-    private static final Pose3D RED_RIGHT_CELL = new Pose3D(58,64,64);
-    private static final Pose3D RED_LEFT_CELL = new Pose3D(86, 64, 64);
+    // Hive cell target poses
+    private static final Pose3D BLUE_RIGHT_CELL = new Pose3D(84,80,60);
+    private static final Pose3D BLUE_LEFT_CELL = new Pose3D(84, 61.5, 60);
+    private static final Pose3D RED_RIGHT_CELL = new Pose3D(57.8,61.5,60);
+    private static final Pose3D RED_LEFT_CELL = new Pose3D(57.8, 80, 60);
 
     // Interpolation map for RPM values at given distances in inches
     private static final LerpTable distanceToRPM = new LerpTable(
-        0, 3200,
+        0, 3300, //Min
+        30, 3500,
         52, 3700,
-        100, 3700
+        100, 3700 //Max
     );
 
     private double pastShotTurretAngle = 0;

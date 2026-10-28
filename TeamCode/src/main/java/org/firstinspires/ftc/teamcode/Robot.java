@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.systems.Intake;
 import org.firstinspires.ftc.teamcode.systems.Shooter;
 import org.firstinspires.ftc.teamcode.systems.Turret;
 import org.firstinspires.ftc.teamcode.util.Pose3D;
-import org.firstinspires.ftc.teamcode.util.ShotCalculator;
+import org.firstinspires.ftc.teamcode.util.SimpleShotCalculator;
 import org.stealthrobotics.library.Alliance;
 import org.stealthrobotics.library.StealthSubsystem;
 
@@ -23,7 +23,7 @@ public class Robot extends StealthSubsystem {
     public final Shooter shooter;
     public final Turret turret;
 
-    private final ShotCalculator shotCalculator;
+    private final SimpleShotCalculator shotCalculator;
 
     public Robot(HardwareMap h) {
         drive = new Drive(h);
@@ -31,7 +31,7 @@ public class Robot extends StealthSubsystem {
         shooter = new Shooter(h);
         turret = new Turret(h);
 
-        shotCalculator = new ShotCalculator();
+        shotCalculator = new SimpleShotCalculator();
     }
 
     public Command shoot() {
@@ -49,11 +49,10 @@ public class Robot extends StealthSubsystem {
 
     @Override
     public void periodic() {
-        shotCalculator.update(Pose3D.of(drive.getPose()), drive.getVelocity());
+        shotCalculator.update(Pose3D.of(drive.getPose()));
 
-        turret.update(0, 0);
-        shooter.update(3400, 22.5);
-//        shooter.update(shotCalculator.getRPM(), shotCalculator.getHoodAngle());
+        turret.update(shotCalculator.getTurretAngle(), 0);
+        shooter.update(shotCalculator.getRPM(), shotCalculator.getHoodAngle());
 
         telemetry.addData("Alliance", Alliance.get());
     }

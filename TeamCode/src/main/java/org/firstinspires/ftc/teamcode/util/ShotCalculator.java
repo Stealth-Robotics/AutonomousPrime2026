@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.util;
 
 import org.stealthrobotics.library.Alliance;
 
+import java.util.concurrent.TimeUnit;
+
 // TODO: rpm, feedforward, interpolation, t-tuning
 public class ShotCalculator {
     private final double GRAVITY = 9.80665; // Gravity on earth in m/s²
@@ -21,7 +23,9 @@ public class ShotCalculator {
         1000, 1000
     );
 
-    private double turretAngle = 0, hoodAngle = 0, rpm = 0;
+    private double pastShotTurretAngle = 0;
+    private long pastTimeStamp = System.nanoTime();
+    private double turretAngle = 0, turretFeedForward = 0, hoodAngle = 0, rpm = 0;
 
     public ShotCalculator() {}
 
@@ -29,6 +33,8 @@ public class ShotCalculator {
         Pose3D targetPose = Alliance.isRed() ?
             (robotPose.y() < 72 ? RED_RIGHT_CELL : RED_LEFT_CELL) :
             (robotPose.y() > 72 ? BLUE_RIGHT_CELL : BLUE_LEFT_CELL);
+
+        pastShotTurretAngle = turretAngle;
 
         Pose3D turretPose = robotPose.plus(ROBOT_TO_TURRET_OFFSET.rotateBy(robotPose.heading())); // Get rotated robot position
         turretPose = turretPose.plus(robotVelocity.times(LATENCY));
@@ -59,6 +65,11 @@ public class ShotCalculator {
         // Robot relative turret angle is acquired by subtracting robot heading and a latency term from field relative turret angle
         turretAngle = fieldRelativeTurretAngle - robotPose.heading() - turretLatencyOffset;
 
+        // Rate of change of turret angle with respect to time
+        //TODO: research better methods to do this
+        turretFeedForward = (turretAngle - pastShotTurretAngle) / TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - pastTimeStamp);
+        pastTimeStamp = System.nanoTime();
+
         // "90 - ..." results from the perpendicular angle between hood lift and fire angle
         hoodAngle = 90 - Math.toDegrees(Math.atan2(movingShotVelocity.z(), horizontalVelocity));
 
@@ -66,6 +77,9 @@ public class ShotCalculator {
         rpm = movingShotVelocityRatio * distanceToRPM.get(horizontalDistance);
     }
 
+    public double getTurretFeedForward() {
+        return turretFeedForward;
+    }
     public double getTurretAngle() {
         return turretAngle;
     }

@@ -4,35 +4,38 @@ import org.stealthrobotics.library.Alliance;
 
 import java.util.concurrent.TimeUnit;
 
-// TODO: rpm, feedforward, interpolation, t-tuning
 public class ShotCalculator {
-    private final double GRAVITY = 9.80665; // Gravity on earth in m/s²
-    private final double LATENCY = 0.02; // Estimated delay between pose measurements and update time in seconds
+    private static final double GRAVITY = 386.0886; // Gravity on earth in in/s²
+    private static final double LATENCY = 0.02; // Estimated delay between pose measurements and update time in seconds
 
-    private final Pose3D ROBOT_TO_TURRET_OFFSET = new Pose3D(0, 0, 0, 0);
+    private static final Pose3D ROBOT_TO_TURRET_OFFSET = new Pose3D(0, 0, 0, 0);
 
     // Hive cell target poses (TODO: Find actual poses from CAD)
-    private final Pose3D BLUE_RIGHT_CELL = new Pose3D(86,80,64);
-    private final Pose3D BLUE_LEFT_CELL = new Pose3D(58, 80, 64);
-    private final Pose3D RED_RIGHT_CELL = new Pose3D(58,64,64);
-    private final Pose3D RED_LEFT_CELL = new Pose3D(86, 64, 64);
+    private static final Pose3D BLUE_RIGHT_CELL = new Pose3D(86,80,64);
+    private static final Pose3D BLUE_LEFT_CELL = new Pose3D(58, 80, 64);
+    private static final Pose3D RED_RIGHT_CELL = new Pose3D(58,64,64);
+    private static final Pose3D RED_LEFT_CELL = new Pose3D(86, 64, 64);
 
     // Interpolation map for RPM values at given distances in inches
-    private final LerpTable distanceToRPM = new LerpTable(
-        0, 0,
-        1000, 1000
+    private static final LerpTable distanceToRPM = new LerpTable(
+        0, 3200,
+        52, 3700,
+        100, 3700
     );
 
     private double pastShotTurretAngle = 0;
     private long pastTimeStamp = System.nanoTime();
+
     private double turretAngle = 0, turretFeedForward = 0, hoodAngle = 0, rpm = 0;
 
-    public ShotCalculator() {}
+    public ShotCalculator() {
+
+    }
 
     public void update(Pose3D robotPose, Pose3D robotVelocity) {
         Pose3D targetPose = Alliance.isRed() ?
-            (robotPose.y() < 72 ? RED_RIGHT_CELL : RED_LEFT_CELL) :
-            (robotPose.y() > 72 ? BLUE_RIGHT_CELL : BLUE_LEFT_CELL);
+            (robotPose.y() > 72 ? RED_LEFT_CELL : RED_RIGHT_CELL) :
+            (robotPose.y() < 72 ? BLUE_LEFT_CELL : BLUE_RIGHT_CELL);
 
         pastShotTurretAngle = turretAngle;
 
@@ -47,7 +50,7 @@ public class ShotCalculator {
         Pose3D launchVelocity = new Pose3D(
                 (targetPose.x() - robotPose.x()) / t,
                 (targetPose.y() - robotPose.y()) / t,
-                (targetPose.z() - robotPose.z()) / t + GRAVITY * t * 2.0
+                (targetPose.z() - robotPose.z()) / t + GRAVITY * t * 0.5
         );
 
         Pose3D movingShotVelocity = launchVelocity.minus(robotVelocity);

@@ -13,11 +13,11 @@ public class Intake extends StealthSubsystem {
     private final DcMotorEx intakeMotor;
     private final Servo harvesterServo;
 
-    private final double INTAKE_SPEED = 1;
-    private final double OUTTAKE_SPEED = -1;
+    private static final double INTAKE_SPEED = 1;
+    private static final double OUTTAKE_SPEED = -1;
 
-    private final double HARVESTER_UP_POSITION = 0.1;
-    private final double HARVESTER_DOWN_POSITION = 1;
+    private static final double HARVESTER_UP_POSITION = 0.1;
+    private static final double HARVESTER_DOWN_POSITION = 1;
 
     private HarvesterState harvesterState = HarvesterState.UP;
 

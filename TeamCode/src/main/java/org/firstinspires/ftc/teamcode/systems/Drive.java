@@ -86,6 +86,8 @@ public class Drive extends StealthSubsystem {
     public Pose getPose() {
         return follower.pose();
     }
+
+    // Returns the field relative velocity of the robot
     public Pose3D getVelocity() {
         Velocity v = follower.velocity();
         return new Pose3D(v.vx, v.vy, 0, v.omega);

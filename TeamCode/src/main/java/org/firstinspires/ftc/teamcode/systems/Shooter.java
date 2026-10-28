@@ -35,18 +35,18 @@ public class Shooter extends StealthSubsystem {
     private ShooterState shooterState = ShooterState.IDLE;
     private GateState gateState = GateState.CLOSED;
 
-    private final double RPM_TOLERANCE = 50;
+    private static final double RPM_TOLERANCE = 50;
 
-    private final double HOOD_MIN_POSITION = 0;
-    private final double HOOD_MAX_POSITION = 0.3;
+    private static final double HOOD_MIN_POSITION = 0;
+    private static final double HOOD_MAX_POSITION = 0.3;
 
-    private final double HOOD_MIN_ANGLE = 2.5;
-    private final double HOOD_MAX_ANGLE = 22.5;
+    private static final double HOOD_MIN_ANGLE = 2.5;
+    private static final double HOOD_MAX_ANGLE = 22.5;
 
-    private final double GATE_OPEN_POSITION = 0.18;
-    private final double GATE_CLOSED_POSITION = 0.4;
+    private static final double GATE_OPEN_POSITION = 0.18;
+    private static final double GATE_CLOSED_POSITION = 0.4;
 
-    private final double TICKS_PER_REVOLUTION = 28;
+    private static final double TICKS_PER_REVOLUTION = 28;
 
     private double targetRPM = 0;
     private double hoodAngle = HOOD_MIN_ANGLE;

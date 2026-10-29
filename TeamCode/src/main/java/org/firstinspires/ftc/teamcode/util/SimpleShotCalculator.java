@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.util;
 
+import static org.stealthrobotics.library.opmodes.StealthOpMode.telemetry;
+
 import org.stealthrobotics.library.Alliance;
 
 import java.util.concurrent.TimeUnit;
@@ -15,14 +17,20 @@ public class SimpleShotCalculator {
 
     // Distance (inches) -> RPM
     private static final LerpTable distanceToRPM = new LerpTable(
-        0, 3300,
+        0, 3400,
         30, 3400,
-        52, 3550,
-        100, 3550
+        50, 3400,
+        100, 3400
     );
 
-    private static final double HOOD_ANGLE = 20;
-    private double turretAngle = 0, rpm = 0;
+    private static final LerpTable distanceToHoodAngle = new LerpTable(
+        0, 13,
+        30, 13,
+        50, 13,
+        100, 13
+    );
+
+    private double turretAngle = 0, hoodAngle = 0, rpm = 0;
 
     public void update(Pose3D robotPose) {
         Pose3D targetPose = Alliance.isRed() ?
@@ -35,7 +43,13 @@ public class SimpleShotCalculator {
 
         Pose3D displacement = targetPose.minus(turretPose);
 
-        rpm = distanceToRPM.get(Math.hypot(displacement.x(), displacement.y()));
+        double inchesAwayFromGoal = Math.hypot(displacement.x(), displacement.y());
+
+        rpm = distanceToRPM.get(inchesAwayFromGoal);
+        hoodAngle = distanceToHoodAngle.get(inchesAwayFromGoal);
+
+        telemetry.addData("Goal Distance (in)", inchesAwayFromGoal);
+
         turretAngle = Math.toDegrees(Math.atan2(displacement.y(), displacement.x()) - robotPose.heading());
     }
 
@@ -43,7 +57,7 @@ public class SimpleShotCalculator {
         return turretAngle;
     }
     public double getHoodAngle() {
-        return HOOD_ANGLE;
+        return hoodAngle;
     }
     public double getRPM() {
         return rpm;

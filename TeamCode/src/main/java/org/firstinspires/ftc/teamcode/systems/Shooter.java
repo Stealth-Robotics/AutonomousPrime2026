@@ -112,8 +112,11 @@ public class Shooter extends StealthSubsystem {
         targetRPM = rpm;
 
         double angleDegrees = Math.max(HOOD_MIN_ANGLE, Math.min(HOOD_MAX_ANGLE, hoodAngle));
-        double servoPosition = HOOD_MIN_POSITION + (angleDegrees - HOOD_MIN_ANGLE) /
-            (HOOD_MAX_ANGLE - HOOD_MIN_ANGLE) * (HOOD_MAX_POSITION - HOOD_MIN_POSITION);
+
+        double servoPosition = HOOD_MAX_POSITION -
+            (angleDegrees - HOOD_MIN_ANGLE) /
+                (HOOD_MAX_ANGLE - HOOD_MIN_ANGLE) *
+                (HOOD_MAX_POSITION - HOOD_MIN_POSITION);
 
         this.hoodAngle = angleDegrees;
         hoodServo.setPosition(servoPosition);

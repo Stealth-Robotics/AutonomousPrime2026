@@ -37,11 +37,11 @@ public class Shooter extends StealthSubsystem {
 
     private static final double RPM_TOLERANCE = 50;
 
-    private static final double HOOD_MIN_POSITION = 0;
-    private static final double HOOD_MAX_POSITION = 0.3;
+    private static final double HOOD_MIN_POSITION = 0.02;
+    private static final double HOOD_MAX_POSITION = 0.16;
 
-    private static final double HOOD_MIN_ANGLE = 2.5;
-    private static final double HOOD_MAX_ANGLE = 22.5;
+    private static final double HOOD_MIN_ANGLE = 11.127;
+    private static final double HOOD_MAX_ANGLE = 20;
 
     private static final double GATE_OPEN_POSITION = 0.18;
     private static final double GATE_CLOSED_POSITION = 0.4;
@@ -116,7 +116,7 @@ public class Shooter extends StealthSubsystem {
             (HOOD_MAX_ANGLE - HOOD_MIN_ANGLE) * (HOOD_MAX_POSITION - HOOD_MIN_POSITION);
 
         this.hoodAngle = angleDegrees;
-//        hoodServo.setPosition(servoPosition);
+        hoodServo.setPosition(servoPosition);
     }
 
     public boolean atTargetRPM() {

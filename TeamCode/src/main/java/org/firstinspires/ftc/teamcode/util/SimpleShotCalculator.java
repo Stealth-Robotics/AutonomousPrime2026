@@ -21,7 +21,7 @@ public class SimpleShotCalculator {
         100, 3550
     );
 
-    private static final double HOOD_ANGLE = 22.5;
+    private static final double HOOD_ANGLE = 20;
     private double turretAngle = 0, rpm = 0;
 
     public void update(Pose3D robotPose) {

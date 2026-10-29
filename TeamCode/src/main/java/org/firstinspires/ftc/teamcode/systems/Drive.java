@@ -46,7 +46,7 @@ public class Drive extends StealthSubsystem {
         }
 
         public Pose getPose() {
-            return Alliance.isRed() ? bluePose : redPose;
+            return Alliance.isRed() ? redPose : bluePose;
         }
     }
 

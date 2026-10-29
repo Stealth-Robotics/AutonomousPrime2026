@@ -2,11 +2,14 @@ package org.firstinspires.ftc.teamcode.systems;
 
 import static org.stealthrobotics.library.opmodes.StealthOpMode.telemetry;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.arcrobotics.ftclib.util.MathUtils;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.TurretController;
 import org.stealthrobotics.library.StealthSubsystem;
 
@@ -14,8 +17,10 @@ public class Turret extends StealthSubsystem {
     private final DcMotorEx turretMotor;
     private final TurretController turretController;
 
-    private static final double MAX_TURRET_ANGLE_DEGREES = 270;
-    private static final double MIN_TURRET_ANGLE_DEGREES = -90;
+    private static final double MAX_TURRET_POWER = 0.65;
+
+    private static final double MAX_TURRET_ANGLE_DEGREES = 450;
+    private static final double MIN_TURRET_ANGLE_DEGREES = 90;
 
     private static final double TURRET_GEAR_RATIO = 100.0 / 30.0;
     private static final double TICKS_PER_REVOLUTION = 384.5;
@@ -26,7 +31,7 @@ public class Turret extends StealthSubsystem {
     public Turret(HardwareMap h) {
         turretMotor = h.get(DcMotorEx.class, "turret");
         turretController = new TurretController(
-            0, 0, 0,
+            0.03, 0, 0,
             MIN_TURRET_ANGLE_DEGREES,
             MAX_TURRET_ANGLE_DEGREES
         );
@@ -36,7 +41,7 @@ public class Turret extends StealthSubsystem {
     }
 
     public double getAngle() {
-        return turretMotor.getCurrentPosition() * 360 / TICKS_PER_REVOLUTION / TURRET_GEAR_RATIO;
+        return 180 + (turretMotor.getCurrentPosition() * 360 / TICKS_PER_REVOLUTION / TURRET_GEAR_RATIO);
     }
 
     public void update(double targetAngle, double targetVelocity) {
@@ -46,10 +51,12 @@ public class Turret extends StealthSubsystem {
 
     @Override
     public void periodic() {
-//        turretMotor.setPower(turretController.calculate(getAngle(), targetAngle, targetVelocity));
+        turretMotor.setPower(MathUtils.clamp(
+            turretController.calculate(getAngle(), targetAngle, targetVelocity),
+            -MAX_TURRET_POWER,
+            MAX_TURRET_POWER
+        ));
 
-        telemetry.addData("Target Angle", targetAngle);
-        telemetry.addData("Target Velocity", targetVelocity);
-        telemetry.addData("Turret Angle Degrees", getAngle());
+        telemetry.addData("Turret Angle", getAngle());
     }
 }

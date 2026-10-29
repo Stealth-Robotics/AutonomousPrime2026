@@ -53,13 +53,13 @@ public abstract class Teleop extends StealthOpMode {
             .whenInactive(robot.intake.stop());
 
         // Relocalize the robot to one of the field's corners (assumes that the robot is facing forward)
-        operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+        driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)
             .whenPressed(robot.drive.resetPoseTo(Drive.PoseResetLocation.FAR_LEFT_CORNER));
-        operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+        driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
             .whenPressed(robot.drive.resetPoseTo(Drive.PoseResetLocation.FAR_RIGHT_CORNER));
-        operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
+        driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
             .whenPressed(robot.drive.resetPoseTo(Drive.PoseResetLocation.CLOSE_RIGHT_CORNER));
-        operatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+        driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
             .whenPressed(robot.drive.resetPoseTo(Drive.PoseResetLocation.CLOSE_LEFT_CORNER));
     }
 

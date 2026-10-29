@@ -59,8 +59,8 @@ public class Drive extends StealthSubsystem {
                 follower.setHeading(Alliance.isRed() ? 0 : Math.toRadians(180));
 
             follower.manual(ManualDrive.fieldCentric(
-                -gamepad.getLeftY(),
-                gamepad.getLeftX(),
+                -gamepad.getLeftY() * (Alliance.isRed() ? -1 : 1),
+                gamepad.getLeftX() * (Alliance.isRed() ? -1 : 1),
                 -gamepad.getRightX(),
                 follower.pose().heading()
             ));
@@ -72,7 +72,8 @@ public class Drive extends StealthSubsystem {
      (assumes the robot is pointing forward for whichever alliance we are on).
     */
     public Command resetPoseTo(PoseResetLocation resetLocation) {
-        return instant(() -> follower.setPose(resetLocation.getPose()));
+//        return instant(() -> follower.setPose(resetLocation.getPose()));
+        return instant(() -> follower.setPose(new Pose(0, 0)));
     }
 
     public Follower getFollower() {

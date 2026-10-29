@@ -8,17 +8,17 @@ public class SimpleShotCalculator {
     private static final Pose3D ROBOT_TO_TURRET_OFFSET = new Pose3D(0, -2.1, 7.6);
 
     // Hive cell target poses
-    private static final Pose3D BLUE_RIGHT_CELL = new Pose3D(84,80,60);
-    private static final Pose3D BLUE_LEFT_CELL = new Pose3D(84, 61.5, 60);
-    private static final Pose3D RED_RIGHT_CELL = new Pose3D(57.8,61.5,60);
-    private static final Pose3D RED_LEFT_CELL = new Pose3D(57.8, 80, 60);
+    private static final Pose3D BLUE_RIGHT_CELL = new Pose3D(84,87.5,60);
+    private static final Pose3D BLUE_LEFT_CELL = new Pose3D(84, 54, 60);
+    private static final Pose3D RED_RIGHT_CELL = new Pose3D(57.8,54,60);
+    private static final Pose3D RED_LEFT_CELL = new Pose3D(57.8, 87.5, 60);
 
     // Distance (inches) -> RPM
     private static final LerpTable distanceToRPM = new LerpTable(
-        0, 3300, //Min
-        30, 3500,
-        52, 3700,
-        100, 3700 //Max
+        0, 3300,
+        30, 3400,
+        52, 3500,
+        100, 3500
     );
 
     private static final double HOOD_ANGLE = 22.5;

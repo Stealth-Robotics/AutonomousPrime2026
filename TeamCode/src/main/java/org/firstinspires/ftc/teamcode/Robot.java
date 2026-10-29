@@ -52,7 +52,7 @@ public class Robot extends StealthSubsystem {
         shotCalculator.update(Pose3D.of(drive.getPose()));
 
         turret.update(shotCalculator.getTurretAngle(), 0);
-        shooter.update(shotCalculator.getRPM(), shotCalculator.getHoodAngle());
+        shooter.update(3500, shotCalculator.getHoodAngle());
 
         telemetry.addData("Alliance", Alliance.get());
     }

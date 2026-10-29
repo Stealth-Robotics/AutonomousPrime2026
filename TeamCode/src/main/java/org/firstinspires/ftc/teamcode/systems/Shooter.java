@@ -69,10 +69,10 @@ public class Shooter extends StealthSubsystem {
         hoodServo = h.get(Servo.class, "hood");
 
         leftShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        leftShooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftShooterMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
         rightShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        rightShooterMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightShooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         hoodServo.setDirection(Servo.Direction.REVERSE);
     }
@@ -116,7 +116,7 @@ public class Shooter extends StealthSubsystem {
             (HOOD_MAX_ANGLE - HOOD_MIN_ANGLE) * (HOOD_MAX_POSITION - HOOD_MIN_POSITION);
 
         this.hoodAngle = angleDegrees;
-        hoodServo.setPosition(servoPosition);
+//        hoodServo.setPosition(servoPosition);
     }
 
     public boolean atTargetRPM() {
@@ -124,7 +124,7 @@ public class Shooter extends StealthSubsystem {
     }
 
     private double getCurrentRPM() {
-        return rightShooterMotor.getVelocity() * 60 / TICKS_PER_REVOLUTION;
+        return -rightShooterMotor.getVelocity() * 60 / TICKS_PER_REVOLUTION;
     }
 
     @Override
@@ -138,7 +138,6 @@ public class Shooter extends StealthSubsystem {
             rightShooterMotor.setPower(calculatedPower);
 
             telemetry.addData("Current RPM", currentRPM);
-            telemetry.addData("velocity", rightShooterMotor.getVelocity());
         }
 
         dashboard.addData("current rpm", currentRPM);

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.systems;
 import static org.stealthrobotics.library.opmodes.StealthOpMode.telemetry;
 
 import com.arcrobotics.ftclib.command.Command;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.pedropathing.follower.Follower;
@@ -72,8 +73,7 @@ public class Drive extends StealthSubsystem {
      (assumes the robot is pointing forward for whichever alliance we are on).
     */
     public Command resetPoseTo(PoseResetLocation resetLocation) {
-//        return instant(() -> follower.setPose(resetLocation.getPose()));
-        return instant(() -> follower.setPose(new Pose(0, 0)));
+        return new InstantCommand(() -> follower.setPose(resetLocation.getPose()));
     }
 
     public Follower getFollower() {

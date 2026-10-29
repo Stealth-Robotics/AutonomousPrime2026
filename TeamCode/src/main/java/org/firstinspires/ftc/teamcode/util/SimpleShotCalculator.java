@@ -17,8 +17,8 @@ public class SimpleShotCalculator {
     private static final LerpTable distanceToRPM = new LerpTable(
         0, 3300,
         30, 3400,
-        52, 3500,
-        100, 3500
+        52, 3550,
+        100, 3550
     );
 
     private static final double HOOD_ANGLE = 22.5;

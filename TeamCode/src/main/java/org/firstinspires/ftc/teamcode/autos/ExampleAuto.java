@@ -8,28 +8,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.stealthrobotics.library.Alliance;
 import org.stealthrobotics.library.opmodes.StealthOpMode;
 
-public abstract class ExampleAuto extends StealthOpMode {
-    private final AutoBuilder autoBuilder;
-
-    public ExampleAuto() {
-        autoBuilder = new AutoBuilder(hardwareMap);
-    }
-
-    @Override
-    public void initialize() {
-        autoBuilder.initialize();
-    }
-
+public abstract class ExampleAuto extends Auto {
     @Override
     public Command getAutoCommand() {
         return sequence(
-            autoBuilder.followPath(autoBuilder.startToShoot)
+            autoBuilder.followPath(autoBuilder.startToShoot),
+            autoBuilder.shoot()
         );
-    }
-
-    @Override
-    public void end() {
-        autoBuilder.end();
     }
 
     @Autonomous(name = "Example Auto (Blue)", group = "Blue")

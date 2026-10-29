@@ -40,9 +40,9 @@ public class AutoBuilder {
     }
 
     public void buildPoses() {
-        startPose = poseFactory.of(56,8,90);
-        shootPose = poseFactory.of(56,27,90);
-        flowerPose = poseFactory.of(10.8,47.2,180);
+        startPose = poseFactory.of(88,133.5,270);
+        shootPose = poseFactory.of(88,117,270);
+        flowerPose = poseFactory.of(133.2,96.8,0);
     }
 
     public void buildPaths() {
@@ -64,5 +64,8 @@ public class AutoBuilder {
 
     public Command followPath(Path p) {
         return new RunCommand(() -> follower.follow(p)).interruptOn(follower::following);
+    }
+    public Command shoot() {
+        return robot.shoot();
     }
 }

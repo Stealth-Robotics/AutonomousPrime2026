@@ -6,8 +6,6 @@ import static org.stealthrobotics.library.Commands.waitUntil;
 import static org.stealthrobotics.library.opmodes.StealthOpMode.telemetry;
 
 import com.arcrobotics.ftclib.command.Command;
-import com.arcrobotics.ftclib.command.CommandScheduler;
-import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.systems.Drive;
@@ -15,7 +13,6 @@ import org.firstinspires.ftc.teamcode.systems.Intake;
 import org.firstinspires.ftc.teamcode.systems.Shooter;
 import org.firstinspires.ftc.teamcode.systems.Turret;
 import org.firstinspires.ftc.teamcode.util.Pose3D;
-import org.firstinspires.ftc.teamcode.util.ShotCalculator;
 import org.firstinspires.ftc.teamcode.util.SimpleShotCalculator;
 import org.stealthrobotics.library.Alliance;
 import org.stealthrobotics.library.StealthSubsystem;

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.autos;
 
 import static org.stealthrobotics.library.Commands.sequence;
+import static org.stealthrobotics.library.Commands.waitSeconds;
 
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
@@ -13,6 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.util.PoseSaver;
 import org.stealthrobotics.library.Alliance;
+import org.stealthrobotics.library.commands.WaitBeforeCommand;
 import org.stealthrobotics.library.opmodes.StealthOpMode;
 
 public abstract class PreloadAuto extends StealthOpMode {
@@ -27,10 +29,11 @@ public abstract class PreloadAuto extends StealthOpMode {
         robot = new Robot(hardwareMap);
         follower = robot.drive.getFollower();
 
-//        if (Alliance.isRed())
-//            poseFactory.rotateAround(0,0,180);
+        if (Alliance.isBlue())
+            poseFactory = poseFactory.rotateAround(70.75,70.75,180);
 
-        startPose = poseFactory.of(52.76, 7.86, Math.toRadians(90));
+        startPose = poseFactory.of(52.76, 7.86, -90);
+        follower.setPose(startPose);
 
         robot.shooter.closeGate().schedule();
         robot.intake.raiseHarvester().schedule();
@@ -39,10 +42,7 @@ public abstract class PreloadAuto extends StealthOpMode {
     @Override
     public Command getAutoCommand() {
         return sequence(
-            new WaitCommand(1000),
-            new InstantCommand(() -> follower.setPose(startPose)),
-            new WaitCommand(500),
-            robot.shoot()
+//            new WaitBeforeCommand(1000, robot.shoot())
         );
     }
 

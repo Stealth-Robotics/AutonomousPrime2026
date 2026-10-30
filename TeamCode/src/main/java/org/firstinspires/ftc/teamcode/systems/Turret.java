@@ -17,7 +17,7 @@ public class Turret extends StealthSubsystem {
     private final DcMotorEx turretMotor;
     private final TurretController turretController;
 
-    private static final double MAX_TURRET_POWER = 0.65;
+    private static final double MAX_TURRET_POWER = 0.6;
 
     private static final double MAX_TURRET_ANGLE_DEGREES = 450;
     private static final double MIN_TURRET_ANGLE_DEGREES = 90;
@@ -31,12 +31,12 @@ public class Turret extends StealthSubsystem {
     public Turret(HardwareMap h) {
         turretMotor = h.get(DcMotorEx.class, "turret");
         turretController = new TurretController(
-            0.03, 0, 0,
+            0.1, 0, 0,
             MIN_TURRET_ANGLE_DEGREES,
             MAX_TURRET_ANGLE_DEGREES
         );
 
-        turretMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        turretMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         turretMotor.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
@@ -51,10 +51,21 @@ public class Turret extends StealthSubsystem {
 
     @Override
     public void periodic() {
-        turretMotor.setPower(MathUtils.clamp(
-            turretController.calculate(getAngle(), targetAngle, targetVelocity),
-            -MAX_TURRET_POWER,
-            MAX_TURRET_POWER
-        ));
+        double currentAngle = getAngle();
+
+        double output = turretController.calculate(
+            currentAngle,
+            targetAngle,
+            targetVelocity
+        );
+
+        output = MathUtils.clamp(output, -MAX_TURRET_POWER, MAX_TURRET_POWER);
+
+        turretMotor.setPower(output);
+
+        telemetry.addData("Turret Power", turretMotor.getPower());
+        telemetry.addData("Turret Angle", currentAngle);
+        telemetry.addData("Turret Target", targetAngle);
+        telemetry.addData("Turret Error", turretController.getPositionError(currentAngle, targetAngle));
     }
 }

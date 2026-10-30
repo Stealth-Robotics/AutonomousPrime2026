@@ -58,6 +58,10 @@ public class TurretController {
         return targetAngle + 360.0 * turns;
     }
 
+    public double getPositionError(double currentAngle, double targetAngle) {
+        return getTargetAngle(currentAngle, targetAngle) - currentAngle;
+    }
+
     public void reset() {
         previousMeasurement = Double.NaN;
         lastTime = 0;

@@ -33,8 +33,8 @@ public class Shooter extends StealthSubsystem {
 
     private static final double RPM_TOLERANCE = 50;
 
-    private static final double HOOD_MIN_POSITION = 0.16;
-    private static final double HOOD_MAX_POSITION = 0.3;
+    private static final double HOOD_MIN_POSITION = 0.005;
+    private static final double HOOD_MAX_POSITION = 0.13;
 
     private static final double HOOD_MIN_ANGLE = 11.127;
     private static final double HOOD_MAX_ANGLE = 20;

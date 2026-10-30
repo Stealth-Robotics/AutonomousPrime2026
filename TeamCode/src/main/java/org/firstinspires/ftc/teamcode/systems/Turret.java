@@ -26,7 +26,7 @@ public class Turret extends StealthSubsystem {
     private static final double MAX_TURRET_ANGLE_DEGREES = 450;
     private static final double MIN_TURRET_ANGLE_DEGREES = 90;
 
-    private static final double TURRET_ANGLE_TOLERANCE = 10;
+    private static final double TURRET_ANGLE_TOLERANCE = 5;
 
     private static final double TURRET_GEAR_RATIO = 100.0 / 30.0;
     private static final double TICKS_PER_REVOLUTION = 384.5;

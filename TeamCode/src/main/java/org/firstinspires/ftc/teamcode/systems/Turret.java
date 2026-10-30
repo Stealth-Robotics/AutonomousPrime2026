@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.systems;
 import static org.stealthrobotics.library.opmodes.StealthOpMode.telemetry;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.arcrobotics.ftclib.command.Command;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.util.MathUtils;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -14,6 +16,8 @@ import org.firstinspires.ftc.teamcode.util.TurretController;
 import org.stealthrobotics.library.StealthSubsystem;
 
 public class Turret extends StealthSubsystem {
+    private TurretState state = TurretState.HOMED;
+
     private final DcMotorEx turretMotor;
     private final TurretController turretController;
 
@@ -28,6 +32,11 @@ public class Turret extends StealthSubsystem {
     private double targetAngle = 0;
     private double targetVelocity = 0;
 
+    public enum TurretState {
+        TRACKING,
+        HOMED
+    }
+
     public Turret(HardwareMap h) {
         turretMotor = h.get(DcMotorEx.class, "turret");
         turretController = new TurretController(
@@ -38,6 +47,14 @@ public class Turret extends StealthSubsystem {
 
         turretMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         turretMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+    }
+
+    public Command setTracking() {
+        return new InstantCommand(() -> state = TurretState.TRACKING);
+    }
+
+    public Command setHomed() {
+        return new InstantCommand(() -> state = TurretState.HOMED);
     }
 
     public double getAngle() {
@@ -51,21 +68,13 @@ public class Turret extends StealthSubsystem {
 
     @Override
     public void periodic() {
-        double currentAngle = getAngle();
+        double current = getAngle();
+        double target = state.equals(TurretState.TRACKING) ? targetAngle : 180;
 
-        double output = turretController.calculate(
-            currentAngle,
-            targetAngle,
-            targetVelocity
-        );
+        double output = turretController.calculate(current, target, targetVelocity);
+        turretMotor.setPower(MathUtils.clamp(output, -MAX_TURRET_POWER, MAX_TURRET_POWER));
 
-        output = MathUtils.clamp(output, -MAX_TURRET_POWER, MAX_TURRET_POWER);
-
-        turretMotor.setPower(output);
-
-        telemetry.addData("Turret Power", turretMotor.getPower());
-        telemetry.addData("Turret Angle", currentAngle);
-        telemetry.addData("Turret Target", targetAngle);
-        telemetry.addData("Turret Error", turretController.getPositionError(currentAngle, targetAngle));
+        telemetry.addData("Turret Angle", current);
+        telemetry.addData("Turret Angle Error", turretController.getPositionError(current, targetAngle));
     }
 }

@@ -29,7 +29,7 @@ public class Shooter extends StealthSubsystem {
         0.00021
     );
 
-    private ShooterState shooterState = ShooterState.IDLE;
+    private ShooterState state = ShooterState.IDLE;
 
     private static final double RPM_TOLERANCE = 50;
 
@@ -68,11 +68,11 @@ public class Shooter extends StealthSubsystem {
     }
 
     public Command runShooter() {
-        return new InstantCommand(() -> shooterState = ShooterState.SHOOTING);
+        return new InstantCommand(() -> state = ShooterState.SHOOTING);
     }
 
     public Command stopShooter() {
-        return new InstantCommand(() -> shooterState = ShooterState.IDLE);
+        return new InstantCommand(() -> state = ShooterState.IDLE);
     }
 
     public Command openGate() {
@@ -108,7 +108,7 @@ public class Shooter extends StealthSubsystem {
     public void periodic() {
         double currentRPM = getCurrentRPM();
 
-        if (shooterState.equals(ShooterState.SHOOTING)) {
+        if (state.equals(ShooterState.SHOOTING)) {
             double calculatedPower = shooterPIDF.calculate(currentRPM, targetRPM);
 
             leftShooterMotor.setPower(calculatedPower);

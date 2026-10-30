@@ -36,6 +36,8 @@ public class Robot extends StealthSubsystem {
 
     public Command shoot() {
         return sequence(
+            turret.setTracking().withTimeout(1500),
+            waitUntil(turret::atTarget),
             shooter.runShooter(),
             waitUntil(shooter::atTargetRPM).withTimeout(1500),
             shooter.openGate(),
@@ -43,7 +45,8 @@ public class Robot extends StealthSubsystem {
             waitSeconds(2000),
             shooter.closeGate(),
             intake.stop(),
-            shooter.stopShooter()
+            shooter.stopShooter(),
+            turret.setHomed()
         );
     }
 

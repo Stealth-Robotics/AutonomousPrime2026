@@ -26,6 +26,8 @@ public class Turret extends StealthSubsystem {
     private static final double MAX_TURRET_ANGLE_DEGREES = 450;
     private static final double MIN_TURRET_ANGLE_DEGREES = 90;
 
+    private static final double TURRET_ANGLE_TOLERANCE = 10;
+
     private static final double TURRET_GEAR_RATIO = 100.0 / 30.0;
     private static final double TICKS_PER_REVOLUTION = 384.5;
 
@@ -57,24 +59,27 @@ public class Turret extends StealthSubsystem {
         return new InstantCommand(() -> state = TurretState.HOMED);
     }
 
+    public boolean atTarget() {
+        return Math.abs(turretController.getPositionError(getAngle(), targetAngle)) < TURRET_ANGLE_TOLERANCE;
+    }
+
     public double getAngle() {
         return 180 + (turretMotor.getCurrentPosition() * 360 / TICKS_PER_REVOLUTION / TURRET_GEAR_RATIO);
     }
 
     public void update(double targetAngle, double targetVelocity) {
-        this.targetAngle = targetAngle;
+        this.targetAngle = state.equals(TurretState.TRACKING) ? targetAngle : 180;
         this.targetVelocity = targetVelocity;
     }
 
     @Override
     public void periodic() {
-        double current = getAngle();
-        double target = state.equals(TurretState.TRACKING) ? targetAngle : 180;
+        double currentAngle = getAngle();
 
-        double output = turretController.calculate(current, target, targetVelocity);
+        double output = turretController.calculate(currentAngle, targetAngle, targetVelocity);
         turretMotor.setPower(MathUtils.clamp(output, -MAX_TURRET_POWER, MAX_TURRET_POWER));
 
-        telemetry.addData("Turret Angle", current);
-        telemetry.addData("Turret Angle Error", turretController.getPositionError(current, targetAngle));
+        telemetry.addData("Turret Angle", currentAngle);
+        telemetry.addData("Turret Angle Error", turretController.getPositionError(currentAngle, targetAngle));
     }
 }

@@ -4,6 +4,7 @@ import static org.stealthrobotics.library.opmodes.StealthOpMode.telemetry;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.Command;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -14,11 +15,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.stealthrobotics.library.StealthSubsystem;
 
-import java.util.function.DoubleSupplier;
-
 public class Shooter extends StealthSubsystem {
-    private final Telemetry dashboard = FtcDashboard.getInstance().getTelemetry();
-
     private final DcMotorEx leftShooterMotor;
     private final DcMotorEx rightShooterMotor;
 
@@ -26,35 +23,28 @@ public class Shooter extends StealthSubsystem {
     private final Servo hoodServo;
 
     private final PIDFController shooterPIDF = new PIDFController(
-        0.0005, // 0.001
+        0.0005,
         0,
         0,
         0.00021
     );
 
     private ShooterState shooterState = ShooterState.IDLE;
-    private GateState gateState = GateState.CLOSED;
 
     private static final double RPM_TOLERANCE = 50;
 
-    private static final double HOOD_MIN_POSITION = 0.02;
-    private static final double HOOD_MAX_POSITION = 0.16;
+    private static final double HOOD_MIN_POSITION = 0.16;
+    private static final double HOOD_MAX_POSITION = 0.3;
 
     private static final double HOOD_MIN_ANGLE = 11.127;
     private static final double HOOD_MAX_ANGLE = 20;
 
     private static final double GATE_OPEN_POSITION = 0.18;
-    private static final double GATE_CLOSED_POSITION = 0.4;
+    private static final double GATE_CLOSED_POSITION = 0.3;
 
     private static final double TICKS_PER_REVOLUTION = 28;
 
     private double targetRPM = 0;
-    private double hoodAngle = HOOD_MIN_ANGLE;
-
-    public enum GateState {
-        OPEN,
-        CLOSED
-    }
 
     public enum ShooterState {
         SHOOTING,
@@ -78,34 +68,19 @@ public class Shooter extends StealthSubsystem {
     }
 
     public Command runShooter() {
-        return instant(() -> {
-            shooterState = ShooterState.SHOOTING;
-        });
+        return new InstantCommand(() -> shooterState = ShooterState.SHOOTING);
     }
 
     public Command stopShooter() {
-        return instant(() -> {
-            shooterState = ShooterState.IDLE;
-
-            shooterPIDF.reset();
-
-            leftShooterMotor.setPower(0.0);
-            rightShooterMotor.setPower(0.0);
-        });
+        return new InstantCommand(() -> shooterState = ShooterState.IDLE);
     }
 
     public Command openGate() {
-        return instant(() -> {
-            gateServo.setPosition(GATE_OPEN_POSITION);
-            gateState = GateState.OPEN;
-        });
+        return new InstantCommand(() -> gateServo.setPosition(GATE_OPEN_POSITION));
     }
 
     public Command closeGate() {
-        return instant(() -> {
-            gateServo.setPosition(GATE_CLOSED_POSITION);
-            gateState = GateState.CLOSED;
-        });
+        return new InstantCommand(() -> gateServo.setPosition(GATE_CLOSED_POSITION));
     }
 
     public void update(double rpm, double hoodAngle) {
@@ -118,7 +93,6 @@ public class Shooter extends StealthSubsystem {
                 (HOOD_MAX_ANGLE - HOOD_MIN_ANGLE) *
                 (HOOD_MAX_POSITION - HOOD_MIN_POSITION);
 
-        this.hoodAngle = angleDegrees;
         hoodServo.setPosition(servoPosition);
     }
 
@@ -139,15 +113,15 @@ public class Shooter extends StealthSubsystem {
 
             leftShooterMotor.setPower(calculatedPower);
             rightShooterMotor.setPower(calculatedPower);
+        }
+        else {
+            shooterPIDF.reset();
 
-            telemetry.addData("Current RPM", currentRPM);
+            leftShooterMotor.setPower(0.0);
+            rightShooterMotor.setPower(0.0);
         }
 
-        dashboard.addData("current rpm", currentRPM);
-        dashboard.addData("target rpm", targetRPM);
-        dashboard.update();
-
+        telemetry.addData("Current RPM", currentRPM);
         telemetry.addData("Target RPM", targetRPM);
-        telemetry.addData("Hood Angle", hoodAngle);
     }
 }

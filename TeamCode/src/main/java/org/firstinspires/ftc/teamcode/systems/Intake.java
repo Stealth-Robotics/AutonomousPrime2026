@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.systems;
 
 import com.arcrobotics.ftclib.command.Command;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -35,15 +36,15 @@ public class Intake extends StealthSubsystem {
     }
 
     public Command intake() {
-        return instant(() -> intakeMotor.setPower(INTAKE_SPEED));
+        return new InstantCommand(() -> intakeMotor.setPower(INTAKE_SPEED));
     }
 
     public Command outtake() {
-        return instant(() -> intakeMotor.setPower(OUTTAKE_SPEED));
+        return new InstantCommand(() -> intakeMotor.setPower(OUTTAKE_SPEED));
     }
 
     public Command stop() {
-        return instant(() -> intakeMotor.setPower(0));
+        return new InstantCommand(() -> intakeMotor.setPower(0));
     }
 
     public HarvesterState getHarvesterState() {
@@ -51,14 +52,14 @@ public class Intake extends StealthSubsystem {
     }
 
     public Command raiseHarvester() {
-        return instant(() -> {
+        return new InstantCommand(() -> {
             harvesterServo.setPosition(HARVESTER_UP_POSITION);
             harvesterState = HarvesterState.UP;
         });
     }
 
     public Command lowerHarvester() {
-        return instant(() -> {
+        return new InstantCommand(() -> {
             harvesterServo.setPosition(HARVESTER_DOWN_POSITION);
             harvesterState = HarvesterState.DOWN;
         });
@@ -70,9 +71,5 @@ public class Intake extends StealthSubsystem {
             raiseHarvester(),
             lowerHarvester()
         );
-    }
-
-    @Override
-    public void periodic() {
     }
 }

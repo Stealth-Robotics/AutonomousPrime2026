@@ -56,7 +56,5 @@ public class Turret extends StealthSubsystem {
             -MAX_TURRET_POWER,
             MAX_TURRET_POWER
         ));
-
-        telemetry.addData("Turret Angle", getAngle());
     }
 }

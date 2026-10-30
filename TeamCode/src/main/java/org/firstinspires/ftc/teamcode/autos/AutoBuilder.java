@@ -16,37 +16,16 @@ import org.firstinspires.ftc.teamcode.util.PoseSaver;
 import org.stealthrobotics.library.Alliance;
 
 public class AutoBuilder {
-    private final Robot robot;
-    private final Follower follower;
-    private final PoseFactory poseFactory = PoseFactory.degrees();
-
-    private Pose startPose;
-    private Pose shootPose;
-    private Pose flowerPose;
-
-
-    // public for testing
-    public Path startToShoot;
+    public final Robot robot;
+    public final PoseFactory poseFactory = PoseFactory.degrees();
+    public final Follower follower;
 
     public AutoBuilder(HardwareMap hardwareMap) {
         robot = new Robot(hardwareMap);
-        follower = robot.drive.getFollower();
+        follower = Constants.create(hardwareMap);
 
         if (Alliance.isRed())
             poseFactory.rotateAround(0,0,180);
-
-        buildPoses();
-        buildPaths();
-    }
-
-    public void buildPoses() {
-        startPose = poseFactory.of(56,8,90);
-        shootPose = poseFactory.of(56,27,90);
-        flowerPose = poseFactory.of(10.8,47.2,180);
-    }
-
-    public void buildPaths() {
-        startToShoot = createLine(startPose, shootPose);
     }
 
     public void initialize() {
@@ -58,7 +37,7 @@ public class AutoBuilder {
         PoseSaver.savedPose = robot.drive.getPose();
     }
 
-    public static Path createLine(Pose p1, Pose p2) {
+    public Path createLine(Pose p1, Pose p2) {
         return line(p1, p2).linear(p1, p2);
     }
 

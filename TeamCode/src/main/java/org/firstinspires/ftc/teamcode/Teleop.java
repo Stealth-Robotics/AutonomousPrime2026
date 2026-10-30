@@ -64,16 +64,8 @@ public abstract class Teleop extends StealthOpMode {
     }
 
     @TeleOp(name = "Teleop (Blue)", group = "Blue")
-    public static class BlueTeleop extends Teleop {
-        public BlueTeleop() {
-            Alliance.set(Alliance.BLUE);
-        }
-    }
+    public static class BlueTeleop extends Teleop { }
 
     @TeleOp(name = "Teleop (Red)", group = "Red")
-    public static class RedTeleop extends Teleop {
-        public RedTeleop() {
-            Alliance.set(Alliance.RED);
-        }
-    }
+    public static class RedTeleop extends Teleop { }
 }

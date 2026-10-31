@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.systems;
 
 import static org.stealthrobotics.library.opmodes.StealthOpMode.telemetry;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.util.MathUtils;
@@ -11,7 +10,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.TurretController;
 import org.stealthrobotics.library.StealthSubsystem;
 
@@ -23,8 +21,8 @@ public class Turret extends StealthSubsystem {
 
     private static final double MAX_TURRET_POWER = 0.6;
 
-    private static final double MAX_TURRET_ANGLE_DEGREES = 450;
-    private static final double MIN_TURRET_ANGLE_DEGREES = 90;
+    private static final double MAX_TURRET_ANGLE_DEGREES = 270;
+    private static final double MIN_TURRET_ANGLE_DEGREES = -90;
 
     private static final double TURRET_ANGLE_TOLERANCE = 5;
 
@@ -64,11 +62,11 @@ public class Turret extends StealthSubsystem {
     }
 
     public double getAngle() {
-        return 180 + (turretMotor.getCurrentPosition() * 360 / TICKS_PER_REVOLUTION / TURRET_GEAR_RATIO);
+        return turretMotor.getCurrentPosition() * 360 / TICKS_PER_REVOLUTION / TURRET_GEAR_RATIO;
     }
 
     public void update(double targetAngle, double targetVelocity) {
-        this.targetAngle = state.equals(TurretState.TRACKING) ? targetAngle : 180;
+        this.targetAngle = state.equals(TurretState.TRACKING) ? targetAngle + 180 : 0;
         this.targetVelocity = targetVelocity;
     }
 

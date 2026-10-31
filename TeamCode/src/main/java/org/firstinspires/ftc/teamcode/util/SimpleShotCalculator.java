@@ -2,11 +2,12 @@ package org.firstinspires.ftc.teamcode.util;
 
 import static org.stealthrobotics.library.opmodes.StealthOpMode.telemetry;
 
+import androidx.core.math.MathUtils;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.stealthrobotics.library.Alliance;
 
 public class SimpleShotCalculator {
-    private static final double LATENCY = 0.01;
-
     private static final Pose3D ROBOT_TO_TURRET_OFFSET = new Pose3D(0, -2.1, 7.6);
 
     // Hive cell target poses
@@ -17,31 +18,23 @@ public class SimpleShotCalculator {
 
     // Distance (inches) -> RPM
     private static final LerpTable distanceToRPM = new LerpTable(
-        40, 3250,
-        50, 3350,
-        65, 3400
+        40, 3200,
+        50, 3250,
+        60, 3300
     );
 
     // Distance (inches) -> Hood angle (degrees)
     private static final LerpTable distanceToHoodAngle = new LerpTable(
         0, 11,
-        30, 11,
-        50, 13,
-        100, 13
+        100, 11
     );
 
     private double turretAngle = 0, hoodAngle = 0, rpm = 0;
 
-    public void update(Pose3D robotPose, Pose3D robotVelocity) {
+    public void update(Pose3D robotPose) {
         Pose3D targetPose = Alliance.isRed() ?
             (robotPose.y() > 72 ? RED_LEFT_CELL : RED_RIGHT_CELL) :
-            (robotPose.y() < 72 ? BLUE_LEFT_CELL : BLUE_RIGHT_CELL);
-
-        Pose3D predictedRobotPose = new Pose3D(
-            robotPose.x() + robotVelocity.x() * LATENCY,
-            robotPose.y() + robotVelocity.y() * LATENCY,
-            robotPose.heading()
-        );
+            (robotPose.y() > 72 ? BLUE_RIGHT_CELL : BLUE_LEFT_CELL);
 
         Pose3D turretPose = robotPose.plus(ROBOT_TO_TURRET_OFFSET.rotateBy(robotPose.heading()));
         Pose3D displacement = targetPose.minus(turretPose);
@@ -55,6 +48,7 @@ public class SimpleShotCalculator {
         telemetry.addData("Goal Distance (in)", inchesAwayFromGoal);
         telemetry.addData("Hood Angle", hoodAngle);
         telemetry.addData("RPM", rpm);
+        telemetry.addData("Calculated Turret Angle", turretAngle);
     }
 
     public double getTurretAngle() {

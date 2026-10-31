@@ -52,7 +52,7 @@ public class Robot extends StealthSubsystem {
 
     @Override
     public void periodic() {
-        shotCalculator.update(Pose3D.of(drive.getPose()), drive.getVelocity());
+        shotCalculator.update(Pose3D.of(drive.getPose()));
 
         turret.update(shotCalculator.getTurretAngle(), 0);
         shooter.update(shotCalculator.getRPM(), shotCalculator.getHoodAngle());

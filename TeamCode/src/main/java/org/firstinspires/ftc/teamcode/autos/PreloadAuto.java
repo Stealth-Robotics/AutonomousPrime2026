@@ -3,24 +3,35 @@ package org.firstinspires.ftc.teamcode.autos;
 import static org.stealthrobotics.library.Commands.sequence;
 
 import com.arcrobotics.ftclib.command.Command;
+import com.pedropathing.api.Paths;
 import com.pedropathing.math.Pose;
+import com.pedropathing.paths.Path;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.stealthrobotics.library.commands.WaitBeforeCommand;
-
 public abstract class PreloadAuto extends Auto {
+    private Pose start;
+    private Pose parkPath;
+    private Pose parkPathControl1;
+
+    private Path park;
+
     @Override
     public void buildPaths() {
         // All poses are defined on the blue alliance and flipped for red autos
-        Pose startPose = poseFactory.of(52.76, 7.86, -90);
+        start = poseFactory.of(52.6409, 8.1679, -90);
+        parkPath = poseFactory.of(8.6374, 96.127, -90);
+        parkPathControl1 = poseFactory.of(38.7789, 37.8307, 0);
 
-        follower.setPose(startPose);
+        park = Paths.curve(start, parkPathControl1, parkPath).constant(parkPath);
+
+        follower.setPose(start);
     }
 
     @Override
     public Command getAutoCommand() {
         return sequence(
-            robot.shoot()
+            robot.shoot(),
+            followPath(park)
         );
     }
 

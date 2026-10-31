@@ -38,6 +38,11 @@ public abstract class Auto extends StealthOpMode {
     }
 
     @Override
+    public void onStart() {
+
+    }
+
+    @Override
     public void end() {
         PoseSaver.savedPose = robot.drive.getPose();
     }

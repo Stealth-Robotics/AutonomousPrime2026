@@ -23,9 +23,6 @@ public abstract class Teleop extends StealthOpMode {
         driverGamepad = new GamepadEx(gamepad1);
         operatorGamepad = new GamepadEx(gamepad2);
 
-        // Load the saved pose
-        robot.drive.setPose(PoseSaver.savedPose);
-
         // Schedule the teleop driving command
         robot.drive.teleopDrive(driverGamepad).schedule();
 
@@ -34,6 +31,12 @@ public abstract class Teleop extends StealthOpMode {
         robot.shooter.closeGate().schedule();
 
         configureBindings();
+    }
+
+    @Override
+    public void onStart() {
+        // Load the saved pose
+        robot.drive.setPose(PoseSaver.savedPose);
     }
 
     @Override

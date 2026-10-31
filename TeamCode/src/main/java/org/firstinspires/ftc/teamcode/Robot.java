@@ -17,6 +17,8 @@ import org.firstinspires.ftc.teamcode.util.SimpleShotCalculator;
 import org.stealthrobotics.library.Alliance;
 import org.stealthrobotics.library.StealthSubsystem;
 
+import java.util.function.BooleanSupplier;
+
 public class Robot extends StealthSubsystem {
     public final Drive drive;
     public final Intake intake;
@@ -32,6 +34,38 @@ public class Robot extends StealthSubsystem {
         turret = new Turret(h);
 
         shotCalculator = new SimpleShotCalculator();
+    }
+
+    public Command autonomousShoot() {
+        return sequence(
+            turret.setTracking().withTimeout(2000),
+            waitUntil(turret::atTarget),
+            shooter.autonomousShootingCommand(),
+            waitUntil(shooter::atTargetRPM).withTimeout(1500),
+            shooter.openGate(),
+            intake.intake(),
+            waitSeconds(2000),
+            shooter.closeGate(),
+            intake.stop(),
+            shooter.stopShooter(),
+            turret.setHomed()
+        );
+    }
+
+    public Command farAutonomousShoot() {
+        return sequence(
+            turret.setTracking().withTimeout(2000),
+            waitUntil(turret::atTarget),
+            shooter.farAutonomousShootingCommand(),
+            waitUntil(shooter::atTargetRPM).withTimeout(1500),
+            shooter.openGate(),
+            intake.intake(),
+            waitSeconds(2000),
+            shooter.closeGate(),
+            intake.stop(),
+            shooter.stopShooter(),
+            turret.setHomed()
+        );
     }
 
     public Command shoot() {

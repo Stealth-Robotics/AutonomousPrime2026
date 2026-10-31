@@ -4,6 +4,7 @@ import static com.pedropathing.api.Paths.line;
 
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.pedropathing.api.PoseFactory;
 import com.pedropathing.follower.Follower;
@@ -53,8 +54,17 @@ public abstract class Auto extends StealthOpMode {
         return line(p1, p2).linear(p1, p2);
     }
 
+    public Command followPath(Path p, long timeout) {
+        return new SequentialCommandGroup(
+            new InstantCommand(() -> follower.follow(p)),
+            new WaitUntilCommand(() -> !follower.following() || follower.atParametricEnd()).withTimeout(timeout)
+        );
+    }
+
     public Command followPath(Path p) {
-        return new InstantCommand(() -> follower.follow(p))
-            .andThen(new WaitUntilCommand(() -> !follower.following()));
+        return new SequentialCommandGroup(
+            new InstantCommand(() -> follower.follow(p)),
+            new WaitUntilCommand(() -> !follower.following() || follower.atParametricEnd())
+        );
     }
 }

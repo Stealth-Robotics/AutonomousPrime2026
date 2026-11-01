@@ -70,10 +70,10 @@ public class Robot extends StealthSubsystem {
 
     public Command shoot() {
         return sequence(
-            turret.setTracking().withTimeout(2000),
-            waitUntil(turret::atTarget),
             shooter.runShooter(),
-            waitUntil(shooter::atTargetRPM).withTimeout(1500),
+            turret.setTracking(),
+            waitUntil(turret::atTarget).withTimeout(1500),
+            waitUntil(shooter::atTargetRPM).withTimeout(500),
             shooter.openGate(),
             intake.intake(),
             waitSeconds(2000),

@@ -22,8 +22,7 @@ import org.stealthrobotics.library.StealthSubsystem;
 
 public class Drive extends StealthSubsystem {
     private final Follower follower;
-    private Telemetry dashboard = FtcDashboard.getInstance().getTelemetry();
-    private LowPassFilter vx, vy, vOmega;
+    private final LowPassFilter vx, vy, vOmega;
 
     public enum PoseResetLocation {
         FAR_LEFT_CORNER(
@@ -57,6 +56,7 @@ public class Drive extends StealthSubsystem {
 
     public Drive(HardwareMap h) {
         follower = Constants.create(h);
+
         vx = new LowPassFilter(0.2);
         vy = new LowPassFilter(0.2);
         vOmega = new LowPassFilter(0.2);
@@ -100,12 +100,12 @@ public class Drive extends StealthSubsystem {
     public Pose3D getVelocity() {
         return new Pose3D(vx.get(), vy.get(), 0.0, vOmega.get());
     }
+
     public void updateVelocity() {
         Velocity v = follower.velocity();
         vx.update(v.vx);
         vy.update(v.vy);
-//        vOmega.update(v.omega);
-        vOmega.update(0.0);
+        vOmega.update(v.omega);
     }
 
     @Override
@@ -119,19 +119,13 @@ public class Drive extends StealthSubsystem {
             (Math.round(follower.pose().y() * 100) / 100.0) + ", " +
             (Math.round(Math.toDegrees(follower.pose().heading()) * 100) / 100.0) + ")"
         );
+
         telemetry.addData(
-                "Velo:", "(" +
-                        (((getVelocity().x()) * 100) / 100.0) + ", " +
-                        (((getVelocity().y()) * 100) / 100.0) + ", " +
-                        (((getVelocity().z()) * 100) / 100.0) + ", " +
-                        (((getVelocity().heading()) * 100) / 100.0) + "°)"
+                "Velocity:", "(" +
+                Math.round(vx.get() * 1000) / 1000.0 + "in/s, " +
+                Math.round(vy.get() * 1000) / 1000.0 + "in/s, " +
+                "0 in/s, " +
+                Math.toDegrees(Math.round(vOmega.get() * 1000) / 1000.0) + "deg/s)"
         );
-        dashboard.addData("vx" , getVelocity().x());
-        dashboard.addData("Filtered vx", vx.get());
-        dashboard.addData("vy" , getVelocity().y());
-        dashboard.addData("Filtered vy", vy.get());
-        dashboard.addData("omega " , getVelocity().heading());
-        dashboard.addData("Filtered omega", vOmega.get());
-        dashboard.update();
     }
 }

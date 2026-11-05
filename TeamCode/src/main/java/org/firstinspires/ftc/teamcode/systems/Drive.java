@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.systems;
 
 import static org.stealthrobotics.library.opmodes.StealthOpMode.telemetry;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -12,13 +13,17 @@ import com.pedropathing.math.Pose;
 import com.pedropathing.math.Velocity;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.util.LowPassFilter;
 import org.firstinspires.ftc.teamcode.util.Pose3D;
 import org.stealthrobotics.library.Alliance;
 import org.stealthrobotics.library.StealthSubsystem;
 
 public class Drive extends StealthSubsystem {
     private final Follower follower;
+    private Telemetry dashboard = FtcDashboard.getInstance().getTelemetry();
+    private LowPassFilter vx, vy, vOmega;
 
     public enum PoseResetLocation {
         FAR_LEFT_CORNER(
@@ -52,6 +57,9 @@ public class Drive extends StealthSubsystem {
 
     public Drive(HardwareMap h) {
         follower = Constants.create(h);
+        vx = new LowPassFilter(0.2);
+        vy = new LowPassFilter(0.2);
+        vOmega = new LowPassFilter(0.2);
     }
 
     public Command teleopDrive(GamepadEx gamepad) {
@@ -90,13 +98,20 @@ public class Drive extends StealthSubsystem {
 
     // Returns the field relative velocity of the robot
     public Pose3D getVelocity() {
+        return new Pose3D(vx.get(), vy.get(), 0.0, vOmega.get());
+    }
+    public void updateVelocity() {
         Velocity v = follower.velocity();
-        return new Pose3D(v.vx, v.vy, 0, v.omega);
+        vx.update(v.vx);
+        vy.update(v.vy);
+//        vOmega.update(v.omega);
+        vOmega.update(0.0);
     }
 
     @Override
     public void periodic() {
         follower.update();
+        updateVelocity();
 
         telemetry.addData(
             "Pose", "(" +
@@ -104,5 +119,19 @@ public class Drive extends StealthSubsystem {
             (Math.round(follower.pose().y() * 100) / 100.0) + ", " +
             (Math.round(Math.toDegrees(follower.pose().heading()) * 100) / 100.0) + ")"
         );
+        telemetry.addData(
+                "Velo:", "(" +
+                        (((getVelocity().x()) * 100) / 100.0) + ", " +
+                        (((getVelocity().y()) * 100) / 100.0) + ", " +
+                        (((getVelocity().z()) * 100) / 100.0) + ", " +
+                        (((getVelocity().heading()) * 100) / 100.0) + "°)"
+        );
+        dashboard.addData("vx" , getVelocity().x());
+        dashboard.addData("Filtered vx", vx.get());
+        dashboard.addData("vy" , getVelocity().y());
+        dashboard.addData("Filtered vy", vy.get());
+        dashboard.addData("omega " , getVelocity().heading());
+        dashboard.addData("Filtered omega", vOmega.get());
+        dashboard.update();
     }
 }

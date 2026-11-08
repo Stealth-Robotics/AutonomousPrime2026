@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.systems.Intake;
 import org.firstinspires.ftc.teamcode.systems.Shooter;
 import org.firstinspires.ftc.teamcode.systems.Turret;
 import org.firstinspires.ftc.teamcode.util.Pose3D;
+import org.firstinspires.ftc.teamcode.util.ShotCalculator;
 import org.firstinspires.ftc.teamcode.util.SimpleShotCalculator;
 import org.stealthrobotics.library.Alliance;
 import org.stealthrobotics.library.StealthSubsystem;
@@ -25,7 +26,7 @@ public class Robot extends StealthSubsystem {
     public final Shooter shooter;
     public final Turret turret;
 
-    private final SimpleShotCalculator shotCalculator;
+    private final ShotCalculator shotCalculator;
 
     public Robot(HardwareMap h) {
         drive = new Drive(h);
@@ -33,7 +34,7 @@ public class Robot extends StealthSubsystem {
         shooter = new Shooter(h);
         turret = new Turret(h);
 
-        shotCalculator = new SimpleShotCalculator();
+        shotCalculator = new ShotCalculator();
     }
 
     public Command autonomousShoot() {
@@ -71,25 +72,24 @@ public class Robot extends StealthSubsystem {
     public Command shoot() {
         return sequence(
             shooter.runShooter(),
-            turret.setTracking(),
-            waitUntil(turret::atTarget).withTimeout(1500),
             waitUntil(shooter::atTargetRPM).withTimeout(500),
             shooter.openGate(),
             intake.intake(),
             waitSeconds(2000),
             shooter.closeGate(),
             intake.stop(),
-            shooter.stopShooter(),
-            turret.setHomed()
+            shooter.stopShooter()
         );
     }
 
     @Override
     public void periodic() {
-        shotCalculator.update(Pose3D.of(drive.getPose()));
+        shotCalculator.update(Pose3D.of(drive.getPose()), drive.getVelocity());
 
         turret.update(shotCalculator.getTurretAngle(), 0);
-        shooter.update(shotCalculator.getRPM(), shotCalculator.getHoodAngle());
+        
+        //TODO: Temp hardcoded hood angle for testing
+        shooter.update(shotCalculator.getRPM(), 11);
 
         telemetry.addData("Alliance", Alliance.get());
     }

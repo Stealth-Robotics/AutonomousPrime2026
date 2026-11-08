@@ -57,9 +57,9 @@ public class Drive extends StealthSubsystem {
     public Drive(HardwareMap h) {
         follower = Constants.create(h);
 
-        vx = new LowPassFilter(0.2);
+        vx = new LowPassFilter(0.1);
         vy = new LowPassFilter(0.2);
-        vOmega = new LowPassFilter(0.2);
+        vOmega = new LowPassFilter(0.1);
     }
 
     public Command teleopDrive(GamepadEx gamepad) {

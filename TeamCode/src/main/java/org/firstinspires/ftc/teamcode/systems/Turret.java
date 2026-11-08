@@ -19,7 +19,7 @@ public class Turret extends StealthSubsystem {
     private final DcMotorEx turretMotor;
     private final TurretController turretController;
 
-    private static final double MAX_TURRET_POWER = 0.6;
+    private static final double MAX_TURRET_POWER = 0.8;
 
     private static final double MAX_TURRET_ANGLE_DEGREES = 270;
     private static final double MIN_TURRET_ANGLE_DEGREES = -90;
@@ -40,13 +40,15 @@ public class Turret extends StealthSubsystem {
     public Turret(HardwareMap h) {
         turretMotor = h.get(DcMotorEx.class, "turret");
         turretController = new TurretController(
-            0.1, 0, 0,
+            0.01, 0, 0,
             MIN_TURRET_ANGLE_DEGREES,
             MAX_TURRET_ANGLE_DEGREES
         );
 
         turretMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         turretMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        setTracking().schedule();
     }
 
     public Command setTracking() {

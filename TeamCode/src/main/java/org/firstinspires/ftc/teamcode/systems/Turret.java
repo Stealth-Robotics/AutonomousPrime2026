@@ -68,7 +68,7 @@ public class Turret extends StealthSubsystem {
     }
 
     public void update(double targetAngle, double targetVelocity) {
-        this.targetAngle = state.equals(TurretState.TRACKING) ? targetAngle + 180 : 0;
+        this.targetAngle = 0;
         this.targetVelocity = targetVelocity;
     }
 

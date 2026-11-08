@@ -37,38 +37,6 @@ public class Robot extends StealthSubsystem {
         shotCalculator = new ShotCalculator();
     }
 
-    public Command autonomousShoot() {
-        return sequence(
-            turret.setTracking().withTimeout(2000),
-            waitUntil(turret::atTarget),
-            shooter.autonomousShootingCommand(),
-            waitUntil(shooter::atTargetRPM).withTimeout(1500),
-            shooter.openGate(),
-            intake.intake(),
-            waitSeconds(2000),
-            shooter.closeGate(),
-            intake.stop(),
-            shooter.stopShooter(),
-            turret.setHomed()
-        );
-    }
-
-    public Command farAutonomousShoot() {
-        return sequence(
-            turret.setTracking().withTimeout(2000),
-            waitUntil(turret::atTarget),
-            shooter.farAutonomousShootingCommand(),
-            waitUntil(shooter::atTargetRPM).withTimeout(1500),
-            shooter.openGate(),
-            intake.intake(),
-            waitSeconds(2000),
-            shooter.closeGate(),
-            intake.stop(),
-            shooter.stopShooter(),
-            turret.setHomed()
-        );
-    }
-
     public Command shoot() {
         return sequence(
             shooter.runShooter(),
@@ -87,9 +55,8 @@ public class Robot extends StealthSubsystem {
         shotCalculator.update(Pose3D.of(drive.getPose()), drive.getVelocity());
 
         turret.update(shotCalculator.getTurretAngle(), 0);
-        
-        //TODO: Temp hardcoded hood angle for testing
-        shooter.update(shotCalculator.getRPM(), 11);
+
+        shooter.update(shotCalculator.getRPM());
 
         telemetry.addData("Alliance", Alliance.get());
     }

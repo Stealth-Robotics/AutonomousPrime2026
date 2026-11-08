@@ -20,7 +20,6 @@ public class Shooter extends StealthSubsystem {
     private final DcMotorEx rightShooterMotor;
 
     private final Servo gateServo;
-    private final Servo hoodServo;
 
     private final PIDFController shooterPIDF = new PIDFController(
         0.0005,
@@ -31,16 +30,7 @@ public class Shooter extends StealthSubsystem {
 
     private ShooterState state = ShooterState.IDLE;
 
-    private static final double FAR_AUTO_RPM = 3420;
-    private static final double AUTO_RPM = 3200;
-
     private static final double RPM_TOLERANCE = 50;
-
-    private static final double HOOD_MIN_POSITION = 0.005;
-    private static final double HOOD_MAX_POSITION = 0.13;
-
-    private static final double HOOD_MIN_ANGLE = 11.127;
-    private static final double HOOD_MAX_ANGLE = 20;
 
     private static final double GATE_OPEN_POSITION = 0.18;
     private static final double GATE_CLOSED_POSITION = 0.3;
@@ -49,10 +39,10 @@ public class Shooter extends StealthSubsystem {
 
     private double targetRPM = 0;
 
+    public boolean onlyUse1Motor = false;
+
     public enum ShooterState {
         SHOOTING,
-        AUTO_SHOOTING,
-        FAR_AUTO_SHOOTING,
         IDLE
     }
 
@@ -61,23 +51,12 @@ public class Shooter extends StealthSubsystem {
         rightShooterMotor = h.get(DcMotorEx.class, "right_shooter");
 
         gateServo = h.get(Servo.class, "gate");
-        hoodServo = h.get(Servo.class, "hood");
 
         leftShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         leftShooterMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
         rightShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightShooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        hoodServo.setDirection(Servo.Direction.REVERSE);
-    }
-
-    public Command farAutonomousShootingCommand() {
-        return new InstantCommand(() -> state = ShooterState.FAR_AUTO_SHOOTING);
-    }
-
-    public Command autonomousShootingCommand() {
-        return new InstantCommand(() -> state = ShooterState.AUTO_SHOOTING);
     }
 
     public Command runShooter() {
@@ -96,17 +75,8 @@ public class Shooter extends StealthSubsystem {
         return new InstantCommand(() -> gateServo.setPosition(GATE_CLOSED_POSITION));
     }
 
-    public void update(double rpm, double hoodAngle) {
+    public void update(double rpm) {
         targetRPM = rpm;
-
-        double angleDegrees = Math.max(HOOD_MIN_ANGLE, Math.min(HOOD_MAX_ANGLE, hoodAngle));
-
-        double servoPosition = HOOD_MAX_POSITION -
-            (angleDegrees - HOOD_MIN_ANGLE) /
-                (HOOD_MAX_ANGLE - HOOD_MIN_ANGLE) *
-                (HOOD_MAX_POSITION - HOOD_MIN_POSITION);
-
-        hoodServo.setPosition(servoPosition);
     }
 
     public boolean atTargetRPM() {
@@ -124,19 +94,8 @@ public class Shooter extends StealthSubsystem {
         if (state.equals(ShooterState.SHOOTING)) {
             double calculatedPower = shooterPIDF.calculate(currentRPM, targetRPM);
 
-            leftShooterMotor.setPower(calculatedPower);
-            rightShooterMotor.setPower(calculatedPower);
-        }
-        else if (state.equals(ShooterState.AUTO_SHOOTING)) {
-            double calculatedPower = shooterPIDF.calculate(currentRPM, AUTO_RPM);
-
-            leftShooterMotor.setPower(calculatedPower);
-            rightShooterMotor.setPower(calculatedPower);
-        }
-        else if (state.equals(ShooterState.FAR_AUTO_SHOOTING)) {
-            double calculatedPower = shooterPIDF.calculate(currentRPM, FAR_AUTO_RPM);
-
-            leftShooterMotor.setPower(calculatedPower);
+            if (!onlyUse1Motor)
+                leftShooterMotor.setPower(calculatedPower);
             rightShooterMotor.setPower(calculatedPower);
         }
         else {
@@ -148,5 +107,7 @@ public class Shooter extends StealthSubsystem {
 
         telemetry.addData("Current RPM", currentRPM);
         telemetry.addData("Target RPM", targetRPM);
+
+        telemetry.addData("Motor Count", onlyUse1Motor ? 1 : 2);
     }
 }

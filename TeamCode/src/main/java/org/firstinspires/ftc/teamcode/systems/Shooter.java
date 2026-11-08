@@ -22,7 +22,7 @@ public class Shooter extends StealthSubsystem {
     private final Servo gateServo;
 
     private final PIDFController shooterPIDF = new PIDFController(
-        0.0005,
+        0.001,
         0,
         0,
         0.00021

@@ -26,7 +26,7 @@ public class Robot extends StealthSubsystem {
     public final Shooter shooter;
     public final Turret turret;
 
-    private final ShotCalculator shotCalculator;
+    private final SimpleShotCalculator shotCalculator;
 
     public Robot(HardwareMap h) {
         drive = new Drive(h);
@@ -34,13 +34,13 @@ public class Robot extends StealthSubsystem {
         shooter = new Shooter(h);
         turret = new Turret(h);
 
-        shotCalculator = new ShotCalculator();
+        shotCalculator = new SimpleShotCalculator();
     }
 
     public Command shoot() {
         return sequence(
             shooter.runShooter(),
-            waitUntil(shooter::atTargetRPM).withTimeout(500),
+            waitUntil(shooter::atTargetRPM),
             shooter.openGate(),
             intake.intake(),
             waitSeconds(2000),
@@ -52,7 +52,7 @@ public class Robot extends StealthSubsystem {
 
     @Override
     public void periodic() {
-        shotCalculator.update(Pose3D.of(drive.getPose()), drive.getVelocity());
+        shotCalculator.update(Pose3D.of(drive.getPose()));
 
         turret.update(shotCalculator.getTurretAngle(), 0);
 

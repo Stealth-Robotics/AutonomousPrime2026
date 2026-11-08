@@ -49,6 +49,7 @@ public abstract class Teleop extends StealthOpMode {
 
         //TODO: Temp controls change for testing
         driverGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(robot.shoot());
+        driverGamepad.getGamepadButton(GamepadKeys.Button.X).whenPressed(() -> robot.shooter.onlyUse1Motor = !robot.shooter.onlyUse1Motor);
 
         new Trigger(() -> driverGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.2)
             .whenActive(robot.intake.intake())

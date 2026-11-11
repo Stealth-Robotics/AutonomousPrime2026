@@ -11,19 +11,17 @@ import org.stealthrobotics.library.opmodes.StealthOpMode;
 
 public abstract class Teleop extends StealthOpMode {
     private Robot robot;
-
-    private GamepadEx driverGamepad;
-    private GamepadEx operatorGamepad;
+    private GamepadEx driverGamepad, operatorGamepad;
 
     @Override
     public void initialize() {
         robot = new Robot(hardwareMap);
-
         driverGamepad = new GamepadEx(gamepad1);
         operatorGamepad = new GamepadEx(gamepad2);
 
-        // Schedule the teleop driving command
-        robot.drive.teleopDrive(driverGamepad).schedule();
+        // Setup default commands
+        robot.drive.setDefaultCommand(robot.drive.teleopDrive(driverGamepad));
+        robot.intake.setDefaultCommand(robot.intake.teleopIntake(driverGamepad));
 
         // Go to the correct starting configuration
         robot.intake.raiseHarvester().schedule();
@@ -34,7 +32,6 @@ public abstract class Teleop extends StealthOpMode {
 
     @Override
     public void onStart() {
-        // Load the saved pose
         robot.drive.setPose(PoseSaver.savedPose);
     }
 
@@ -48,13 +45,6 @@ public abstract class Teleop extends StealthOpMode {
 
         //TODO: Temp controls change for testing
         driverGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(robot.shoot());
-
-        new Trigger(() -> driverGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.2)
-            .whenActive(robot.intake.intake())
-            .whenInactive(robot.intake.stop());
-        new Trigger(() -> driverGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.2)
-            .whenActive(robot.intake.outtake())
-            .whenInactive(robot.intake.stop());
 
         // Relocalize the robot to a known field reset pose (assumes that the robot is facing forward)
         driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)

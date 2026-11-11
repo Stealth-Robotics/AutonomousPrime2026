@@ -19,9 +19,9 @@ public class ShotCalculator {
 
     // Distance (inches) -> RPM
     private static final LerpTable distanceToRPM = new LerpTable(
-        40, 3200,
-        50, 3250,
-        60, 3300
+        44, 3200,
+        53, 3300,
+        60, 3400
     );
 
     private double turretAngle = 0, hoodAngle = 0, rpm = 0;

@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.systems;
 
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -10,12 +12,14 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.stealthrobotics.library.StealthSubsystem;
 
+import java.util.function.BooleanSupplier;
+
 public class Intake extends StealthSubsystem {
     private final DcMotorEx intakeMotor;
     private final Servo harvesterServo;
 
-    private static final double INTAKE_SPEED = 1;
-    private static final double OUTTAKE_SPEED = -1;
+    //Tunable to control bps while shooting
+    private static final double TRANSFER_SPEED = 1;
 
     private static final double HARVESTER_UP_POSITION = 0.15;
     private static final double HARVESTER_DOWN_POSITION = 0.93;
@@ -35,20 +39,30 @@ public class Intake extends StealthSubsystem {
         intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
+    public Command teleopIntake(GamepadEx gamepad) {
+        return infinite(() -> {
+            double power = gamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) -
+                gamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER);
+
+            if (Math.abs(power) > 0.2)
+                intakeMotor.setPower(power);
+        });
+    }
+
     public Command intake() {
-        return new InstantCommand(() -> intakeMotor.setPower(INTAKE_SPEED));
+        return new InstantCommand(() -> intakeMotor.setPower(1));
+    }
+
+    public Command transfer() {
+        return new InstantCommand(() -> intakeMotor.setPower(TRANSFER_SPEED));
     }
 
     public Command outtake() {
-        return new InstantCommand(() -> intakeMotor.setPower(OUTTAKE_SPEED));
+        return new InstantCommand(() -> intakeMotor.setPower(-1));
     }
 
     public Command stop() {
         return new InstantCommand(() -> intakeMotor.setPower(0));
-    }
-
-    public HarvesterState getHarvesterState() {
-        return harvesterState;
     }
 
     public Command raiseHarvester() {

@@ -31,9 +31,6 @@ public class Shooter extends StealthSubsystem {
 
     private ShooterState state = ShooterState.IDLE;
 
-    private static final double FAR_AUTO_RPM = 3420;
-    private static final double AUTO_RPM = 3200;
-
     private static final double RPM_TOLERANCE = 50;
 
     private static final double HOOD_MIN_POSITION = 0.005;
@@ -50,9 +47,8 @@ public class Shooter extends StealthSubsystem {
     private double targetRPM = 0;
 
     public enum ShooterState {
+        SPINUP,
         SHOOTING,
-        AUTO_SHOOTING,
-        FAR_AUTO_SHOOTING,
         IDLE
     }
 
@@ -70,14 +66,6 @@ public class Shooter extends StealthSubsystem {
         rightShooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         hoodServo.setDirection(Servo.Direction.REVERSE);
-    }
-
-    public Command farAutonomousShootingCommand() {
-        return new InstantCommand(() -> state = ShooterState.FAR_AUTO_SHOOTING);
-    }
-
-    public Command autonomousShootingCommand() {
-        return new InstantCommand(() -> state = ShooterState.AUTO_SHOOTING);
     }
 
     public Command runShooter() {
@@ -127,21 +115,8 @@ public class Shooter extends StealthSubsystem {
             leftShooterMotor.setPower(calculatedPower);
             rightShooterMotor.setPower(calculatedPower);
         }
-        else if (state.equals(ShooterState.AUTO_SHOOTING)) {
-            double calculatedPower = shooterPIDF.calculate(currentRPM, AUTO_RPM);
-
-            leftShooterMotor.setPower(calculatedPower);
-            rightShooterMotor.setPower(calculatedPower);
-        }
-        else if (state.equals(ShooterState.FAR_AUTO_SHOOTING)) {
-            double calculatedPower = shooterPIDF.calculate(currentRPM, FAR_AUTO_RPM);
-
-            leftShooterMotor.setPower(calculatedPower);
-            rightShooterMotor.setPower(calculatedPower);
-        }
         else {
             shooterPIDF.reset();
-
             leftShooterMotor.setPower(0.0);
             rightShooterMotor.setPower(0.0);
         }

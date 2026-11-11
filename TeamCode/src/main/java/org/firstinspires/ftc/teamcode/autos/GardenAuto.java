@@ -52,7 +52,7 @@ public abstract class GardenAuto extends Auto {
     public Command getAutoCommand() {
         return sequence(
             new WaitCommand(1000),
-            robot.autonomousShoot(),
+            robot.shoot(),
             followPath(garden),
             robot.intake.intake(),
             followPath(alignWithGarden),
@@ -64,7 +64,7 @@ public abstract class GardenAuto extends Auto {
             followPath(driveThroughHub),
             followPath(turn),
             followPath(driveBackToWall, 1000),
-            robot.autonomousShoot(),
+            robot.shoot(),
             followPath(park)
         );
     }

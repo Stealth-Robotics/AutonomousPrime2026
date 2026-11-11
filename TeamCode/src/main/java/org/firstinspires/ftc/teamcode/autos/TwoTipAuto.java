@@ -34,7 +34,7 @@ public abstract class TwoTipAuto extends Auto {
     public Command getAutoCommand() {
         return sequence(
             new WaitCommand(1000),
-            robot.autonomousShoot(),
+            robot.shoot(),
             followPath(driveToFlower),
             robot.intake.lowerHarvester(),
             robot.intake.intake(),
@@ -49,7 +49,7 @@ public abstract class TwoTipAuto extends Auto {
             robot.intake.stop(),
             robot.intake.raiseHarvester(),
             followPath(shootPath),
-            robot.autonomousShoot()
+            robot.shoot()
         );
     }
 

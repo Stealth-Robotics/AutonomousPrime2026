@@ -14,7 +14,8 @@ import org.firstinspires.ftc.teamcode.util.TurretController;
 import org.stealthrobotics.library.StealthSubsystem;
 
 public class Turret extends StealthSubsystem {
-    private TurretState state = TurretState.HOMED;
+    // Allows us to freeze the turret on startup for debugging
+    private final TurretState state = TurretState.HOMED;
 
     private final DcMotorEx turretMotor;
     private final TurretController turretController;
@@ -28,6 +29,9 @@ public class Turret extends StealthSubsystem {
 
     private static final double TURRET_GEAR_RATIO = 100.0 / 30.0;
     private static final double TICKS_PER_REVOLUTION = 384.5;
+
+    private static final double WRAP_LOOKAHEAD_MS = 250;
+    private static final double DEGREES_PER_TICK = 360.0 / TICKS_PER_REVOLUTION / TURRET_GEAR_RATIO;
 
     private double targetAngle = 0;
     private double targetVelocity = 0;
@@ -47,16 +51,6 @@ public class Turret extends StealthSubsystem {
 
         turretMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         turretMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-
-        setTracking().schedule();
-    }
-
-    public Command setTracking() {
-        return new InstantCommand(() -> state = TurretState.TRACKING);
-    }
-
-    public Command setHomed() {
-        return new InstantCommand(() -> state = TurretState.HOMED);
     }
 
     public Command resetToZero() {
@@ -66,8 +60,15 @@ public class Turret extends StealthSubsystem {
         });
     }
 
-    public boolean atTarget() {
-        return Math.abs(turretController.getPositionError(getAngle(), targetAngle)) < TURRET_ANGLE_TOLERANCE;
+    public boolean isNotWrapping() {
+        double currentAngle = getAngle();
+        double velocity = turretMotor.getVelocity() * DEGREES_PER_TICK;
+        double projectedAngle = currentAngle + velocity * (WRAP_LOOKAHEAD_MS / 1000.0);
+
+        return projectedAngle > MIN_TURRET_ANGLE_DEGREES
+            && projectedAngle < MAX_TURRET_ANGLE_DEGREES
+            && currentAngle > MIN_TURRET_ANGLE_DEGREES
+            && currentAngle < MAX_TURRET_ANGLE_DEGREES;
     }
 
     public double getAngle() {

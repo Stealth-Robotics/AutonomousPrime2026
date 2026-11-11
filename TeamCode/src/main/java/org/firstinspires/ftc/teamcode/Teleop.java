@@ -41,6 +41,7 @@ public abstract class Teleop extends StealthOpMode {
     }
 
     private void configureBindings() {
+        operatorGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(robot.shoot());
         operatorGamepad.getGamepadButton(GamepadKeys.Button.X).whenPressed(robot.intake.toggleHarvester());
         operatorGamepad.getGamepadButton(GamepadKeys.Button.Y).toggleWhenPressed(robot.shooter.runShooter(), robot.shooter.stopShooter());
 

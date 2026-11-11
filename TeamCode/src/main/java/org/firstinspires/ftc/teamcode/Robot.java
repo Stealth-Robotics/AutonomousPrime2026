@@ -38,6 +38,7 @@ public class Robot extends StealthSubsystem {
         return sequence(
             shooter.runShooter(),
             waitUntil(shooter::atTargetRPM).withTimeout(500),
+            waitUntil(turret::isNotWrapping),
             shooter.openGate(),
             intake.transfer(),
             waitSeconds(2000),

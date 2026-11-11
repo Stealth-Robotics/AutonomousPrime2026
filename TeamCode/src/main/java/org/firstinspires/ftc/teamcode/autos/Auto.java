@@ -40,7 +40,6 @@ public abstract class Auto extends StealthOpMode {
 
     @Override
     public void onStart() {
-
     }
 
     @Override
@@ -49,10 +48,6 @@ public abstract class Auto extends StealthOpMode {
     }
 
     public void buildPaths() {}
-
-    public Path createLine(Pose p1, Pose p2) {
-        return line(p1, p2).linear(p1, p2);
-    }
 
     public Command followPath(Path p, long timeout) {
         return new SequentialCommandGroup(

@@ -32,7 +32,7 @@ public abstract class PreloadPlusParkAuto extends Auto {
     public Command getAutoCommand() {
         return sequence(
             new WaitCommand(1000),
-            robot.autonomousShoot(),
+            robot.shoot(),
             followPath(park)
         );
     }

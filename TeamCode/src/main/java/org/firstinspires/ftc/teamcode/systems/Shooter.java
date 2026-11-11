@@ -47,7 +47,6 @@ public class Shooter extends StealthSubsystem {
     private double targetRPM = 0;
 
     public enum ShooterState {
-        SPINUP,
         SHOOTING,
         IDLE
     }

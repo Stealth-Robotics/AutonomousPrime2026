@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.systems;
 
 import static org.stealthrobotics.library.opmodes.StealthOpMode.telemetry;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -13,7 +12,6 @@ import com.pedropathing.math.Pose;
 import com.pedropathing.math.Velocity;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.util.LowPassFilter;
 import org.firstinspires.ftc.teamcode.util.Pose3D;
@@ -25,21 +23,22 @@ public class Drive extends StealthSubsystem {
     private final LowPassFilter vx, vy, vOmega;
 
     public enum PoseResetLocation {
-        FAR_LEFT_CORNER(
-            new Pose(8.32,6.5, Math.toRadians(180)),
-            new Pose(133,135.5, Math.toRadians(0))
+        NEAR_LEFT_CORNER(
+            new Pose(134.5,6.5, Math.toRadians(180)),
+            new Pose(7,135.5, Math.toRadians(0))
         ),
-        FAR_RIGHT_CORNER(
-            new Pose(8.32,135.5, Math.toRadians(180)),
-            new Pose(133,6.5, Math.toRadians(0))
+        NEAR_RIGHT_CORNER(
+            new Pose(134.5,135.5, Math.toRadians(180)),
+            new Pose(7,6, Math.toRadians(0))
         ),
-        CLOSE_LEFT_CORNER(
-            new Pose(133,6.5, Math.toRadians(180)),
-            new Pose(8.32,135.5, Math.toRadians(0))
+
+        LEFT_SIDE_OF_FLOWER(
+            new Pose(134.5,85.5, Math.toRadians(180)),
+            new Pose(7,56, Math.toRadians(0))
         ),
-        CLOSE_RIGHT_CORNER(
-            new Pose(133,135.5, Math.toRadians(180)),
-            new Pose(8.32,6.5, Math.toRadians(0))
+        RIGHT_SIDE_OF_FLOWER(
+            new Pose(134.5,104.1, Math.toRadians(180)),
+            new Pose(7,37.4, Math.toRadians(0))
         );
 
         private final Pose bluePose, redPose;

@@ -114,18 +114,13 @@ public class Drive extends StealthSubsystem {
         updateVelocity();
 
         telemetry.addData(
-            "Pose", "(" +
-            (Math.round(follower.pose().x() * 100) / 100.0) + ", " +
-            (Math.round(follower.pose().y() * 100) / 100.0) + ", " +
-            (Math.round(Math.toDegrees(follower.pose().heading()) * 100) / 100.0) + ")"
+            "Pose", "(%.2f in, %.2f in, %.2f deg)",
+            follower.pose().x(), follower.pose().y(), Math.toDegrees(follower.pose().heading())
         );
 
         telemetry.addData(
-                "Velocity:", "(" +
-                Math.round(vx.get() * 1000) / 1000.0 + "in/s, " +
-                Math.round(vy.get() * 1000) / 1000.0 + "in/s, " +
-                "0 in/s, " +
-                Math.toDegrees(Math.round(vOmega.get() * 1000) / 1000.0) + "deg/s)"
+            "Velocity", "(%.2f in/s, %.2f in/s, %.2f deg/s)",
+            vx.get(), vy.get(), Math.toDegrees(vOmega.get())
         );
     }
 }

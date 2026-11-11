@@ -59,6 +59,13 @@ public class Turret extends StealthSubsystem {
         return new InstantCommand(() -> state = TurretState.HOMED);
     }
 
+    public Command resetToZero() {
+        return new InstantCommand(() -> {
+            turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            turretMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        });
+    }
+
     public boolean atTarget() {
         return Math.abs(turretController.getPositionError(getAngle(), targetAngle)) < TURRET_ANGLE_TOLERANCE;
     }

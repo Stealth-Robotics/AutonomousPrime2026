@@ -29,6 +29,11 @@ public abstract class StealthOpMode extends LinearOpMode {
      */
     public abstract void initialize();
 
+    /**
+     * Override this to run stuff when the opmode actually starts
+     */
+    public void onStart() { }
+
     /*
      * Override this to do stuff right before the opmode finishes
      */
@@ -114,6 +119,7 @@ public abstract class StealthOpMode extends LinearOpMode {
             hubs.forEach(LynxModule::clearBulkCache);
         }
 
+        onStart();
         schedule(getAutoCommand());
 
         while (!isStopRequested() && opModeIsActive()) {

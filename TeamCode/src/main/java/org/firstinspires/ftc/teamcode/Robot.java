@@ -37,11 +37,11 @@ public class Robot extends StealthSubsystem {
     public Command shoot() {
         return sequence(
             shooter.runShooter(),
-            waitUntil(shooter::atTargetRPM).withTimeout(500),
+            waitUntil(shooter::atTargetRPM).withTimeout(1500),
             waitUntil(turret::isNotWrapping),
             shooter.openGate(),
-            intake.transfer(),
-            waitSeconds(2000),
+            intake.intake(),
+            waitSeconds(1000),
             shooter.closeGate(),
             intake.stop(),
             shooter.stopShooter()
@@ -54,7 +54,5 @@ public class Robot extends StealthSubsystem {
 
         turret.update(shotCalculator.getTurretAngle(), 0);
         shooter.update(shotCalculator.getRPM(), shotCalculator.getHoodAngle());
-
-        telemetry.addData("Alliance", Alliance.get());
     }
 }

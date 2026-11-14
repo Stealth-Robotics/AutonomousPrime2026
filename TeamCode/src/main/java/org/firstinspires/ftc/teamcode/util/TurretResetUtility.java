@@ -1,21 +1,26 @@
 package org.firstinspires.ftc.teamcode.util;
 
+import com.arcrobotics.ftclib.command.RunCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Utility;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.Robot;
 import org.stealthrobotics.library.opmodes.StealthOpMode;
 
-@Utility
+@Utility(name = "Turret Reset")
 public class TurretResetUtility extends StealthOpMode {
+    private DcMotorEx turretMotor;
+
     @Override
     public void initialize() {
-        Robot robot = new Robot(hardwareMap);
+        turretMotor = hardwareMap.get(DcMotorEx.class, "turret");
 
-        // Schedule the turret reset command
-        robot.turret.resetToZero().schedule();
-    }
+        //Reset the internal encoder to 0 ticks
+        turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        turretMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-    @Override
-    public void end() {
+        schedule(new RunCommand(() ->
+            telemetry.addData("Turret Position (ticks)", turretMotor.getCurrentPosition())));
     }
 }

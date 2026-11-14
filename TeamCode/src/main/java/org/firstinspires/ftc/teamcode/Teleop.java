@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -10,6 +11,8 @@ import org.stealthrobotics.library.opmodes.StealthOpMode;
 public abstract class Teleop extends StealthOpMode {
     private Robot robot;
     private GamepadEx driverGamepad, operatorGamepad;
+
+    private boolean ohZGosh = false;
 
     @Override
     public void initialize() {
@@ -22,11 +25,14 @@ public abstract class Teleop extends StealthOpMode {
         robot.drive.setDefaultCommand(robot.drive.teleopDrive(driverGamepad));
         robot.intake.setDefaultCommand(robot.intake.teleopIntake(driverGamepad));
 
+        configureBindings();
+    }
+
+    @Override
+    public void onStart() {
         // Go to the correct starting configuration
         robot.intake.raiseHarvester().schedule();
         robot.shooter.closeGate().schedule();
-
-        configureBindings();
     }
 
     private void configureBindings() {

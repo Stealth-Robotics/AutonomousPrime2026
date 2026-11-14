@@ -29,10 +29,13 @@ public abstract class Auto extends StealthOpMode {
             poseFactory = poseFactory.rotateAround(FIELD_CENTER,180);
 
         buildPaths();
+    }
 
-        // Starting configuration
-        robot.shooter.closeGate().schedule();
+    @Override
+    public void onStart() {
+        // Go to the correct starting configuration
         robot.intake.raiseHarvester().schedule();
+        robot.shooter.closeGate().schedule();
     }
 
     public void buildPaths() {}

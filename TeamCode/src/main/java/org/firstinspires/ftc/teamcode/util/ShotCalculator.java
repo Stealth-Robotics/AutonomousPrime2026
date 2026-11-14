@@ -27,7 +27,6 @@ public class ShotCalculator {
     private double turretAngle = 0, hoodAngle = 0, rpm = 0;
 
     public void update(Pose3D robotPose, Pose3D robotVelocity) {
-        telemetry.addData("velocity magnitude", robotVelocity.magnitude());
         Pose3D targetPose = Alliance.isRed()
             ? (robotPose.y() > 72 ? RED_LEFT_CELL : RED_RIGHT_CELL)
             : (robotPose.y() < 72 ? BLUE_LEFT_CELL : BLUE_RIGHT_CELL);

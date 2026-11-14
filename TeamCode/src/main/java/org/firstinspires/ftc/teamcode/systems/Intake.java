@@ -21,8 +21,8 @@ public class Intake extends StealthSubsystem {
     //Tunable to control bps while shooting
     private static final double TRANSFER_SPEED = 1;
 
-    private static final double HARVESTER_UP_POSITION = 0.15;
-    private static final double HARVESTER_DOWN_POSITION = 0.93;
+    private static final double HARVESTER_UP_POSITION = 0;
+    private static final double HARVESTER_DOWN_POSITION = 0.92;
 
     private HarvesterState harvesterState = HarvesterState.UP;
 
@@ -46,23 +46,25 @@ public class Intake extends StealthSubsystem {
 
             if (Math.abs(power) > 0.2)
                 intakeMotor.setPower(power);
+            else
+                intakeMotor.setPower(0);
         });
     }
 
     public Command intake() {
-        return new InstantCommand(() -> intakeMotor.setPower(1));
+        return instant(() -> intakeMotor.setPower(1));
     }
 
     public Command transfer() {
-        return new InstantCommand(() -> intakeMotor.setPower(TRANSFER_SPEED));
+        return instant(() -> intakeMotor.setPower(TRANSFER_SPEED));
     }
 
     public Command outtake() {
-        return new InstantCommand(() -> intakeMotor.setPower(-1));
+        return instant(() -> intakeMotor.setPower(-1));
     }
 
     public Command stop() {
-        return new InstantCommand(() -> intakeMotor.setPower(0));
+        return instant(() -> intakeMotor.setPower(0));
     }
 
     public Command raiseHarvester() {

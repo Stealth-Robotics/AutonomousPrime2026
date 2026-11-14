@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.autos;
 
-import static com.pedropathing.api.Paths.line;
-
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -12,7 +10,6 @@ import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
 
 import org.firstinspires.ftc.teamcode.Robot;
-import org.firstinspires.ftc.teamcode.util.PoseSaver;
 import org.stealthrobotics.library.Alliance;
 import org.stealthrobotics.library.opmodes.StealthOpMode;
 
@@ -36,15 +33,6 @@ public abstract class Auto extends StealthOpMode {
         // Starting configuration
         robot.shooter.closeGate().schedule();
         robot.intake.raiseHarvester().schedule();
-    }
-
-    @Override
-    public void onStart() {
-    }
-
-    @Override
-    public void end() {
-        PoseSaver.savedPose = robot.drive.getPose();
     }
 
     public void buildPaths() {}

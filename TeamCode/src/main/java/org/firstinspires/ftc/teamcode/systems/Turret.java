@@ -85,7 +85,7 @@ public class Turret extends StealthSubsystem {
         double currentAngle = getAngle();
 
         double output = turretController.calculate(currentAngle, targetAngle, targetVelocity);
-        turretMotor.setPower(MathUtils.clamp(output, -MAX_TURRET_POWER, MAX_TURRET_POWER));
+//        turretMotor.setPower(MathUtils.clamp(output, -MAX_TURRET_POWER, MAX_TURRET_POWER));
 
         telemetry.addData("Turret Angle", currentAngle);
         telemetry.addData("Turret Angle Error", turretController.getPositionError(currentAngle, targetAngle));

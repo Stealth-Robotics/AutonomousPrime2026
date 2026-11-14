@@ -1,12 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.systems.Drive;
-import org.firstinspires.ftc.teamcode.util.PoseSaver;
 import org.stealthrobotics.library.opmodes.StealthOpMode;
 
 public abstract class Teleop extends StealthOpMode {
@@ -16,6 +14,7 @@ public abstract class Teleop extends StealthOpMode {
     @Override
     public void initialize() {
         robot = new Robot(hardwareMap);
+
         driverGamepad = new GamepadEx(gamepad1);
         operatorGamepad = new GamepadEx(gamepad2);
 
@@ -30,16 +29,6 @@ public abstract class Teleop extends StealthOpMode {
         configureBindings();
     }
 
-    @Override
-    public void onStart() {
-        robot.drive.setPose(PoseSaver.savedPose);
-    }
-
-    @Override
-    public void end() {
-        PoseSaver.savedPose = robot.drive.getPose();
-    }
-
     private void configureBindings() {
         operatorGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(robot.shoot());
         operatorGamepad.getGamepadButton(GamepadKeys.Button.X).whenPressed(robot.intake.toggleHarvester());
@@ -47,6 +36,8 @@ public abstract class Teleop extends StealthOpMode {
 
         //TODO: Temp controls change for testing
         driverGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(robot.shoot());
+        driverGamepad.getGamepadButton(GamepadKeys.Button.X).whenPressed(robot.intake.toggleHarvester());
+        driverGamepad.getGamepadButton(GamepadKeys.Button.Y).toggleWhenPressed(robot.shooter.runShooter(), robot.shooter.stopShooter());
 
         // Relocalize the robot to a known field reset pose (assumes that the robot is facing forward)
         driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)

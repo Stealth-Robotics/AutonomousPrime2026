@@ -16,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.stealthrobotics.library.StealthSubsystem;
 
 public class Shooter extends StealthSubsystem {
+    private Telemetry dash = FtcDashboard.getInstance().getTelemetry();
     private final DcMotorEx leftShooterMotor;
     private final DcMotorEx rightShooterMotor;
 
@@ -23,21 +24,22 @@ public class Shooter extends StealthSubsystem {
     private final Servo hoodServo;
 
     private final PIDFController shooterPIDF = new PIDFController(
-        0.0005,
+        0.001,
         0,
         0,
-        0.00021
+        0.00019
     );
 
     private ShooterState state = ShooterState.IDLE;
 
     private static final double RPM_TOLERANCE = 50;
 
-    private static final double HOOD_MIN_POSITION = 0.005;
-    private static final double HOOD_MAX_POSITION = 0.13;
+    private static final double HOOD_MIN_POSITION = 0.55;
+    private static final double HOOD_MAX_POSITION = 0.76;
 
-    private static final double HOOD_MIN_ANGLE = 11.127;
-    private static final double HOOD_MAX_ANGLE = 20;
+    //Hood angles (0 degrees being a shot vertically straight up)
+    private static final double HOOD_MIN_ANGLE = 3.838;
+    private static final double HOOD_MAX_ANGLE = 15.838;
 
     private static final double GATE_OPEN_POSITION = 0.18;
     private static final double GATE_CLOSED_POSITION = 0.3;
@@ -59,7 +61,7 @@ public class Shooter extends StealthSubsystem {
         hoodServo = h.get(Servo.class, "hood");
 
         leftShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        leftShooterMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftShooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         rightShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightShooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -86,12 +88,12 @@ public class Shooter extends StealthSubsystem {
     public void update(double rpm, double hoodAngle) {
         targetRPM = rpm;
 
-        double angleDegrees = Math.max(HOOD_MIN_ANGLE, Math.min(HOOD_MAX_ANGLE, hoodAngle));
+        double angle = Math.max(HOOD_MIN_ANGLE, Math.min(HOOD_MAX_ANGLE, hoodAngle));
 
         double servoPosition = HOOD_MAX_POSITION -
-            (angleDegrees - HOOD_MIN_ANGLE) /
-                (HOOD_MAX_ANGLE - HOOD_MIN_ANGLE) *
-                (HOOD_MAX_POSITION - HOOD_MIN_POSITION);
+            (angle - HOOD_MIN_ANGLE) /
+            (HOOD_MAX_ANGLE - HOOD_MIN_ANGLE) *
+            (HOOD_MAX_POSITION - HOOD_MIN_POSITION);
 
         hoodServo.setPosition(servoPosition);
     }
@@ -119,6 +121,10 @@ public class Shooter extends StealthSubsystem {
             leftShooterMotor.setPower(0.0);
             rightShooterMotor.setPower(0.0);
         }
+
+        dash.addData("current rpm", currentRPM);
+        dash.addData("target rpm", targetRPM);
+        dash.update();
 
         telemetry.addData("Current RPM", currentRPM);
         telemetry.addData("Target RPM", targetRPM);

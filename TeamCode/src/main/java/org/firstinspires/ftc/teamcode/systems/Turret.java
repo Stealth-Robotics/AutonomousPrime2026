@@ -14,10 +14,13 @@ import org.firstinspires.ftc.teamcode.util.TurretController;
 import org.stealthrobotics.library.StealthSubsystem;
 
 public class Turret extends StealthSubsystem {
+    private TurretState state = TurretState.TRACKING;
+
     private final DcMotorEx turretMotor;
     private final TurretController turretController;
 
-    private static final double MAX_TURRET_POWER = 0.8;
+    private static final double MAX_TURRET_POWER = 0.75;
+    private static final double TURRET_TOLERANCE_DEGREES = 2;
 
     private static final double MAX_TURRET_ANGLE_DEGREES = 270;
     private static final double MIN_TURRET_ANGLE_DEGREES = -90;
@@ -25,11 +28,15 @@ public class Turret extends StealthSubsystem {
     private static final double TURRET_GEAR_RATIO = 100.0 / 30.0;
     private static final double TICKS_PER_REVOLUTION = 384.5;
 
-    private static final double WRAP_LOOKAHEAD_MS = 250;
-    private static final double DEGREES_PER_TICK = 360.0 / TICKS_PER_REVOLUTION / TURRET_GEAR_RATIO;
+    private static final double TURRET_KS = 0.08;
 
     private double targetAngle = 0;
     private double targetVelocity = 0;
+
+    private enum TurretState {
+        HOMED,
+        TRACKING
+    }
 
     public Turret(HardwareMap h) {
         turretMotor = h.get(DcMotorEx.class, "turret");
@@ -43,23 +50,24 @@ public class Turret extends StealthSubsystem {
         turretMotor.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
-    public boolean isNotWrapping() {
-        double currentAngle = getAngle();
-        double velocity = turretMotor.getVelocity() * DEGREES_PER_TICK;
-        double projectedAngle = currentAngle + velocity * (WRAP_LOOKAHEAD_MS / 1000.0);
+    public Command setTracking() {
+        return new InstantCommand(() -> state = TurretState.TRACKING);
+    }
 
-        return projectedAngle > MIN_TURRET_ANGLE_DEGREES
-            && projectedAngle < MAX_TURRET_ANGLE_DEGREES
-            && currentAngle > MIN_TURRET_ANGLE_DEGREES
-            && currentAngle < MAX_TURRET_ANGLE_DEGREES;
+    public Command setHomed() {
+        return new InstantCommand(() -> state = TurretState.HOMED);
     }
 
     public double getAngle() {
         return turretMotor.getCurrentPosition() * 360 / TICKS_PER_REVOLUTION / TURRET_GEAR_RATIO;
     }
 
+    public boolean atAngle() {
+        return Math.abs(getAngle() - targetAngle) < TURRET_TOLERANCE_DEGREES;
+    }
+
     public void update(double targetAngle, double targetVelocity) {
-        this.targetAngle = targetAngle + 180;
+        this.targetAngle = (state.equals(TurretState.TRACKING)) ? targetAngle + 180 : 0;
         this.targetVelocity = targetVelocity;
     }
 
@@ -68,6 +76,10 @@ public class Turret extends StealthSubsystem {
         double currentAngle = getAngle();
 
         double output = turretController.calculate(currentAngle, targetAngle, targetVelocity);
+
+        if (Math.abs(currentAngle - targetAngle) >= TURRET_TOLERANCE_DEGREES)
+            output += TURRET_KS * Math.signum(output);
+
         turretMotor.setPower(MathUtils.clamp(output, -MAX_TURRET_POWER, MAX_TURRET_POWER));
 
         telemetry.addData("Turret Angle", currentAngle);

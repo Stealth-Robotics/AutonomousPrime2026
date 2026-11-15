@@ -17,11 +17,13 @@ public class ShotCalculator {
     private static final Pose3D RED_RIGHT_CELL = new Pose3D(57.8,51,60);
     private static final Pose3D RED_LEFT_CELL = new Pose3D(57.8, 90, 60);
 
-    // Distance (inches) -> RPM
     private static final LerpTable distanceToRPM = new LerpTable(
-        44, 3200,
-        53, 3300,
-        60, 3400
+        20, 2950,
+        25, 3000,
+        42, 3100,
+        53, 3200,
+        66, 3500,
+        80, 3600
     );
 
     private double turretAngle = 0, hoodAngle = 0, rpm = 0;

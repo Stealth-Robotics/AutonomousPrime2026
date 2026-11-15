@@ -18,20 +18,25 @@ public class SimpleShotCalculator {
 
     // Distance (inches) -> RPM
     private static final LerpTable distanceToRPM = new LerpTable(
-        44, 3200,
-        53, 3300,
-        60, 3400
+        20, 2950,
+        25, 3000,
+        42, 3100,
+        53, 3200,
+        60, 3500,
+        80, 3600
     );
 
     // Distance (inches) -> Hood angle (degrees)
     private static final LerpTable distanceToHoodAngle = new LerpTable(
-        0, 11,
-        100, 11
+        20, 3,
+        33, 8,
+        42, 11,
+        60, 15
     );
 
     private double turretAngle = 0, hoodAngle = 0, rpm = 0;
 
-    public void update(Pose3D robotPose) {
+    public void update(Pose3D robotPose, Pose3D robotVelocity) {
         Pose3D targetPose = Alliance.isRed() ?
             (robotPose.y() > 72 ? RED_LEFT_CELL : RED_RIGHT_CELL) :
             (robotPose.y() > 72 ? BLUE_RIGHT_CELL : BLUE_LEFT_CELL);
@@ -45,10 +50,9 @@ public class SimpleShotCalculator {
         hoodAngle = distanceToHoodAngle.get(inchesAwayFromGoal);
         turretAngle = Math.toDegrees(Math.atan2(displacement.y(), displacement.x()) - robotPose.heading());
 
-        telemetry.addData("Goal Distance (in)", inchesAwayFromGoal);
-        telemetry.addData("Hood Angle", hoodAngle);
-        telemetry.addData("RPM", rpm);
         telemetry.addData("Calculated Turret Angle", turretAngle);
+        telemetry.addData("Distance From Goal (in)", inchesAwayFromGoal);
+        telemetry.addData("Calculated RPM", rpm);
     }
 
     public double getTurretAngle() {

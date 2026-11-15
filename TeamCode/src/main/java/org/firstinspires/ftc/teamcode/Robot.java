@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.systems.Shooter;
 import org.firstinspires.ftc.teamcode.systems.Turret;
 import org.firstinspires.ftc.teamcode.util.Pose3D;
 import org.firstinspires.ftc.teamcode.util.ShotCalculator;
+import org.firstinspires.ftc.teamcode.util.SimpleShotCalculator;
 import org.stealthrobotics.library.Alliance;
 import org.stealthrobotics.library.StealthSubsystem;
 
@@ -23,7 +24,7 @@ public class Robot extends StealthSubsystem {
     public final Shooter shooter;
     public final Turret turret;
 
-    private final ShotCalculator shotCalculator;
+    private final SimpleShotCalculator shotCalculator;
 
     public Robot(HardwareMap h) {
         drive = new Drive(h);
@@ -31,20 +32,23 @@ public class Robot extends StealthSubsystem {
         shooter = new Shooter(h);
         turret = new Turret(h);
 
-        shotCalculator = new ShotCalculator();
+        shotCalculator = new SimpleShotCalculator();
     }
 
     public Command shoot() {
         return sequence(
             shooter.runShooter(),
-            waitUntil(shooter::atTargetRPM).withTimeout(1500),
-            waitUntil(turret::isNotWrapping),
+            turret.setTracking(),
+            waitUntil(shooter::atTargetRPM).withTimeout(2000),
+            waitUntil(turret::atAngle),
+            shooter.stopShooter(),
             shooter.openGate(),
             intake.intake(),
             waitSeconds(1000),
             shooter.closeGate(),
             intake.stop(),
-            shooter.stopShooter()
+            shooter.stopShooter(),
+            turret.setHomed()
         );
     }
 

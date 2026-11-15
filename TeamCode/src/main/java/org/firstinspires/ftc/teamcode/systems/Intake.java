@@ -25,11 +25,19 @@ public class Intake extends StealthSubsystem {
 
     private final DistanceSensor intakeSensor;
 
-    private final Debouncer sensorDebouncer = new Debouncer(0.5);
-    private static final double POLLEN_DISTANCE_INCHES = 2;
-
     private static final double HARVESTER_UP_POSITION = 0;
     private static final double HARVESTER_DOWN_POSITION = 0.92;
+
+    private static final double DETECT_DISTANCE = 2.0;
+    private static final double CLEAR_DISTANCE = 2.5;
+
+    private static final long FULL_DETECTION_TIME_MS = 250;
+    private static final long CLEAR_DETECTION_TIME_MS = 200;
+
+    private boolean isFull = false;
+
+    private long detectionStart = 0;
+    private long clearStart = 0;
 
     private HarvesterState harvesterState = HarvesterState.UP;
 
@@ -93,12 +101,49 @@ public class Intake extends StealthSubsystem {
         );
     }
 
+    private void updateSensor() {
+        double distance = intakeSensor.getDistance(DistanceUnit.INCH);
+        long now = System.currentTimeMillis();
+
+        if (!Double.isFinite(distance))
+            return;
+
+        if (!isFull) {
+            if (distance < DETECT_DISTANCE) {
+                clearStart = 0;
+
+                if (detectionStart == 0)
+                    detectionStart = now;
+
+                if (now - detectionStart >= FULL_DETECTION_TIME_MS)
+                    isFull = true;
+            }
+            else detectionStart = 0;
+        }
+        else {
+            if (distance > CLEAR_DISTANCE) {
+                if (clearStart == 0)
+                    clearStart = now;
+
+                if (now - clearStart >= CLEAR_DETECTION_TIME_MS) {
+                    isFull = false;
+                    detectionStart = 0;
+                    clearStart = 0;
+                }
+            }
+            else clearStart = 0;
+        }
+    }
+
     public boolean isFull() {
-        return sensorDebouncer.calculate(intakeSensor.getDistance(DistanceUnit.INCH) < POLLEN_DISTANCE_INCHES);
+        return isFull;
     }
 
     @Override
     public void periodic() {
+        updateSensor();
+
         telemetry.addData("Is Full", isFull());
+        telemetry.addData("Sensor Distance (in)", intakeSensor.getDistance(DistanceUnit.INCH));
     }
 }

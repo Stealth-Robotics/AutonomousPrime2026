@@ -61,7 +61,7 @@ public class Drive extends StealthSubsystem {
         vOmega = new LowPassFilter(0.1);
     }
 
-    public Command teleopDrive(GamepadEx gamepad) {
+    public Command teleopDriveDefaultCommand(GamepadEx gamepad) {
         return infinite(() -> {
             if (gamepad.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON).get())
                 follower.setHeading(Alliance.isRed() ? 0 : Math.toRadians(180));

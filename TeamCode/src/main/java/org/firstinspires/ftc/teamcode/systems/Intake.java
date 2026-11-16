@@ -4,6 +4,7 @@ import static org.stealthrobotics.library.opmodes.StealthOpMode.telemetry;
 
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -15,18 +16,14 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.stealthrobotics.library.StealthSubsystem;
-import org.stealthrobotics.library.math.filter.Debouncer;
-
-import java.util.function.BooleanSupplier;
 
 public class Intake extends StealthSubsystem {
     private final DcMotorEx intakeMotor;
     private final Servo harvesterServo;
-
     private final DistanceSensor intakeSensor;
 
-    private static final double HARVESTER_UP_POSITION = 0;
-    private static final double HARVESTER_DOWN_POSITION = 0.92;
+    private static final double HARVESTER_UP_POSITION = 0.18;
+    private static final double HARVESTER_DOWN_POSITION = 1;
 
     private static final double DETECT_DISTANCE = 2.0;
     private static final double CLEAR_DISTANCE = 2.5;
@@ -53,9 +50,10 @@ public class Intake extends StealthSubsystem {
 
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public Command teleopIntake(GamepadEx gamepad) {
+    public Command teleopIntakeDefaultCommand(GamepadEx gamepad) {
         return infinite(() -> {
             double power = gamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) -
                 gamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER);

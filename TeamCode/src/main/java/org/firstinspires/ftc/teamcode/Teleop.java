@@ -22,8 +22,8 @@ public abstract class Teleop extends StealthOpMode {
         operatorGamepad = new GamepadEx(gamepad2);
 
         // Setup default commands
-        robot.drive.setDefaultCommand(robot.drive.teleopDrive(driverGamepad));
-        robot.intake.setDefaultCommand(robot.intake.teleopIntake(driverGamepad));
+        robot.drive.setDefaultCommand(robot.drive.teleopDriveDefaultCommand(driverGamepad));
+        robot.intake.setDefaultCommand(robot.intake.teleopIntakeDefaultCommand(driverGamepad));
 
         configureBindings();
     }
@@ -38,13 +38,11 @@ public abstract class Teleop extends StealthOpMode {
     private void configureBindings() {
         operatorGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(robot.shoot());
         operatorGamepad.getGamepadButton(GamepadKeys.Button.X).whenPressed(robot.intake.toggleHarvester());
-        operatorGamepad.getGamepadButton(GamepadKeys.Button.Y).toggleWhenPressed(robot.shooter.runShooter(), robot.shooter.stopShooter());
 
         //TODO: Temp controls change for testing
         driverGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(robot.shoot());
         driverGamepad.getGamepadButton(GamepadKeys.Button.X).whenPressed(robot.intake.toggleHarvester());
-        driverGamepad.getGamepadButton(GamepadKeys.Button.Y).whenPressed(robot.shooter.runShooter());
-        driverGamepad.getGamepadButton(GamepadKeys.Button.A).whenPressed(robot.shooter.stopShooter());
+        driverGamepad.getGamepadButton(GamepadKeys.Button.Y).whenPressed(robot.shooter.stopShooter());
 
         // Relocalize the robot to a known field reset pose (assumes that the robot is facing forward)
         driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)

@@ -11,26 +11,33 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.stealthrobotics.library.StealthSubsystem;
 
 public class Shooter extends StealthSubsystem {
-    private Telemetry dash = FtcDashboard.getInstance().getTelemetry();
+    //TODO: Temporary for tuning
+    private final Telemetry dash = FtcDashboard.getInstance().getTelemetry();
+
     private final DcMotorEx leftShooterMotor;
     private final DcMotorEx rightShooterMotor;
+
+    private final VoltageSensor voltageSensor;
 
     private final Servo gateServo;
     private final Servo hoodServo;
 
     private final PIDFController shooterPIDF = new PIDFController(
-        0.001,
+        0.0008,
         0,
         0,
         0.00019
     );
 
-    private ShooterState state = ShooterState.IDLE;
+    private ShooterState state = ShooterState.STOPPED;
+
+    private static final double IDLE_RPM = 2250;
 
     private static final double RPM_TOLERANCE = 50;
 
@@ -50,7 +57,8 @@ public class Shooter extends StealthSubsystem {
 
     public enum ShooterState {
         SHOOTING,
-        IDLE
+        IDLE,
+        STOPPED
     }
 
     public Shooter(HardwareMap h) {
@@ -60,11 +68,15 @@ public class Shooter extends StealthSubsystem {
         gateServo = h.get(Servo.class, "gate");
         hoodServo = h.get(Servo.class, "hood");
 
+        voltageSensor = h.voltageSensor.iterator().next();
+
         leftShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         leftShooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftShooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         rightShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightShooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightShooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         hoodServo.setDirection(Servo.Direction.REVERSE);
     }
@@ -73,8 +85,12 @@ public class Shooter extends StealthSubsystem {
         return new InstantCommand(() -> state = ShooterState.SHOOTING);
     }
 
-    public Command stopShooter() {
+    public Command idleShooter() {
         return new InstantCommand(() -> state = ShooterState.IDLE);
+    }
+
+    public Command stopShooter() {
+        return new InstantCommand(() -> state = ShooterState.STOPPED);
     }
 
     public Command openGate() {
@@ -110,16 +126,21 @@ public class Shooter extends StealthSubsystem {
     public void periodic() {
         double currentRPM = getCurrentRPM();
 
-        if (state.equals(ShooterState.SHOOTING)) {
-            double calculatedPower = shooterPIDF.calculate(currentRPM, targetRPM);
+        if (!state.equals(ShooterState.STOPPED)) {
+            double calculatedPower =
+                shooterPIDF.calculate(currentRPM, state.equals(ShooterState.SHOOTING) ? targetRPM : IDLE_RPM);
+
+            //Normalize the output to 12V even when the battery voltage is higher
+            calculatedPower *= 12.0 / voltageSensor.getVoltage();
 
             leftShooterMotor.setPower(calculatedPower);
             rightShooterMotor.setPower(calculatedPower);
         }
         else {
             shooterPIDF.reset();
-            leftShooterMotor.setPower(0.0);
-            rightShooterMotor.setPower(0.0);
+
+            leftShooterMotor.setPower(0);
+            rightShooterMotor.setPower(0);
         }
 
         dash.addData("current rpm", currentRPM);

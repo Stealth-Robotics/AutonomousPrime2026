@@ -17,16 +17,14 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.stealthrobotics.library.StealthSubsystem;
 
 public class Turret extends StealthSubsystem {
-    private TurretState state = TurretState.TRACKING;
+    private TurretState state = TurretState.HOMED;
 
     private final DcMotorEx turretMotor;
     private final PIDController turretController;
 
-    private final VoltageSensor voltageSensor;
-
     private static final double TURRET_TOLERANCE_DEGREES = 2;
 
-    private static final double MAX_MOTOR_POWER = 0.6;
+    private static final double MAX_MOTOR_POWER = 0.8;
 
     private static final double MAX_TURRET_ANGLE_DEGREES = 270;
     private static final double MIN_TURRET_ANGLE_DEGREES = -90;
@@ -45,9 +43,7 @@ public class Turret extends StealthSubsystem {
 
     public Turret(HardwareMap h) {
         turretMotor = h.get(DcMotorEx.class, "turret");
-        turretController = new PIDController(0.005, 0, 0);
-
-        voltageSensor = h.voltageSensor.iterator().next();
+        turretController = new PIDController(0.01, 0, 0);
 
         turretMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         turretMotor.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -107,8 +103,6 @@ public class Turret extends StealthSubsystem {
         if (Math.abs(currentAngle - targetAngle) > 1)
             output += TURRET_KS * Math.signum(output);
 
-        //Normalize the output to 12V even when the battery voltage is higher
-        output *= 12.0 / voltageSensor.getVoltage();
         output = MathUtils.clamp(output, -MAX_MOTOR_POWER, MAX_MOTOR_POWER);
 
         turretMotor.setPower(output);

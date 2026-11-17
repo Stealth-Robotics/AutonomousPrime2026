@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.systems.Turret;
 import org.firstinspires.ftc.teamcode.util.LoopTimeTracker;
 import org.firstinspires.ftc.teamcode.util.Pose3D;
 import org.firstinspires.ftc.teamcode.util.SimpleShotCalculator;
+import org.stealthrobotics.library.Commands;
 import org.stealthrobotics.library.StealthSubsystem;
 
 public class Robot extends StealthSubsystem {
@@ -39,19 +40,27 @@ public class Robot extends StealthSubsystem {
         loopTracker = new LoopTimeTracker();
 
         //Trigger that starts idling the shooter when the intake is full
-        new Trigger(intake::isFull).whenActive(shooter.idleShooter());
+        new Trigger(intake::isFull)
+            .whenActive(shooter.idleShooter())
+            .whenInactive(conditional(
+                () -> shooter.getState().equals(Shooter.ShooterState.IDLE),
+                shooter.stopShooter(),
+                Commands.none()
+            ));
     }
 
     public Command shoot() {
         return sequence(
+            turret.setTracking(),
             shooter.runShooter(),
-            waitUntil(shooter::atTargetRPM).withTimeout(2000),
+            waitUntil(shooter::atTargetRPM).withTimeout(1500),
             shooter.openGate(),
             intake.intake(),
             waitSeconds(1000),
             shooter.closeGate(),
             intake.stop(),
-            shooter.stopShooter()
+            shooter.stopShooter(),
+            turret.setHomed()
         );
     }
 

@@ -4,7 +4,6 @@ import static org.stealthrobotics.library.opmodes.StealthOpMode.telemetry;
 
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -30,6 +29,9 @@ public class Intake extends StealthSubsystem {
 
     private static final long FULL_DETECTION_TIME_MS = 250;
     private static final long CLEAR_DETECTION_TIME_MS = 200;
+
+    private static final int SENSOR_UPDATE_LOOP_FREQUENCY = 15;
+    private int currentLoopCount;
 
     private boolean isFull = false;
 
@@ -139,9 +141,12 @@ public class Intake extends StealthSubsystem {
 
     @Override
     public void periodic() {
-        updateSensor();
+//        if (currentLoopCount == SENSOR_UPDATE_LOOP_FREQUENCY) {
+//            currentLoopCount = 0;
+//            updateSensor();
+//        }
+//        else currentLoopCount++;
 
-        telemetry.addData("Is Full", isFull());
-        telemetry.addData("Sensor Distance (in)", intakeSensor.getDistance(DistanceUnit.INCH));
+        telemetry.addData("Has 4 Pollen", isFull());
     }
 }

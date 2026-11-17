@@ -29,15 +29,15 @@ public class Shooter extends StealthSubsystem {
     private final Servo hoodServo;
 
     private final PIDFController shooterPIDF = new PIDFController(
-        0.0008,
+        0.001,
         0,
         0,
-        0.00019
+        0.000208
     );
 
     private ShooterState state = ShooterState.STOPPED;
 
-    private static final double IDLE_RPM = 2250;
+    private static final double IDLE_RPM = 3000;
 
     private static final double RPM_TOLERANCE = 50;
 
@@ -99,6 +99,10 @@ public class Shooter extends StealthSubsystem {
 
     public Command closeGate() {
         return new InstantCommand(() -> gateServo.setPosition(GATE_CLOSED_POSITION));
+    }
+
+    public ShooterState getState() {
+        return state;
     }
 
     public void update(double rpm, double hoodAngle) {

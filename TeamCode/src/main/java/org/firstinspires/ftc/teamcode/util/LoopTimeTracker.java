@@ -28,7 +28,5 @@ public class LoopTimeTracker {
         telemetry.addData("Loop Time", "%.2f ms", loopTime);
         telemetry.addData("Loop Avg", "%.2f ms", totalLoopTime / loopCount);
         telemetry.addData("Loop Max", "%.2f ms", maxLoopTime);
-        telemetry.addData("Slow Loops (>20ms)", slowLoops);
-        telemetry.addData("Very Slow Loops (>50ms)", verySlowLoops);
     }
 }

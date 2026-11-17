@@ -18,20 +18,19 @@ public class SimpleShotCalculator {
 
     // Distance (inches) -> RPM
     private static final LerpTable distanceToRPM = new LerpTable(
-        20, 2950,
-        25, 3000,
+        20, 3000,
         42, 3100,
         53, 3200,
-        60, 3500,
+        60, 3400,
         80, 3600
     );
 
     // Distance (inches) -> Hood angle (degrees)
     private static final LerpTable distanceToHoodAngle = new LerpTable(
-        20, 3,
-        33, 8,
-        42, 11,
-        60, 15
+        20, 5,
+        36, 8,
+        42, 10,
+        60, 13
     );
 
     private double turretAngle = 0, hoodAngle = 0, rpm = 0;

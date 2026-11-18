@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.systems;
 
-import static org.stealthrobotics.library.opmodes.StealthOpMode.telemetry;
-
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -13,8 +11,6 @@ import com.pedropathing.math.Velocity;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
-import org.firstinspires.ftc.teamcode.util.LowPassFilter;
-import org.firstinspires.ftc.teamcode.util.Pose3D;
 import org.stealthrobotics.library.Alliance;
 import org.stealthrobotics.library.StealthSubsystem;
 
@@ -90,25 +86,12 @@ public class Drive extends StealthSubsystem {
         return follower.pose();
     }
 
-    // Returns the field relative velocity of the robot
-    public Pose3D getVelocity() {
-        Velocity followerVelocity = follower.velocity();
-        return new Pose3D(followerVelocity.vx, followerVelocity.vx, 0.0, followerVelocity.omega);
+    public Velocity getVelocity() {
+        return follower.velocity();
     }
 
     @Override
     public void periodic() {
         follower.update();
-        Velocity followerVelocity = follower.velocity();
-
-        telemetry.addData(
-            "Pose", "(%.2f in, %.2f in, %.2f deg)",
-            follower.pose().x(), follower.pose().y(), Math.toDegrees(follower.pose().heading())
-        );
-
-        telemetry.addData(
-            "Velocity", "(%.2f in/s, %.2f in/s, %.2f deg/s)",
-            followerVelocity.vx, followerVelocity.vx, Math.toDegrees(followerVelocity.omega)
-        );
     }
 }

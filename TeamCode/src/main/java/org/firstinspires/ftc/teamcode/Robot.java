@@ -3,8 +3,11 @@ package org.firstinspires.ftc.teamcode;
 import static org.stealthrobotics.library.Commands.sequence;
 import static org.stealthrobotics.library.Commands.waitSeconds;
 import static org.stealthrobotics.library.Commands.waitUntil;
+import static org.stealthrobotics.library.opmodes.StealthOpMode.telemetry;
 
 import com.arcrobotics.ftclib.command.Command;
+import com.pedropathing.math.Pose;
+import com.pedropathing.math.Velocity;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.systems.Drive;
@@ -27,6 +30,9 @@ public class Robot extends StealthSubsystem {
     private final ShotCalculator shotCalculator;
     private final LoopTimeTracker loopTimeTracker;
 
+    // The time it takes for all 4 pollen to leave the shooter
+    private static final long SHOT_TIME_MILLISECONDS = 600;
+
     public Robot(HardwareMap h) {
         drive = new Drive(h);
         intake = new Intake(h);
@@ -41,11 +47,11 @@ public class Robot extends StealthSubsystem {
         return sequence(
             turret.setTracking(),
             shooter.runShooter(),
-            conditional(turret::atAngle, Commands.none(), waitSeconds(750)),
+            conditional(turret::atAngle, Commands.none(), waitSeconds(500)),
             waitUntil(shooter::atTargetRPM).withTimeout(1500),
             shooter.openGate(),
             intake.intake(),
-            waitSeconds(1000),
+            waitSeconds(SHOT_TIME_MILLISECONDS),
             shooter.closeGate(),
             intake.stop(),
             shooter.stopShooter(),
@@ -55,12 +61,25 @@ public class Robot extends StealthSubsystem {
 
     @Override
     public void periodic() {
-        shotCalculator.update(Pose3D.of(drive.getPose()), drive.getVelocity());
+        Pose robotPose = drive.getPose();
+        Velocity robotVelocity = drive.getVelocity();
 
+        shotCalculator.update(Pose3D.of(robotPose), robotVelocity);
         ShotValues shotValues = shotCalculator.getLatestShotValues();
-        turret.update(shotValues.turretAngle);
+
+        turret.update(shotValues.turretAngle, shotValues.turretVelocity);
         shooter.update(shotValues.rpm, shotValues.hoodAngle);
 
         loopTimeTracker.update();
+
+        telemetry.addData(
+            "Pose", "(%.2f in, %.2f in, %.2f deg)",
+            robotPose.x(), robotPose.y(), Math.toDegrees(robotPose.heading())
+        );
+
+        telemetry.addData(
+            "Velocity", "(%.2f in/s, %.2f in/s, %.2f deg/s)",
+            robotVelocity.vx, robotVelocity.vx, Math.toDegrees(robotVelocity.omega)
+        );
     }
 }

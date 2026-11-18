@@ -21,15 +21,14 @@ import org.stealthrobotics.library.StealthSubsystem;
 import java.util.function.DoubleSupplier;
 
 public class Turret extends StealthSubsystem {
-    private Telemetry dash = FtcDashboard.getInstance().getTelemetry();
     private TurretState state = TurretState.HOMED;
 
     private final DcMotorEx turretMotor;
     private final PIDController turretController;
 
-    private static final double TURRET_TOLERANCE_DEGREES = 5;
+    private final Telemetry dashboard = FtcDashboard.getInstance().getTelemetry();
 
-    private static final double MAX_MOTOR_POWER = 1;
+    private static final double TURRET_TOLERANCE_DEGREES = 5;
 
     private static final double MAX_TURRET_ANGLE_DEGREES = 270;
     private static final double MIN_TURRET_ANGLE_DEGREES = -90;
@@ -37,9 +36,10 @@ public class Turret extends StealthSubsystem {
     private static final double TURRET_GEAR_RATIO = 100.0 / 30.0;
     private static final double TICKS_PER_REVOLUTION = 384.5;
 
-    private static final double TURRET_KS = 0.07;
+    private static final double TURRET_KS = 0.065;
+    private static final double TURRET_KV = 0.0012;
 
-    private double currentAngle, targetAngle, lastMotorPower;
+    private double currentAngle, targetAngle, targetVelocity, lastMotorPower;
 
     private enum TurretState {
         HOMED,
@@ -94,10 +94,15 @@ public class Turret extends StealthSubsystem {
         return Math.abs(currentAngle - targetAngle) < TURRET_TOLERANCE_DEGREES;
     }
 
-    public void update(double targetAngle) {
-        if (state == TurretState.TRACKING)
+    public void update(double targetAngle, double targetVelocity) {
+        if (state == TurretState.TRACKING) {
             this.targetAngle = findValidTargetAngle(targetAngle + 180);
-        else this.targetAngle = 0;
+            this.targetVelocity = targetVelocity;
+        }
+        else {
+            this.targetAngle = 0;
+            this.targetVelocity = 0;
+        }
     }
 
     @Override
@@ -109,7 +114,7 @@ public class Turret extends StealthSubsystem {
         if (Math.abs(currentAngle - targetAngle) > 1)
             motorPower += TURRET_KS * Math.signum(motorPower);
 
-        motorPower = MathUtils.clamp(motorPower, -MAX_MOTOR_POWER, MAX_MOTOR_POWER);
+        motorPower += TURRET_KV * targetVelocity;
 
         //Power deadband for optimal hardware writes
         if (Math.abs(motorPower - lastMotorPower) > 0.01 || motorPower == 0) {
@@ -118,11 +123,12 @@ public class Turret extends StealthSubsystem {
             lastMotorPower = motorPower;
         }
 
-        dash.addData("Current Angle", currentAngle);
-        dash.addData("Target Angle", targetAngle);
-        dash.update();
+        dashboard.addData("Current Angle", currentAngle);
+        dashboard.addData("Target Angle", targetAngle);
+        dashboard.update();
 
         telemetry.addData("Turret Angle", currentAngle);
+        telemetry.addData("Turret Velocity", turretMotor.getVelocity() * 360 / TICKS_PER_REVOLUTION / TURRET_GEAR_RATIO);
         telemetry.addData("Turret Angle Error", turretController.getPositionError());
     }
 }

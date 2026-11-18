@@ -1,22 +1,24 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.arcrobotics.ftclib.command.SelectCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.systems.Drive;
+import org.firstinspires.ftc.teamcode.systems.Shooter;
 import org.stealthrobotics.library.opmodes.StealthOpMode;
+
+import java.util.Map;
 
 public abstract class Teleop extends StealthOpMode {
     private Robot robot;
-    private GamepadEx driverGamepad, operatorGamepad;
+    private GamepadEx driverGamepad;
 
     @Override
     public void initialize() {
         robot = new Robot(hardwareMap);
-
         driverGamepad = new GamepadEx(gamepad1);
-        operatorGamepad = new GamepadEx(gamepad2);
 
         // Setup default commands
         robot.drive.setDefaultCommand(robot.drive.teleopDriveDefaultCommand(driverGamepad));
@@ -33,14 +35,18 @@ public abstract class Teleop extends StealthOpMode {
     }
 
     private void configureBindings() {
-        operatorGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(robot.shoot());
-        operatorGamepad.getGamepadButton(GamepadKeys.Button.X).whenPressed(robot.intake.toggleHarvester());
-
-        //TODO: Temp controls change for testing
         driverGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(robot.shoot());
+        driverGamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(
+            new SelectCommand(
+                Map.of(
+                    Shooter.ShooterState.STOPPED, robot.shooter.idleShooter(),
+                    Shooter.ShooterState.IDLE, robot.shooter.stopShooter()
+                ),
+                robot.shooter::getState
+            )
+        );
+
         driverGamepad.getGamepadButton(GamepadKeys.Button.X).whenPressed(robot.intake.toggleHarvester());
-        driverGamepad.getGamepadButton(GamepadKeys.Button.Y).whenPressed(robot.shooter.idleShooter());
-        driverGamepad.getGamepadButton(GamepadKeys.Button.A).whenPressed(robot.shooter.stopShooter());
 
         // Relocalize the robot to a known field reset pose (assumes that the robot is facing forward)
         driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)
@@ -53,9 +59,9 @@ public abstract class Teleop extends StealthOpMode {
             .whenPressed(robot.drive.resetPoseTo(Drive.PoseResetLocation.NEAR_LEFT_CORNER));
     }
 
-    @TeleOp(name = "Teleop (Blue)", group = "Blue")
+    @TeleOp(name = "Teleop (BLUE)", group = "Blue")
     public static class BlueTeleop extends Teleop { }
 
-    @TeleOp(name = "Teleop (Red)", group = "Red")
+    @TeleOp(name = "Teleop (RED)", group = "Red")
     public static class RedTeleop extends Teleop { }
 }

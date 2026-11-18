@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.systems;
 
 import static org.stealthrobotics.library.opmodes.StealthOpMode.telemetry;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.controller.PIDController;
@@ -14,17 +15,21 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.stealthrobotics.library.StealthSubsystem;
 
+import java.util.function.DoubleSupplier;
+
 public class Turret extends StealthSubsystem {
+    private Telemetry dash = FtcDashboard.getInstance().getTelemetry();
     private TurretState state = TurretState.HOMED;
 
     private final DcMotorEx turretMotor;
     private final PIDController turretController;
 
-    private static final double TURRET_TOLERANCE_DEGREES = 2;
+    private static final double TURRET_TOLERANCE_DEGREES = 5;
 
-    private static final double MAX_MOTOR_POWER = 0.8;
+    private static final double MAX_MOTOR_POWER = 1;
 
     private static final double MAX_TURRET_ANGLE_DEGREES = 270;
     private static final double MIN_TURRET_ANGLE_DEGREES = -90;
@@ -32,9 +37,9 @@ public class Turret extends StealthSubsystem {
     private static final double TURRET_GEAR_RATIO = 100.0 / 30.0;
     private static final double TICKS_PER_REVOLUTION = 384.5;
 
-    private static final double TURRET_KS = 0.06;
+    private static final double TURRET_KS = 0.07;
 
-    private double currentAngle, targetAngle;
+    private double currentAngle, targetAngle, lastMotorPower;
 
     private enum TurretState {
         HOMED,
@@ -43,7 +48,7 @@ public class Turret extends StealthSubsystem {
 
     public Turret(HardwareMap h) {
         turretMotor = h.get(DcMotorEx.class, "turret");
-        turretController = new PIDController(0.01, 0, 0);
+        turretController = new PIDController(0.01, 0, 0.0005);
 
         turretMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         turretMotor.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -90,22 +95,32 @@ public class Turret extends StealthSubsystem {
     }
 
     public void update(double targetAngle) {
-        this.targetAngle =
-            (state.equals(TurretState.TRACKING)) ? findValidTargetAngle(targetAngle + 180) : 0;
+        if (state == TurretState.TRACKING)
+            this.targetAngle = findValidTargetAngle(targetAngle + 180);
+        else this.targetAngle = 0;
     }
 
     @Override
     public void periodic() {
         currentAngle = getAngle();
 
-        double output = turretController.calculate(currentAngle, targetAngle);
+        double motorPower = turretController.calculate(currentAngle, targetAngle);
 
         if (Math.abs(currentAngle - targetAngle) > 1)
-            output += TURRET_KS * Math.signum(output);
+            motorPower += TURRET_KS * Math.signum(motorPower);
 
-        output = MathUtils.clamp(output, -MAX_MOTOR_POWER, MAX_MOTOR_POWER);
+        motorPower = MathUtils.clamp(motorPower, -MAX_MOTOR_POWER, MAX_MOTOR_POWER);
 
-        turretMotor.setPower(output);
+        //Power deadband for optimal hardware writes
+        if (Math.abs(motorPower - lastMotorPower) > 0.01 || motorPower == 0) {
+            turretMotor.setPower(motorPower);
+
+            lastMotorPower = motorPower;
+        }
+
+        dash.addData("Current Angle", currentAngle);
+        dash.addData("Target Angle", targetAngle);
+        dash.update();
 
         telemetry.addData("Turret Angle", currentAngle);
         telemetry.addData("Turret Angle Error", turretController.getPositionError());

@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.systems;
 
 import static org.stealthrobotics.library.opmodes.StealthOpMode.telemetry;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.controller.PIDFController;
@@ -13,13 +12,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.stealthrobotics.library.StealthSubsystem;
 
 public class Shooter extends StealthSubsystem {
-    //TODO: Temporary for tuning
-    private final Telemetry dash = FtcDashboard.getInstance().getTelemetry();
-
     private final DcMotorEx leftShooterMotor;
     private final DcMotorEx rightShooterMotor;
 
@@ -53,7 +48,7 @@ public class Shooter extends StealthSubsystem {
 
     private static final double TICKS_PER_REVOLUTION = 28;
 
-    private double targetRPM = 0;
+    private double targetRPM, lastCommandedPower;
 
     public enum ShooterState {
         SHOOTING,
@@ -137,19 +132,22 @@ public class Shooter extends StealthSubsystem {
             //Normalize the output to 12V even when the battery voltage is higher
             calculatedPower *= 12.0 / voltageSensor.getVoltage();
 
-            leftShooterMotor.setPower(calculatedPower);
-            rightShooterMotor.setPower(calculatedPower);
+            //Power deadband for optimal hardware writes
+            if (Math.abs(calculatedPower - lastCommandedPower) > 0.01 || calculatedPower == 0) {
+                leftShooterMotor.setPower(calculatedPower);
+                rightShooterMotor.setPower(calculatedPower);
+
+                lastCommandedPower = calculatedPower;
+            }
         }
-        else {
+        else if (lastCommandedPower != 0) {
             shooterPIDF.reset();
 
             leftShooterMotor.setPower(0);
             rightShooterMotor.setPower(0);
-        }
 
-        dash.addData("current rpm", currentRPM);
-        dash.addData("target rpm", targetRPM);
-        dash.update();
+            lastCommandedPower = 0;
+        }
 
         telemetry.addData("Current RPM", currentRPM);
         telemetry.addData("Target RPM", targetRPM);

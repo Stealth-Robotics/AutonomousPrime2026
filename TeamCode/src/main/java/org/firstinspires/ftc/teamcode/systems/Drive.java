@@ -20,7 +20,6 @@ import org.stealthrobotics.library.StealthSubsystem;
 
 public class Drive extends StealthSubsystem {
     private final Follower follower;
-    private final LowPassFilter vx, vy, vOmega;
 
     public enum PoseResetLocation {
         NEAR_LEFT_CORNER(
@@ -55,10 +54,6 @@ public class Drive extends StealthSubsystem {
 
     public Drive(HardwareMap h) {
         follower = Constants.create(h);
-
-        vx = new LowPassFilter(0.1);
-        vy = new LowPassFilter(0.2);
-        vOmega = new LowPassFilter(0.1);
     }
 
     public Command teleopDriveDefaultCommand(GamepadEx gamepad) {
@@ -97,20 +92,14 @@ public class Drive extends StealthSubsystem {
 
     // Returns the field relative velocity of the robot
     public Pose3D getVelocity() {
-        return new Pose3D(vx.get(), vy.get(), 0.0, vOmega.get());
-    }
-
-    public void updateVelocity() {
-        Velocity v = follower.velocity();
-        vx.update(v.vx);
-        vy.update(v.vy);
-        vOmega.update(v.omega);
+        Velocity followerVelocity = follower.velocity();
+        return new Pose3D(followerVelocity.vx, followerVelocity.vx, 0.0, followerVelocity.omega);
     }
 
     @Override
     public void periodic() {
         follower.update();
-        updateVelocity();
+        Velocity followerVelocity = follower.velocity();
 
         telemetry.addData(
             "Pose", "(%.2f in, %.2f in, %.2f deg)",
@@ -119,7 +108,7 @@ public class Drive extends StealthSubsystem {
 
         telemetry.addData(
             "Velocity", "(%.2f in/s, %.2f in/s, %.2f deg/s)",
-            vx.get(), vy.get(), Math.toDegrees(vOmega.get())
+            followerVelocity.vx, followerVelocity.vx, Math.toDegrees(followerVelocity.omega)
         );
     }
 }

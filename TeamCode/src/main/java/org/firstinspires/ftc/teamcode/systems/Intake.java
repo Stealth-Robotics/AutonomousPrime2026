@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.systems;
 
-import static org.stealthrobotics.library.opmodes.StealthOpMode.telemetry;
-
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -13,30 +11,14 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.stealthrobotics.library.StealthSubsystem;
 
 public class Intake extends StealthSubsystem {
     private final DcMotorEx intakeMotor;
     private final Servo harvesterServo;
-    private final DistanceSensor intakeSensor;
 
     private static final double HARVESTER_UP_POSITION = 0.18;
     private static final double HARVESTER_DOWN_POSITION = 1;
-
-    private static final double DETECT_DISTANCE = 2.0;
-    private static final double CLEAR_DISTANCE = 2.5;
-
-    private static final long FULL_DETECTION_TIME_MS = 250;
-    private static final long CLEAR_DETECTION_TIME_MS = 200;
-
-    private static final int SENSOR_UPDATE_LOOP_FREQUENCY = 15;
-    private int currentLoopCount;
-
-    private boolean isFull = false;
-
-    private long detectionStart = 0;
-    private long clearStart = 0;
 
     private HarvesterState harvesterState = HarvesterState.UP;
 
@@ -48,7 +30,6 @@ public class Intake extends StealthSubsystem {
     public Intake(HardwareMap h) {
         intakeMotor = h.get(DcMotorEx.class, "intake");
         harvesterServo = h.get(Servo.class, "harvester");
-        intakeSensor = h.get(DistanceSensor.class, "intake_sensor");
 
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -99,54 +80,5 @@ public class Intake extends StealthSubsystem {
             raiseHarvester(),
             lowerHarvester()
         );
-    }
-
-    private void updateSensor() {
-        double distance = intakeSensor.getDistance(DistanceUnit.INCH);
-        long now = System.currentTimeMillis();
-
-        if (!Double.isFinite(distance))
-            return;
-
-        if (!isFull) {
-            if (distance < DETECT_DISTANCE) {
-                clearStart = 0;
-
-                if (detectionStart == 0)
-                    detectionStart = now;
-
-                if (now - detectionStart >= FULL_DETECTION_TIME_MS)
-                    isFull = true;
-            }
-            else detectionStart = 0;
-        }
-        else {
-            if (distance > CLEAR_DISTANCE) {
-                if (clearStart == 0)
-                    clearStart = now;
-
-                if (now - clearStart >= CLEAR_DETECTION_TIME_MS) {
-                    isFull = false;
-                    detectionStart = 0;
-                    clearStart = 0;
-                }
-            }
-            else clearStart = 0;
-        }
-    }
-
-    public boolean isFull() {
-        return isFull;
-    }
-
-    @Override
-    public void periodic() {
-//        if (currentLoopCount == SENSOR_UPDATE_LOOP_FREQUENCY) {
-//            currentLoopCount = 0;
-//            updateSensor();
-//        }
-//        else currentLoopCount++;
-
-        telemetry.addData("Has 4 Pollen", isFull());
     }
 }

@@ -5,10 +5,6 @@ import static org.stealthrobotics.library.Commands.waitSeconds;
 import static org.stealthrobotics.library.Commands.waitUntil;
 
 import com.arcrobotics.ftclib.command.Command;
-import com.arcrobotics.ftclib.command.RunCommand;
-import com.arcrobotics.ftclib.command.button.Trigger;
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.systems.Drive;
@@ -17,7 +13,8 @@ import org.firstinspires.ftc.teamcode.systems.Shooter;
 import org.firstinspires.ftc.teamcode.systems.Turret;
 import org.firstinspires.ftc.teamcode.util.LoopTimeTracker;
 import org.firstinspires.ftc.teamcode.util.Pose3D;
-import org.firstinspires.ftc.teamcode.util.SimpleShotCalculator;
+import org.firstinspires.ftc.teamcode.util.ShotCalculator;
+import org.firstinspires.ftc.teamcode.util.ShotValues;
 import org.stealthrobotics.library.Commands;
 import org.stealthrobotics.library.StealthSubsystem;
 
@@ -27,8 +24,8 @@ public class Robot extends StealthSubsystem {
     public final Shooter shooter;
     public final Turret turret;
 
-    private final SimpleShotCalculator shotCalculator;
-    private final LoopTimeTracker loopTracker;
+    private final ShotCalculator shotCalculator;
+    private final LoopTimeTracker loopTimeTracker;
 
     public Robot(HardwareMap h) {
         drive = new Drive(h);
@@ -36,23 +33,15 @@ public class Robot extends StealthSubsystem {
         shooter = new Shooter(h);
         turret = new Turret(h);
 
-        shotCalculator = new SimpleShotCalculator();
-        loopTracker = new LoopTimeTracker();
-
-        //Trigger that starts idling the shooter when the intake is full
-        new Trigger(intake::isFull)
-            .whenActive(shooter.idleShooter())
-            .whenInactive(conditional(
-                () -> shooter.getState().equals(Shooter.ShooterState.IDLE),
-                shooter.stopShooter(),
-                Commands.none()
-            ));
+        shotCalculator = new ShotCalculator();
+        loopTimeTracker = new LoopTimeTracker();
     }
 
     public Command shoot() {
         return sequence(
             turret.setTracking(),
             shooter.runShooter(),
+            conditional(turret::atAngle, Commands.none(), waitSeconds(750)),
             waitUntil(shooter::atTargetRPM).withTimeout(1500),
             shooter.openGate(),
             intake.intake(),
@@ -68,9 +57,10 @@ public class Robot extends StealthSubsystem {
     public void periodic() {
         shotCalculator.update(Pose3D.of(drive.getPose()), drive.getVelocity());
 
-        turret.update(shotCalculator.getTurretAngle());
-        shooter.update(shotCalculator.getRPM(), shotCalculator.getHoodAngle());
+        ShotValues shotValues = shotCalculator.getLatestShotValues();
+        turret.update(shotValues.turretAngle);
+        shooter.update(shotValues.rpm, shotValues.hoodAngle);
 
-        loopTracker.update();
+        loopTimeTracker.update();
     }
 }

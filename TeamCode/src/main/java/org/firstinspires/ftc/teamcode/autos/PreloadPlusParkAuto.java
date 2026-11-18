@@ -19,8 +19,8 @@ public abstract class PreloadPlusParkAuto extends Auto {
     @Override
     public void buildPaths() {
         // All poses are defined on the blue alliance and flipped for red autos
-        start = poseFactory.of(52.6409, 8.1679, -90);
-        parkPath = poseFactory.of(8.6374, 96.127, -90);
+        start = poseFactory.of(52.6409, 8.1679, 90);
+        parkPath = poseFactory.of(8.6374, 96.127, 90);
         parkPathControl1 = poseFactory.of(38.7789, 37.8307, 0);
 
         park = Paths.curve(start, parkPathControl1, parkPath).constant(parkPath);
@@ -31,7 +31,6 @@ public abstract class PreloadPlusParkAuto extends Auto {
     @Override
     public Command getAutoCommand() {
         return sequence(
-            new WaitCommand(1000),
             robot.shoot(),
             followPath(park)
         );

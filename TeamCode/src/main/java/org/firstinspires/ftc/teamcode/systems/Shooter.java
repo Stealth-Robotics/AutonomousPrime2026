@@ -2,9 +2,13 @@ package org.firstinspires.ftc.teamcode.systems;
 
 import static org.stealthrobotics.library.opmodes.StealthOpMode.telemetry;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.controller.PIDFController;
+import com.arcrobotics.ftclib.util.MathUtils;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -12,11 +16,17 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.stealthrobotics.library.Commands;
 import org.stealthrobotics.library.StealthSubsystem;
+
+import java.util.function.DoubleSupplier;
 
 public class Shooter extends StealthSubsystem {
     private final DcMotorEx leftShooterMotor;
     private final DcMotorEx rightShooterMotor;
+
+    private final Telemetry dashboard = FtcDashboard.getInstance().getTelemetry();
 
     private final VoltageSensor voltageSensor;
 
@@ -26,8 +36,8 @@ public class Shooter extends StealthSubsystem {
     private final PIDFController shooterPIDF = new PIDFController(
         0.001,
         0,
-        0,
-        0.000208
+        0.00001,
+        0.00019
     );
 
     private ShooterState state = ShooterState.STOPPED;
@@ -46,7 +56,7 @@ public class Shooter extends StealthSubsystem {
 
     private static final double TICKS_PER_REVOLUTION = 28;
 
-    private double targetRPM, lastCommandedPower;
+    private double targetRPM, hoodOffset, lastCommandedPower;
 
     public enum ShooterState {
         SHOOTING,
@@ -71,6 +81,19 @@ public class Shooter extends StealthSubsystem {
         rightShooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         hoodServo.setDirection(Servo.Direction.REVERSE);
+    }
+
+    public Command startShooting(DoubleSupplier shotTime) {
+        return Commands.sequence(
+            new WaitCommand((int) (shotTime.getAsDouble() / 4.0)),
+            new InstantCommand(() -> hoodOffset += 0.02),
+            new WaitCommand((int) (shotTime.getAsDouble() / 4.0)),
+            new InstantCommand(() -> hoodOffset += 0.02),
+            new WaitCommand((int) (shotTime.getAsDouble() / 4.0)),
+            new InstantCommand(() -> hoodOffset += 0.02),
+            new WaitCommand((int) (shotTime.getAsDouble() / 4.0)),
+            new InstantCommand(() -> hoodOffset = 0)
+        );
     }
 
     public Command runShooter() {
@@ -103,7 +126,7 @@ public class Shooter extends StealthSubsystem {
             (HOOD_MAX_ANGLE - HOOD_MIN_ANGLE) *
             (HOOD_MAX_POSITION - HOOD_MIN_POSITION);
 
-        hoodServo.setPosition(servoPosition);
+        hoodServo.setPosition(MathUtils.clamp(servoPosition + hoodOffset, HOOD_MIN_POSITION, HOOD_MAX_POSITION));
     }
 
     public boolean atTargetRPM() {
@@ -141,6 +164,10 @@ public class Shooter extends StealthSubsystem {
 
             lastCommandedPower = 0;
         }
+
+        dashboard.addData("Current RPM", currentRPM);
+        dashboard.addData("Target RPM", targetRPM);
+        dashboard.update();
 
         telemetry.addData("Current RPM", currentRPM);
         telemetry.addData("Target RPM", targetRPM);

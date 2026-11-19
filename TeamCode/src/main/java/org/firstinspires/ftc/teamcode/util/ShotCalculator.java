@@ -29,23 +29,23 @@ public class ShotCalculator {
 
     public ShotCalculator() {
         rpmLUT.add(20, 3100);
-        rpmLUT.add(42, 3200);
-        rpmLUT.add(53, 3300);
-        rpmLUT.add(60, 3400);
-        rpmLUT.add(80, 3600);
+        rpmLUT.add(42, 3100);
+        rpmLUT.add(53, 3200);
+        rpmLUT.add(60, 3300);
+        rpmLUT.add(80, 3500);
 
         hoodLUT.add(20, 5);
-        hoodLUT.add(36, 8);
-        hoodLUT.add(42, 10);
-        hoodLUT.add(60, 13);
+        hoodLUT.add(36, 9);
+        hoodLUT.add(42, 12);
+        hoodLUT.add(60, 15);
         hoodLUT.add(80, 15);
 
         // Experimental data, need to measure actual values
-        flightTimeLUT.add(20, 0.3);
-        flightTimeLUT.add(36, 0.32);
-        flightTimeLUT.add(42, 0.35);
-        flightTimeLUT.add(60, 0.4);
-        flightTimeLUT.add(80, 0.45);
+        flightTimeLUT.add(20, 0.4);
+        flightTimeLUT.add(36, 0.45);
+        flightTimeLUT.add(42, 0.5);
+        flightTimeLUT.add(60, 0.55);
+        flightTimeLUT.add(80, 0.6);
 
         rpmLUT.createLUT();
         hoodLUT.createLUT();

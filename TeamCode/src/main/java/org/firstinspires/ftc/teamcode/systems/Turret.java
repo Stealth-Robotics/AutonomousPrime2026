@@ -26,8 +26,6 @@ public class Turret extends StealthSubsystem {
     private final DcMotorEx turretMotor;
     private final PIDController turretController;
 
-    private final Telemetry dashboard = FtcDashboard.getInstance().getTelemetry();
-
     private static final double TURRET_TOLERANCE_DEGREES = 10;
 
     private static final double MAX_TURRET_ANGLE_DEGREES = 270;
@@ -146,13 +144,9 @@ public class Turret extends StealthSubsystem {
             lastMotorPower = motorPower;
         }
 
-        dashboard.addData("Current Angle", currentAngle);
-        dashboard.addData("Target Angle", targetAngle);
-        dashboard.update();
-
-        telemetry.addData("Turret Angle", currentAngle);
-        telemetry.addData("Turret Velocity", turretMotor.getVelocity() * 360 / TICKS_PER_REVOLUTION / TURRET_GEAR_RATIO);
+//        telemetry.addData("Turret Angle", currentAngle);
+//        telemetry.addData("Turret Velocity", turretMotor.getVelocity() * 360 / TICKS_PER_REVOLUTION / TURRET_GEAR_RATIO);
         telemetry.addData("Turret Angle Error", turretController.getPositionError());
-        telemetry.addData("Turret Wrapping", wrapping);
+//        telemetry.addData("Turret Wrapping", wrapping);
     }
 }

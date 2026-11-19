@@ -26,14 +26,13 @@ public class Drive extends StealthSubsystem {
             new Pose(134.5,135.5, Math.toRadians(180)),
             new Pose(7,6, Math.toRadians(0))
         ),
-
-        LEFT_SIDE_OF_FLOWER(
-            new Pose(134.5,85.5, Math.toRadians(180)),
-            new Pose(7,56, Math.toRadians(0))
+        NEAR_HIVE_CENTER(
+            new Pose(101,70.75, Math.toRadians(180)),
+            new Pose(32,70.75, Math.toRadians(0))
         ),
-        RIGHT_SIDE_OF_FLOWER(
-            new Pose(134.5,104.1, Math.toRadians(180)),
-            new Pose(7,37.4, Math.toRadians(0))
+        FAR_HIVE_CENTER(
+            new Pose(32,70.75, Math.toRadians(180)),
+            new Pose(101,70.75, Math.toRadians(0))
         );
 
         private final Pose bluePose, redPose;

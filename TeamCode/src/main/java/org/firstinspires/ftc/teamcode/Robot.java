@@ -34,12 +34,8 @@ public class Robot extends StealthSubsystem {
     private final ShotCalculator shotCalculator;
     private final LoopTimeTracker loopTimeTracker;
 
-    private final ShotTimer shotTimer;
-
-    private boolean resumeShooting = false;
-
     // The time it takes for all 4 pollen to leave the shooter
-    private static final double SHOT_TIME_SECONDS = 0.6;
+    private static final int SHOT_TIME = 600;
 
     public Robot(HardwareMap h) {
         drive = new Drive(h);
@@ -49,41 +45,16 @@ public class Robot extends StealthSubsystem {
 
         shotCalculator = new ShotCalculator();
         loopTimeTracker = new LoopTimeTracker();
-
-        shotTimer = new ShotTimer();
     }
 
     public Command shoot() {
         return sequence(
             turret.setTracking(),
             shooter.runShooter(),
-
-            new InstantCommand(shotTimer::reset),
-            new InstantCommand(shotTimer::resume),
+            waitUntil(() -> shooter.atTargetRPM() && turret.atAngle()).withTimeout(2000),
             shooter.openGate(),
             intake.intake(),
-            new RunCommand(() -> {
-                if (turret.atAngle() && shooter.atTargetRPM() && !turret.isWrapping()) {
-                    if (resumeShooting) {
-                        shotTimer.resume();
-
-                        shooter.openGate().schedule();
-                        intake.intake().schedule();
-
-                        resumeShooting = false;
-                    }
-                }
-                else if (!shotTimer.isPaused()) {
-                    shotTimer.pause();
-
-                    shooter.closeGate().schedule();
-                    intake.stop().schedule();
-
-                    resumeShooting = true;
-                }
-            }).interruptOn(() -> shotTimer.seconds() >= SHOT_TIME_SECONDS),
-            new InstantCommand(shotTimer::reset),
-
+            shooter.startShooting(() -> SHOT_TIME),
             shooter.closeGate(),
             intake.stop(),
             shooter.stopShooter(),

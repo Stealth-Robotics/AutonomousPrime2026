@@ -9,7 +9,7 @@ import com.pedropathing.math.Velocity;
 import org.stealthrobotics.library.Alliance;
 
 public class ShotCalculator {
-    private static final Pose3D ROBOT_TO_TURRET_OFFSET = new Pose3D(0, -2.1, 7.6);
+    private static final Pose3D ROBOT_TO_TURRET_OFFSET = new Pose3D(-2.1, 0, 7.6);
 
     private static final Pose3D BLUE_RIGHT_CELL = new Pose3D(84,86,60);
     private static final Pose3D BLUE_LEFT_CELL = new Pose3D(84, 55.5, 60);

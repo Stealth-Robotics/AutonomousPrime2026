@@ -16,7 +16,7 @@ public class ShotCalculator {
     private static final Pose3D RED_RIGHT_CELL = new Pose3D(57.8,51,60);
     private static final Pose3D RED_LEFT_CELL = new Pose3D(57.8, 90, 60);
 
-    private static final double MIN_LUT_DISTANCE_INCHES = 20.1;
+    private static final double MIN_LUT_DISTANCE_INCHES = 24.1;
     private static final double MAX_LUT_DISTANCE_INCHES = 79.9;
 
     private static final int CONVERGENCE_ITERATIONS = 5;
@@ -28,24 +28,27 @@ public class ShotCalculator {
     private ShotValues latestValues;
 
     public ShotCalculator() {
-        rpmLUT.add(20, 3100);
-        rpmLUT.add(42, 3100);
-        rpmLUT.add(53, 3200);
+        rpmLUT.add(24, 2950);
+        rpmLUT.add(30, 3000);
+        rpmLUT.add(40, 3100);
+        rpmLUT.add(47, 3150);
         rpmLUT.add(60, 3300);
         rpmLUT.add(80, 3500);
 
-        hoodLUT.add(20, 5);
-        hoodLUT.add(36, 9);
-        hoodLUT.add(42, 12);
-        hoodLUT.add(60, 15);
+        hoodLUT.add(24, 8);
+        hoodLUT.add(30, 8);
+        hoodLUT.add(40, 11);
+        hoodLUT.add(47, 12);
+        hoodLUT.add(60, 14);
         hoodLUT.add(80, 15);
 
         // Experimental data, need to measure actual values
-        flightTimeLUT.add(20, 0.4);
-        flightTimeLUT.add(36, 0.45);
-        flightTimeLUT.add(42, 0.5);
-        flightTimeLUT.add(60, 0.55);
-        flightTimeLUT.add(80, 0.6);
+        flightTimeLUT.add(24, 0.45);
+        flightTimeLUT.add(30, 0.5);
+        flightTimeLUT.add(40, 0.55);
+        flightTimeLUT.add(47, 0.6);
+        flightTimeLUT.add(60, 0.7);
+        flightTimeLUT.add(80, 0.7);
 
         rpmLUT.createLUT();
         hoodLUT.createLUT();
@@ -113,6 +116,8 @@ public class ShotCalculator {
             turretTargetAngle,
             turretTargetVelocity
         );
+
+        telemetry.addData("Distance", lookupDistance);
     }
 
     public ShotValues getLatestShotValues() {

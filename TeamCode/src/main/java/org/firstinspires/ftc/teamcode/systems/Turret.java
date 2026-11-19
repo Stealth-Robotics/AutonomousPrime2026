@@ -35,7 +35,7 @@ public class Turret extends StealthSubsystem {
     private static final double TICKS_PER_REVOLUTION = 384.5;
 
     private static final double TURRET_KS = 0.065;
-    private static final double TURRET_KV = 0.0012;
+    private static final double TURRET_KV = 0.0016;
 
     private static final double WRAP_DETECTION_DEGREES = 180;
 

@@ -54,7 +54,7 @@ public class Robot extends StealthSubsystem {
             waitUntil(() -> shooter.atTargetRPM() && turret.atAngle()).withTimeout(2000),
             shooter.openGate(),
             intake.intake(),
-            shooter.startShooting(() -> SHOT_TIME),
+            waitSeconds(SHOT_TIME).alongWith(shooter.hoodCompensation()),
             shooter.closeGate(),
             intake.stop(),
             shooter.stopShooter(),

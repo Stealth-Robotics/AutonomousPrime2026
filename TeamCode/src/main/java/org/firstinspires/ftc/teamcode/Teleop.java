@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.SelectCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -37,12 +38,10 @@ public abstract class Teleop extends StealthOpMode {
     private void configureBindings() {
         driverGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(robot.shoot());
         driverGamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(
-            new SelectCommand(
-                Map.of(
-                    Shooter.ShooterState.STOPPED, robot.shooter.idleShooter(),
-                    Shooter.ShooterState.IDLE, robot.shooter.stopShooter()
-                ),
-                robot.shooter::getState
+            new ConditionalCommand(
+                robot.shooter.runShooter(),
+                robot.shooter.stopShooter(),
+                () -> robot.shooter.getState().equals(Shooter.ShooterState.STOPPED)
             )
         );
 

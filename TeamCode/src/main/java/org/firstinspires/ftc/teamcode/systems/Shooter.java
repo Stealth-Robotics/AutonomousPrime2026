@@ -32,8 +32,6 @@ public class Shooter extends StealthSubsystem {
 
     private ShooterState state = ShooterState.STOPPED;
 
-    private static final double IDLE_RPM = 3000;
-
     private static final double RPM_TOLERANCE = 50;
 
     private static final double HOOD_MIN_POSITION = 0.55;
@@ -52,7 +50,6 @@ public class Shooter extends StealthSubsystem {
 
     public enum ShooterState {
         SHOOTING,
-        IDLE,
         STOPPED
     }
 
@@ -78,10 +75,6 @@ public class Shooter extends StealthSubsystem {
 
     public Command runShooter() {
         return new InstantCommand(() -> state = ShooterState.SHOOTING);
-    }
-
-    public Command idleShooter() {
-        return new InstantCommand(() -> state = ShooterState.IDLE);
     }
 
     public Command stopShooter() {
@@ -127,7 +120,7 @@ public class Shooter extends StealthSubsystem {
 
         if (!state.equals(ShooterState.STOPPED)) {
             double calculatedPower =
-                shooterPIDF.calculate(currentRPM, state.equals(ShooterState.SHOOTING) ? targetRPM : IDLE_RPM);
+                shooterPIDF.calculate(currentRPM, targetRPM);
 
             //Normalize the output to 12V even when the battery voltage is higher
             calculatedPower *= 12.0 / voltageSensor.getVoltage();

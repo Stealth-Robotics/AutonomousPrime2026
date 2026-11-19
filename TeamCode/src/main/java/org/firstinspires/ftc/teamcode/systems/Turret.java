@@ -39,6 +39,11 @@ public class Turret extends StealthSubsystem {
     private static final double TURRET_KS = 0.065;
     private static final double TURRET_KV = 0.0012;
 
+    private static final double WRAP_DETECTION_DEGREES = 180;
+
+    private boolean wrapping = false;
+    private double previousTargetAngle = Double.NaN;
+
     private double currentAngle, targetAngle, targetVelocity, lastMotorPower;
 
     private enum TurretState {
@@ -58,6 +63,7 @@ public class Turret extends StealthSubsystem {
     public Command setTracking() {
         return new InstantCommand(() -> {
             state = TurretState.TRACKING;
+            previousTargetAngle = Double.NaN;
             turretController.reset();
         });
     }
@@ -94,14 +100,31 @@ public class Turret extends StealthSubsystem {
         return Math.abs(currentAngle - targetAngle) < TURRET_TOLERANCE_DEGREES;
     }
 
+    public boolean isWrapping() {
+        return wrapping;
+    }
+
     public void update(double targetAngle, double targetVelocity) {
         if (state == TurretState.TRACKING) {
-            this.targetAngle = findValidTargetAngle(targetAngle + 180);
+            double newTargetAngle = findValidTargetAngle(targetAngle + 180);
+
+            if (!Double.isNaN(previousTargetAngle) && Math.abs(newTargetAngle - previousTargetAngle) > WRAP_DETECTION_DEGREES)
+                wrapping = true;
+
+            this.targetAngle = newTargetAngle;
             this.targetVelocity = targetVelocity;
+
+            previousTargetAngle = newTargetAngle;
+
+            if (wrapping && atAngle())
+                wrapping = false;
         }
         else {
             this.targetAngle = 0;
             this.targetVelocity = 0;
+
+            previousTargetAngle = Double.NaN;
+            wrapping = false;
         }
     }
 
@@ -130,5 +153,6 @@ public class Turret extends StealthSubsystem {
         telemetry.addData("Turret Angle", currentAngle);
         telemetry.addData("Turret Velocity", turretMotor.getVelocity() * 360 / TICKS_PER_REVOLUTION / TURRET_GEAR_RATIO);
         telemetry.addData("Turret Angle Error", turretController.getPositionError());
+        telemetry.addData("Turret Wrapping", wrapping);
     }
 }

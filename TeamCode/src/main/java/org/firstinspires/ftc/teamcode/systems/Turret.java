@@ -6,27 +6,23 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.controller.PIDController;
-import com.arcrobotics.ftclib.controller.wpilibcontroller.ProfiledPIDController;
-import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
-import com.arcrobotics.ftclib.util.MathUtils;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.stealthrobotics.library.StealthSubsystem;
 
-import java.util.function.DoubleSupplier;
-
 public class Turret extends StealthSubsystem {
-    private TurretState state = TurretState.HOMED;
+    private TurretState state = TurretState.TRACKING;
+
+    private final Telemetry dashboard = FtcDashboard.getInstance().getTelemetry();
 
     private final DcMotorEx turretMotor;
     private final PIDController turretController;
 
-    private static final double TURRET_TOLERANCE_DEGREES = 10;
+    private static final double TURRET_TOLERANCE_DEGREES = 5;
 
     private static final double MAX_TURRET_ANGLE_DEGREES = 270;
     private static final double MIN_TURRET_ANGLE_DEGREES = -90;
@@ -34,15 +30,16 @@ public class Turret extends StealthSubsystem {
     private static final double TURRET_GEAR_RATIO = 100.0 / 30.0;
     private static final double TICKS_PER_REVOLUTION = 384.5;
 
-    private static final double TURRET_KS = 0.065;
-    private static final double TURRET_KV = 0.0016;
+    private static final double TURRET_kPV = 0;
+    private static final double TURRET_kV = 0.002;
+    private static final double TURRET_kS = 0.04;
 
     private static final double WRAP_DETECTION_DEGREES = 180;
 
     private boolean wrapping = false;
     private double previousTargetAngle = Double.NaN;
 
-    private double currentAngle, targetAngle, targetVelocity, lastMotorPower;
+    private double currentAngle, targetAngle, targetVelocity;
 
     private enum TurretState {
         HOMED,
@@ -61,7 +58,9 @@ public class Turret extends StealthSubsystem {
     public Command setTracking() {
         return new InstantCommand(() -> {
             state = TurretState.TRACKING;
+
             previousTargetAngle = Double.NaN;
+
             turretController.reset();
         });
     }
@@ -98,6 +97,10 @@ public class Turret extends StealthSubsystem {
         return Math.abs(currentAngle - targetAngle) < TURRET_TOLERANCE_DEGREES;
     }
 
+    private double getVelocity() {
+        return turretMotor.getVelocity() * 360 / TICKS_PER_REVOLUTION / TURRET_GEAR_RATIO;
+    }
+
     public boolean isWrapping() {
         return wrapping;
     }
@@ -122,6 +125,7 @@ public class Turret extends StealthSubsystem {
             this.targetVelocity = 0;
 
             previousTargetAngle = Double.NaN;
+
             wrapping = false;
         }
     }
@@ -133,20 +137,19 @@ public class Turret extends StealthSubsystem {
         double motorPower = turretController.calculate(currentAngle, targetAngle);
 
         if (Math.abs(currentAngle - targetAngle) > 1)
-            motorPower += TURRET_KS * Math.signum(motorPower);
+            motorPower += TURRET_kS * Math.signum(motorPower);
 
-        motorPower += TURRET_KV * targetVelocity;
+        double velocityError = targetVelocity - getVelocity();
+        motorPower += TURRET_kPV * velocityError + TURRET_kV * targetVelocity;
 
-        //Power deadband for optimal hardware writes
-        if (Math.abs(motorPower - lastMotorPower) > 0.01 || motorPower == 0) {
-            turretMotor.setPower(motorPower);
+        turretMotor.setPower(motorPower);
 
-            lastMotorPower = motorPower;
-        }
+        dashboard.addData("current angle", currentAngle);
+        dashboard.addData("target angle", targetAngle);
+        dashboard.addData("current velocity", getVelocity());
+        dashboard.addData("target velocity", targetVelocity);
+        dashboard.update();
 
-//        telemetry.addData("Turret Angle", currentAngle);
-//        telemetry.addData("Turret Velocity", turretMotor.getVelocity() * 360 / TICKS_PER_REVOLUTION / TURRET_GEAR_RATIO);
         telemetry.addData("Turret Angle Error", turretController.getPositionError());
-//        telemetry.addData("Turret Wrapping", wrapping);
     }
 }

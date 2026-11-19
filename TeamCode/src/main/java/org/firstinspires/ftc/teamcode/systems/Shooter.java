@@ -26,8 +26,6 @@ public class Shooter extends StealthSubsystem {
     private final DcMotorEx leftShooterMotor;
     private final DcMotorEx rightShooterMotor;
 
-    private final Telemetry dashboard = FtcDashboard.getInstance().getTelemetry();
-
     private final VoltageSensor voltageSensor;
 
     private final Servo gateServo;
@@ -42,7 +40,7 @@ public class Shooter extends StealthSubsystem {
 
     private ShooterState state = ShooterState.STOPPED;
 
-    private static final double RPM_TOLERANCE = 25;
+    private static final double RPM_TOLERANCE = 50;
 
     private static final double HOOD_MIN_POSITION = 0.55;
     private static final double HOOD_MAX_POSITION = 0.76;
@@ -56,7 +54,7 @@ public class Shooter extends StealthSubsystem {
 
     private static final double TICKS_PER_REVOLUTION = 28;
 
-    private double targetRPM, hoodOffset, lastCommandedPower;
+    private double targetRPM, hoodOffset;
 
     public enum ShooterState {
         SHOOTING,
@@ -85,13 +83,13 @@ public class Shooter extends StealthSubsystem {
 
     public Command hoodCompensation() {
         return Commands.sequence(
-            new WaitCommand(150),
+            new WaitCommand(100),
             new InstantCommand(() -> hoodOffset += 0.02),
-            new WaitCommand(150),
+            new WaitCommand(100),
             new InstantCommand(() -> hoodOffset += 0.02),
-            new WaitCommand(150),
+            new WaitCommand(100),
             new InstantCommand(() -> hoodOffset += 0.02),
-            new WaitCommand(150)
+            new WaitCommand(100)
         ).whenFinished(() -> hoodOffset = 0);
     }
 
@@ -141,32 +139,20 @@ public class Shooter extends StealthSubsystem {
         double currentRPM = getCurrentRPM();
 
         if (!state.equals(ShooterState.STOPPED)) {
-            double calculatedPower =
-                shooterPIDF.calculate(currentRPM, targetRPM);
+            double calculatedPower = shooterPIDF.calculate(currentRPM, targetRPM);
 
             //Normalize the output to 12V even when the battery voltage is higher
             calculatedPower *= 12.0 / voltageSensor.getVoltage();
 
-            //Power deadband for optimal hardware writes
-            if (Math.abs(calculatedPower - lastCommandedPower) > 0.01 || calculatedPower == 0) {
-                leftShooterMotor.setPower(calculatedPower);
-                rightShooterMotor.setPower(calculatedPower);
-
-                lastCommandedPower = calculatedPower;
-            }
+            leftShooterMotor.setPower(calculatedPower);
+            rightShooterMotor.setPower(calculatedPower);
         }
-        else if (lastCommandedPower != 0) {
+        else {
             shooterPIDF.reset();
 
             leftShooterMotor.setPower(0);
             rightShooterMotor.setPower(0);
-
-            lastCommandedPower = 0;
         }
-
-        dashboard.addData("Current RPM", currentRPM);
-        dashboard.addData("Target RPM", targetRPM);
-        dashboard.update();
 
         telemetry.addData("Current RPM", currentRPM);
         telemetry.addData("Target RPM", targetRPM);

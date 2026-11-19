@@ -35,7 +35,7 @@ public class Robot extends StealthSubsystem {
     private final LoopTimeTracker loopTimeTracker;
 
     // The time it takes for all 4 pollen to leave the shooter
-    private static final int SHOT_TIME = 600;
+    private static final int SHOT_TIME = 800;
 
     public Robot(HardwareMap h) {
         drive = new Drive(h);

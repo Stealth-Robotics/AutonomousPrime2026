@@ -56,12 +56,15 @@ public class Drive extends StealthSubsystem {
             if (gamepad.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON).get())
                 follower.setHeading(Alliance.isRed() ? 0 : Math.toRadians(180));
 
-            follower.manual(ManualDrive.fieldCentric(
-                -gamepad.getLeftY() * (Alliance.isRed() ? -1 : 1),
-                gamepad.getLeftX() * (Alliance.isRed() ? -1 : 1),
-                -gamepad.getRightX(),
-                follower.pose().heading()
-            ));
+            ManualDrive.driveOrHold(
+                follower,
+                ManualDrive.fieldCentric(
+                    -gamepad.getLeftY() * (Alliance.isRed() ? -1 : 1),
+                    gamepad.getLeftX() * (Alliance.isRed() ? -1 : 1),
+                    -gamepad.getRightX(),
+                    follower.pose().heading()
+                )
+            );
         });
     }
 

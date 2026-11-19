@@ -28,8 +28,8 @@ public class ShotCalculator {
     private ShotValues latestValues;
 
     public ShotCalculator() {
-        rpmLUT.add(20, 3000);
-        rpmLUT.add(42, 3100);
+        rpmLUT.add(20, 3100);
+        rpmLUT.add(42, 3200);
         rpmLUT.add(53, 3300);
         rpmLUT.add(60, 3400);
         rpmLUT.add(80, 3600);
@@ -41,11 +41,11 @@ public class ShotCalculator {
         hoodLUT.add(80, 15);
 
         // Experimental data, need to measure actual values
-        flightTimeLUT.add(20, 0.4);
-        flightTimeLUT.add(36, 0.4);
-        flightTimeLUT.add(42, 0.4);
-        flightTimeLUT.add(60, 0.45);
-        flightTimeLUT.add(80, 0.6);
+        flightTimeLUT.add(20, 0.3);
+        flightTimeLUT.add(36, 0.32);
+        flightTimeLUT.add(42, 0.35);
+        flightTimeLUT.add(60, 0.4);
+        flightTimeLUT.add(80, 0.45);
 
         rpmLUT.createLUT();
         hoodLUT.createLUT();
@@ -113,13 +113,6 @@ public class ShotCalculator {
             turretTargetAngle,
             turretTargetVelocity
         );
-
-
-        telemetry.addData("Target Angle", turretTargetAngle);
-        telemetry.addData("Flight Time", flightTime);
-        telemetry.addData("Turret Target Velocity", turretTargetVelocity);
-
-        telemetry.addLine("--------------------------------\n\n");
     }
 
     public ShotValues getLatestShotValues() {

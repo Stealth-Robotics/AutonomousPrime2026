@@ -28,7 +28,7 @@ public class Turret extends StealthSubsystem {
 
     private final Telemetry dashboard = FtcDashboard.getInstance().getTelemetry();
 
-    private static final double TURRET_TOLERANCE_DEGREES = 5;
+    private static final double TURRET_TOLERANCE_DEGREES = 10;
 
     private static final double MAX_TURRET_ANGLE_DEGREES = 270;
     private static final double MIN_TURRET_ANGLE_DEGREES = -90;

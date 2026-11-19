@@ -104,6 +104,10 @@ public class Robot extends StealthSubsystem {
 
         loopTimeTracker.update();
 
+        telemetry.addData("Turret Wrapping", turret.isWrapping());
+        telemetry.addData("Turret At Angle", turret.atAngle());
+        telemetry.addData("At RPMS", shooter.atTargetRPM());
+
         telemetry.addData(
             "Pose", "(%.2f in, %.2f in, %.2f deg)",
             robotPose.x(), robotPose.y(), Math.toDegrees(robotPose.heading())
@@ -111,7 +115,7 @@ public class Robot extends StealthSubsystem {
 
         telemetry.addData(
             "Velocity", "(%.2f in/s, %.2f in/s, %.2f deg/s)",
-            robotVelocity.vx, robotVelocity.vx, Math.toDegrees(robotVelocity.omega)
+            robotVelocity.vx, robotVelocity.vy, Math.toDegrees(robotVelocity.omega)
         );
     }
 }

@@ -11,10 +11,10 @@ import org.stealthrobotics.library.Alliance;
 public class ShotCalculator {
     private static final Pose3D ROBOT_TO_TURRET_OFFSET = new Pose3D(0, -2.1, 7.6);
 
-    private static final Pose3D BLUE_RIGHT_CELL = new Pose3D(84,90,60);
-    private static final Pose3D BLUE_LEFT_CELL = new Pose3D(84, 51, 60);
-    private static final Pose3D RED_RIGHT_CELL = new Pose3D(57.8,51,60);
-    private static final Pose3D RED_LEFT_CELL = new Pose3D(57.8, 90, 60);
+    private static final Pose3D BLUE_RIGHT_CELL = new Pose3D(84,86,60);
+    private static final Pose3D BLUE_LEFT_CELL = new Pose3D(84, 55.5, 60);
+    private static final Pose3D RED_RIGHT_CELL = new Pose3D(57.5,55.5,60);
+    private static final Pose3D RED_LEFT_CELL = new Pose3D(57.5, 86, 60);
 
     private static final double MIN_LUT_DISTANCE_INCHES = 24.1;
     private static final double MAX_LUT_DISTANCE_INCHES = 79.9;
@@ -73,9 +73,7 @@ public class ShotCalculator {
         double turretVelocityX = robotVelocity.vx - robotVelocity.omega * turretOffset.y();
         double turretVelocityY = robotVelocity.vy + robotVelocity.omega * turretOffset.x();
 
-        double flightTime = flightTimeLUT.get(
-            MathUtils.clamp(initialDistance, MIN_LUT_DISTANCE_INCHES, MAX_LUT_DISTANCE_INCHES)
-        );
+        double flightTime = flightTimeLUT.get(MathUtils.clamp(initialDistance, MIN_LUT_DISTANCE_INCHES, MAX_LUT_DISTANCE_INCHES));
 
         double dx = 0;
         double dy = 0;

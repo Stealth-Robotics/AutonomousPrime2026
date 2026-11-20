@@ -32,7 +32,7 @@ public class Shooter extends StealthSubsystem {
     private final Servo hoodServo;
 
     private final PIDFController shooterPIDF = new PIDFController(
-        0.0015,
+        0.001,
         0,
         0.00001,
         0.00019
@@ -79,18 +79,6 @@ public class Shooter extends StealthSubsystem {
         rightShooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         hoodServo.setDirection(Servo.Direction.REVERSE);
-    }
-
-    public Command hoodCompensation() {
-        return Commands.sequence(
-            new WaitCommand(100),
-            new InstantCommand(() -> hoodOffset += 0.02),
-            new WaitCommand(100),
-            new InstantCommand(() -> hoodOffset += 0.02),
-            new WaitCommand(100),
-            new InstantCommand(() -> hoodOffset += 0.02),
-            new WaitCommand(100)
-        ).whenFinished(() -> hoodOffset = 0);
     }
 
     public Command runShooter() {

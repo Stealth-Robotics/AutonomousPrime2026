@@ -31,26 +31,19 @@ public abstract class Auto extends StealthOpMode {
         buildPaths();
     }
 
-    @Override
-    public void onStart() {
-        // Go to the correct starting configuration
-        robot.intake.raiseHarvester().schedule();
-        robot.shooter.closeGate().schedule();
-    }
-
     public void buildPaths() {}
 
     public Command followPath(Path p, long timeout) {
         return new SequentialCommandGroup(
             new InstantCommand(() -> follower.follow(p)),
-            new WaitUntilCommand(() -> !follower.following() || follower.atParametricEnd()).withTimeout(timeout)
+            new WaitUntilCommand(() -> !follower.following()).withTimeout(timeout)
         );
     }
 
     public Command followPath(Path p) {
         return new SequentialCommandGroup(
             new InstantCommand(() -> follower.follow(p)),
-            new WaitUntilCommand(() -> !follower.following() || follower.atParametricEnd())
+            new WaitUntilCommand(() -> !follower.following())
         );
     }
 }

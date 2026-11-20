@@ -18,7 +18,7 @@ public class Intake extends StealthSubsystem {
     private final Servo harvesterServo;
 
     private static final double HARVESTER_UP_POSITION = 0.0;
-    private static final double HARVESTER_DOWN_POSITION = 0.8;
+    private static final double HARVESTER_DOWN_POSITION = 0.92;
 
     private HarvesterState harvesterState = HarvesterState.UP;
 

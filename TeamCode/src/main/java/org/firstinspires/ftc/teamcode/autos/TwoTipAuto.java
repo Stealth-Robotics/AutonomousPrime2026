@@ -12,20 +12,18 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 
 public abstract class TwoTipAuto extends Auto {
-    private Pose start, driveToGarden, intakeGarden, leaveGarden,
-        point4, driveToOtherSide, driveToFlowerStart, driveToFlower;
     private Path driveToGardenPath, intakeGardenPath, leaveGardenPath, path4, driveToOtherSidePath, driveToFlowerPath;
 
     @Override
     public void buildPaths() {
-        start = poseFactory.of(52.5, 8.4, -90);
-        driveToGarden = poseFactory.of(6.2387, 15.1752, -90);
-        intakeGarden = poseFactory.of(6.1236, 8.0792, -90);
-        leaveGarden = poseFactory.of(5.8838, 16.1962, -90);
-        point4 = poseFactory.of(61.326, 30.8467, -90);
-        driveToOtherSide = poseFactory.of(61.0353, 122.123, -90);
-        driveToFlowerStart = poseFactory.of(61.0353, 122.123, -90);
-        driveToFlower = poseFactory.of(46.8788, 115.3733, 90);
+        Pose start = poseFactory.of(52.5, 8.4, -90);
+        Pose driveToGarden = poseFactory.of(6.2387, 15.1752, -90);
+        Pose intakeGarden = poseFactory.of(6.1236, 8.0792, -90);
+        Pose leaveGarden = poseFactory.of(5.8838, 16.1962, -90);
+        Pose point4 = poseFactory.of(61.326, 30.8467, -90);
+        Pose driveToOtherSide = poseFactory.of(61.0353, 122.123, -90);
+        Pose driveToFlowerStart = poseFactory.of(61.0353, 122.123, -90);
+        Pose driveToFlower = poseFactory.of(46.8788, 115.3733, 90);
 
         driveToGardenPath = Paths.line(start, driveToGarden).constant(driveToGarden);
         intakeGardenPath = Paths.line(driveToGarden, intakeGarden).constant(intakeGarden)

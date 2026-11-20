@@ -15,12 +15,13 @@ import java.util.Map;
 
 public abstract class Teleop extends StealthOpMode {
     private Robot robot;
-    private GamepadEx driverGamepad;
+    private GamepadEx driverGamepad, operatorGamepad;
 
     @Override
     public void initialize() {
         robot = new Robot(hardwareMap);
         driverGamepad = new GamepadEx(gamepad1);
+        operatorGamepad = new GamepadEx(gamepad2);
 
         // Setup default commands
         robot.drive.setDefaultCommand(robot.drive.teleopDriveDefaultCommand(driverGamepad));
@@ -38,7 +39,7 @@ public abstract class Teleop extends StealthOpMode {
 
     private void configureBindings() {
         driverGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(robot.shoot());
-        driverGamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(
+        operatorGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(
             new ConditionalCommand(
                 robot.shooter.runShooter(),
                 robot.shooter.stopShooter(),

@@ -1,11 +1,7 @@
 package org.firstinspires.ftc.teamcode.systems;
 
-import static org.stealthrobotics.library.opmodes.StealthOpMode.telemetry;
-
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.util.MathUtils;
@@ -16,11 +12,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.stealthrobotics.library.Commands;
 import org.stealthrobotics.library.StealthSubsystem;
-
-import java.util.function.DoubleSupplier;
 
 public class Shooter extends StealthSubsystem {
     private final DcMotorEx leftShooterMotor;

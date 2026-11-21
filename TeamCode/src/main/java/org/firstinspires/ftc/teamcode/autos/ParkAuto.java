@@ -14,9 +14,8 @@ public abstract class ParkAuto extends Auto {
 
     @Override
     public void buildPaths() {
-        // All poses are defined on the blue alliance and flipped for red autos
-        Pose start = poseFactory.of(6.076, 133.3453, 90);
-        Pose park = poseFactory.of(7.2099, 118.8378, 90);
+        Pose start = poseFactory.of(5.8836, 132.7653, 90);
+        Pose park = poseFactory.of(6.0588, 123.6161, 90);
 
         parkPath = Paths.line(start, park).constant(park);
 

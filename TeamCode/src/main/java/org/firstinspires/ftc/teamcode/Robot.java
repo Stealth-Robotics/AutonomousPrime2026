@@ -56,6 +56,18 @@ public class Robot extends StealthSubsystem {
         );
     }
 
+    public Command suck() {
+        return sequence(
+            shooter.openGate(),
+            intake.outtake(),
+            shooter.suck(),
+            waitSeconds(200),
+            shooter.closeGate(),
+            intake.stop(),
+            shooter.stopShooter()
+        );
+    }
+
     @Override
     public void periodic() {
         Pose robotPose = drive.getPose();

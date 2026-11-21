@@ -35,6 +35,8 @@ public class Shooter extends StealthSubsystem {
 
     private static final double RPM_TOLERANCE = 30;
 
+    private static final double SUCK_RPM = -500;
+
     private static final double HOOD_MIN_POSITION = 0.55;
     private static final double HOOD_MAX_POSITION = 0.76;
 
@@ -51,6 +53,7 @@ public class Shooter extends StealthSubsystem {
 
     public enum ShooterState {
         SHOOTING,
+        SUCKING,
         STOPPED
     }
 
@@ -89,6 +92,10 @@ public class Shooter extends StealthSubsystem {
 
     public Command runShooter() {
         return new InstantCommand(() -> state = ShooterState.SHOOTING);
+    }
+
+    public Command suck() {
+        return new InstantCommand(() -> state = ShooterState.SUCKING);
     }
 
     public Command stopShooter() {
@@ -133,7 +140,8 @@ public class Shooter extends StealthSubsystem {
         double currentRPM = getCurrentRPM();
 
         if (!state.equals(ShooterState.STOPPED)) {
-            double calculatedPower = shooterPIDF.calculate(currentRPM, targetRPM);
+            double calculatedPower =
+                shooterPIDF.calculate(currentRPM, state.equals(ShooterState.SUCKING) ? SUCK_RPM : targetRPM);
 
             //Normalize the output to 12V even when the battery voltage is higher
             calculatedPower *= 12.0 / voltageSensor.getVoltage();

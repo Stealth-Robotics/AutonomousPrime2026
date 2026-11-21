@@ -39,6 +39,9 @@ public abstract class Teleop extends StealthOpMode {
 
     private void configureBindings() {
         driverGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(robot.shoot());
+        driverGamepad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(robot.suck());
+
+        // Spinup
         operatorGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(
             new ConditionalCommand(
                 robot.shooter.runShooter(),

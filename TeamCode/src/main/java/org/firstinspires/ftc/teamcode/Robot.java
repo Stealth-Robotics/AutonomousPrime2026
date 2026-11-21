@@ -42,10 +42,6 @@ public class Robot extends StealthSubsystem {
         loopTimeTracker = new LoopTimeTracker();
     }
 
-    public void changeRPMOffset(int amount) {
-        shotCalculator.rpmOffset += amount;
-    }
-
     public Command shoot() {
         return sequence(
             shooter.runShooter(),
@@ -53,7 +49,7 @@ public class Robot extends StealthSubsystem {
             waitUntil(() -> !turret.isWrapping()).withTimeout(1000),
             shooter.openGate(),
             intake.intake(),
-            waitSeconds(SHOT_TIME),
+            waitSeconds(SHOT_TIME).alongWith(shooter.hoodCompensation()),
             shooter.closeGate(),
             intake.stop(),
             shooter.stopShooter()

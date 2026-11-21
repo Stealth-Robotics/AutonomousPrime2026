@@ -21,8 +21,6 @@ public class ShotCalculator {
 
     private static final int CONVERGENCE_ITERATIONS = 5;
 
-    public int rpmOffset = 0;
-
     private final InterpLUT rpmLUT = new InterpLUT();
     private final InterpLUT hoodLUT = new InterpLUT();
     private final InterpLUT flightTimeLUT = new InterpLUT();
@@ -30,14 +28,14 @@ public class ShotCalculator {
     private ShotValues latestValues;
 
     public ShotCalculator() {
-        rpmLUT.add(24, 2950);
+        rpmLUT.add(24, 2900);
         rpmLUT.add(30, 3000);
-        rpmLUT.add(40, 3050);
-        rpmLUT.add(47, 3100);
+        rpmLUT.add(40, 3100);
+        rpmLUT.add(47, 3120);
         rpmLUT.add(50, 3200);
         rpmLUT.add(60, 3300);
-        rpmLUT.add(70, 3450);
-        rpmLUT.add(80, 3550);
+        rpmLUT.add(70, 3400);
+        rpmLUT.add(80, 3500);
 
         hoodLUT.add(24, 6);
         hoodLUT.add(30, 8);
@@ -49,11 +47,11 @@ public class ShotCalculator {
         hoodLUT.add(80, 15);
 
         // Experimental data, need to measure actual values
-        flightTimeLUT.add(24, 0.45);
-        flightTimeLUT.add(30, 0.5);
+        flightTimeLUT.add(24, 0.55);
+        flightTimeLUT.add(30, 0.55);
         flightTimeLUT.add(40, 0.55);
         flightTimeLUT.add(47, 0.6);
-        flightTimeLUT.add(60, 0.7);
+        flightTimeLUT.add(60, 0.65);
         flightTimeLUT.add(80, 0.7);
 
         rpmLUT.createLUT();
@@ -115,14 +113,13 @@ public class ShotCalculator {
         double lookupDistance = MathUtils.clamp(predictedDistance, MIN_LUT_DISTANCE_INCHES, MAX_LUT_DISTANCE_INCHES);
 
         latestValues = new ShotValues(
-            rpmLUT.get(lookupDistance) + rpmOffset,
+            rpmLUT.get(lookupDistance),
             hoodLUT.get(lookupDistance),
             turretTargetAngle,
             turretTargetVelocity
         );
 
         telemetry.addData("Distance", lookupDistance);
-        telemetry.addData("RPM Offset", rpmOffset);
     }
 
     public ShotValues getLatestShotValues() {

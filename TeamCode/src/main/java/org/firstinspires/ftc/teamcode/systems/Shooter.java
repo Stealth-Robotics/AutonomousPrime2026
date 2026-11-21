@@ -40,7 +40,7 @@ public class Shooter extends StealthSubsystem {
 
     private ShooterState state = ShooterState.STOPPED;
 
-    private static final double RPM_TOLERANCE = 50;
+    private static final double RPM_TOLERANCE = 30;
 
     private static final double HOOD_MIN_POSITION = 0.55;
     private static final double HOOD_MAX_POSITION = 0.76;
@@ -54,7 +54,7 @@ public class Shooter extends StealthSubsystem {
 
     private static final double TICKS_PER_REVOLUTION = 28;
 
-    private double targetRPM, hoodOffset;
+    private double targetRPM = 0, hoodCompensation = 0;
 
     public enum ShooterState {
         SHOOTING,
@@ -79,6 +79,19 @@ public class Shooter extends StealthSubsystem {
         rightShooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         hoodServo.setDirection(Servo.Direction.REVERSE);
+    }
+
+    public Command hoodCompensation() {
+        return Commands.sequence(
+            new WaitCommand(300),
+            new InstantCommand(() -> hoodCompensation += 0.01),
+            new WaitCommand(100),
+            new InstantCommand(() -> hoodCompensation += 0.01),
+            new WaitCommand(100),
+            new InstantCommand(() -> hoodCompensation += 0.01),
+            new WaitCommand(100),
+            new InstantCommand(() -> hoodCompensation = 0)
+        );
     }
 
     public Command runShooter() {
@@ -111,7 +124,7 @@ public class Shooter extends StealthSubsystem {
             (HOOD_MAX_ANGLE - HOOD_MIN_ANGLE) *
             (HOOD_MAX_POSITION - HOOD_MIN_POSITION);
 
-        hoodServo.setPosition(MathUtils.clamp(servoPosition + hoodOffset, HOOD_MIN_POSITION, HOOD_MAX_POSITION));
+        hoodServo.setPosition(MathUtils.clamp(servoPosition + hoodCompensation, HOOD_MIN_POSITION, HOOD_MAX_POSITION));
     }
 
     public boolean atTargetRPM() {
@@ -141,8 +154,5 @@ public class Shooter extends StealthSubsystem {
             leftShooterMotor.setPower(0);
             rightShooterMotor.setPower(0);
         }
-
-        telemetry.addData("Current RPM", currentRPM);
-        telemetry.addData("Target RPM", targetRPM);
     }
 }

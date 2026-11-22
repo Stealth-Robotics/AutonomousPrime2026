@@ -77,18 +77,18 @@ public class Shooter extends StealthSubsystem {
         hoodServo.setDirection(Servo.Direction.REVERSE);
     }
 
-    public Command hoodCompensation() {
-        return Commands.sequence(
-            new WaitCommand(300),
-            new InstantCommand(() -> hoodCompensation += 0.01),
-            new WaitCommand(100),
-            new InstantCommand(() -> hoodCompensation += 0.01),
-            new WaitCommand(100),
-            new InstantCommand(() -> hoodCompensation += 0.01),
-            new WaitCommand(100),
-            new InstantCommand(() -> hoodCompensation = 0)
-        );
-    }
+//    public Command hoodCompensation() {
+//        return Commands.sequence(
+//            new WaitCommand(300),
+//            new InstantCommand(() -> hoodCompensation += 0.01),
+//            new WaitCommand(100),
+//            new InstantCommand(() -> hoodCompensation += 0.01),
+//            new WaitCommand(100),
+//            new InstantCommand(() -> hoodCompensation += 0.01),
+//            new WaitCommand(100),
+//            new InstantCommand(() -> hoodCompensation = 0)
+//        );
+//    }
 
     public Command runShooter() {
         return new InstantCommand(() -> state = ShooterState.SHOOTING);

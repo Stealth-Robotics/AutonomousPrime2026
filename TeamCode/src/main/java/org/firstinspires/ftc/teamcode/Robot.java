@@ -49,7 +49,7 @@ public class Robot extends StealthSubsystem {
             waitUntil(() -> !turret.isWrapping()).withTimeout(1000),
             shooter.openGate(),
             intake.intake(),
-            waitSeconds(SHOT_TIME).alongWith(shooter.hoodCompensation()),
+            waitSeconds(SHOT_TIME),
             shooter.closeGate(),
             intake.stop(),
             shooter.stopShooter()

@@ -24,7 +24,6 @@ public class Vision extends StealthSubsystem {
     private static final double CONFIDENCE_THRESHOLD = 0.5; // Confidence level required to turn off camera
     private final Limelight3A limelight;
     private boolean isRightSideUp = true;
-    private boolean isConfident = false;
     private final Set<Integer> LEFT_TAGS;
     private final Set<Integer> RIGHT_TAGS;
 
@@ -44,10 +43,7 @@ public class Vision extends StealthSubsystem {
 
     public Command updateLimelight() {
         return new InstantCommand(
-                () -> {
-                    limelight.start();
-                    isConfident = false;
-                }
+                limelight::start
         );
     }
 
@@ -81,7 +77,6 @@ public class Vision extends StealthSubsystem {
             if(rightUpConfidence < -CONFIDENCE_THRESHOLD) isRightSideUp = false;
 
             if(Math.abs(rightUpConfidence) > CONFIDENCE_THRESHOLD) { // Limelight is confident, the limelight stops
-                isConfident = true;
                 limelight.stop();
             }
         }

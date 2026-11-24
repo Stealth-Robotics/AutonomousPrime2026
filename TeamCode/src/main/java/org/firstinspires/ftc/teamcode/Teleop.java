@@ -27,6 +27,8 @@ public abstract class Teleop extends StealthOpMode {
         robot.drive.setDefaultCommand(robot.drive.teleopDriveDefaultCommand(driverGamepad));
         robot.intake.setDefaultCommand(robot.intake.teleopIntakeDefaultCommand(driverGamepad));
 
+        robot.vision.trackRightSide().schedule();
+
         configureBindings();
     }
 

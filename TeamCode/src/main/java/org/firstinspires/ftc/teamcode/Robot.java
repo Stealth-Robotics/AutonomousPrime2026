@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.systems.Drive;
 import org.firstinspires.ftc.teamcode.systems.Intake;
 import org.firstinspires.ftc.teamcode.systems.Shooter;
 import org.firstinspires.ftc.teamcode.systems.Turret;
+import org.firstinspires.ftc.teamcode.systems.Vision;
 import org.firstinspires.ftc.teamcode.util.LoopTimeTracker;
 import org.firstinspires.ftc.teamcode.util.Pose3D;
 import org.firstinspires.ftc.teamcode.util.ShotCalculator;
@@ -25,6 +26,7 @@ public class Robot extends StealthSubsystem {
     public final Intake intake;
     public final Shooter shooter;
     public final Turret turret;
+    public final Vision vision;
 
     private final ShotCalculator shotCalculator;
     private final LoopTimeTracker loopTimeTracker;
@@ -37,6 +39,7 @@ public class Robot extends StealthSubsystem {
         intake = new Intake(h);
         shooter = new Shooter(h);
         turret = new Turret(h);
+        vision = new Vision(h);
 
         shotCalculator = new ShotCalculator();
         loopTimeTracker = new LoopTimeTracker();
@@ -73,7 +76,8 @@ public class Robot extends StealthSubsystem {
         Pose robotPose = drive.getPose();
         Velocity robotVelocity = drive.getVelocity();
 
-        shotCalculator.update(Pose3D.of(robotPose), robotVelocity);
+//        shotCalculator.update(Pose3D.of(robotPose), robotVelocity);
+        shotCalculator.update(new Pose3D(), Velocity.zero());
         ShotValues shotValues = shotCalculator.getLatestShotValues();
 
         turret.update(shotValues.turretAngle, shotValues.turretVelocity);

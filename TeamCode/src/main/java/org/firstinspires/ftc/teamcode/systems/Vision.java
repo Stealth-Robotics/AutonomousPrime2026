@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.systems;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -8,6 +9,7 @@ import com.qualcomm.hardware.limelightvision.LLResultTypes.*;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.stealthrobotics.library.Alliance;
 import org.stealthrobotics.library.StealthSubsystem;
 
@@ -16,6 +18,8 @@ import java.util.List;
 import java.util.Set;
 
 public class Vision extends StealthSubsystem {
+
+    private final Telemetry dashboard = FtcDashboard.getInstance().getTelemetry();
     private static final Set<Integer> RED_LEFT_TAG_IDS = Set.of(30, 31, 32, 33); // From https://ftc-resources.firstinspires.org/ftc/archive/2027/game/manual#page=77
     private static final Set<Integer> RED_RIGHT_TAG_IDS = Set.of(34, 35, 36, 37);
     private static final Set<Integer> BLUE_RIGHT_TAG_IDS = Set.of(38, 39, 40, 41);
@@ -62,6 +66,9 @@ public class Vision extends StealthSubsystem {
             List<FiducialResult> tags = snapshot.getFiducialResults();
             int rightUpReadings = 0; // Tracks the number of readings that show right side as up
 
+            dashboard.addData("First tag id", tags.get(0).getFiducialId());
+            dashboard.addData("First tag y", tags.get(0).getTargetYPixels());
+
             for(FiducialResult tag : tags) {
                 if(RIGHT_TAGS.contains(tag.getFiducialId()) && tag.getTargetYPixels() > UP_THRESHOLD_PIXELS || // Right up contributes to upward confidence
                         LEFT_TAGS.contains(tag.getFiducialId()) && tag.getTargetYPixels() < UP_THRESHOLD_PIXELS) { // Left down contributes to upward confidence
@@ -72,6 +79,7 @@ public class Vision extends StealthSubsystem {
             }
 
             double rightUpConfidence = (double) rightUpReadings / tags.size();
+            dashboard.addData("Right side up confidence", rightUpConfidence);
 
             if(rightUpConfidence > CONFIDENCE_THRESHOLD) isRightSideUp = true;
             if(rightUpConfidence < -CONFIDENCE_THRESHOLD) isRightSideUp = false;

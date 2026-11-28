@@ -50,7 +50,7 @@ public class Robot extends StealthSubsystem {
             waitUntil(() -> !turret.isWrapping()).withTimeout(1000),
             shooter.openGate(),
             intake.intake(),
-            waitUntil(turret::isWrapping).withTimeout(SHOT_TIME),
+            waitUntil(turret::isWrapping).withTimeout(SHOT_TIME), // Terminate if turret starts wrapping, or if the allotted time elapses
             shooter.closeGate(),
             intake.stop(),
             shooter.stopShooter()

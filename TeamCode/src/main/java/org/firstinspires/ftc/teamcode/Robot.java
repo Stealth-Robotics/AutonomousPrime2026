@@ -6,6 +6,7 @@ import static org.stealthrobotics.library.Commands.waitUntil;
 import static org.stealthrobotics.library.opmodes.StealthOpMode.telemetry;
 
 import com.arcrobotics.ftclib.command.Command;
+import com.arcrobotics.ftclib.command.ParallelRaceGroup;
 import com.pedropathing.math.Pose;
 import com.pedropathing.math.Velocity;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -49,7 +50,7 @@ public class Robot extends StealthSubsystem {
             waitUntil(() -> !turret.isWrapping()).withTimeout(1000),
             shooter.openGate(),
             intake.intake(),
-            waitSeconds(SHOT_TIME),
+            waitUntil(turret::isWrapping).withTimeout(SHOT_TIME),
             shooter.closeGate(),
             intake.stop(),
             shooter.stopShooter()

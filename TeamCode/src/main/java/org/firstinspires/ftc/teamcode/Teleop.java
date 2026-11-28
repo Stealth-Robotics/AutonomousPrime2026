@@ -52,6 +52,8 @@ public abstract class Teleop extends StealthOpMode {
 
         driverGamepad.getGamepadButton(GamepadKeys.Button.X).whenPressed(robot.intake.toggleHarvester());
 
+        operatorGamepad.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON) // Should soon become the relocalizer
+                .whenPressed(robot.vision.track());
         // Relocalize the robot to a known field reset pose (assumes that the robot is facing forward)
         driverGamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP)
             .whenPressed(robot.drive.resetPoseTo(Drive.PoseResetLocation.FAR_HIVE_CENTER));
